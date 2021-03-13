@@ -1,1 +1,1 @@
-# 26-restaurant-automation
+# Group 26-Restaurant-Automation
