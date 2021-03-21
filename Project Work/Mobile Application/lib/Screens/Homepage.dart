@@ -13,14 +13,14 @@ class _HomepageState extends State<Homepage> {
 
   TextEditingController _filter = TextEditingController();
   TextEditingController _foodAmountController = TextEditingController();
-
+  bool isJainWanted = false;
 
   List<Dish> _dishesList = List<Dish>();
   List<Dish> _filteredDishesList = List<Dish>();
 
   @override
   void initState() {
-    _dishesList.add(Dish('Paneer Tikka Masala', 'abcdefghijk', 145.0, true, false));
+    _dishesList.add(Dish('Paneer Tikka Masala', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', 145.0, true, false));
     _dishesList.add(Dish('Malai Kofta', 'abcdefghijk', 105.0, true, true));
     _dishesList.add(Dish('Paneer Bhurji', 'abcdefghijk', 160.0, true, false));
     _dishesList.add(Dish('Butter Naan', 'abcdefghijk', 90.0, true, true));
@@ -33,6 +33,10 @@ class _HomepageState extends State<Homepage> {
     _dishesList.add(Dish('Manchurian', 'abcdefghijk', 160.0, true, false));
     _dishesList.add(Dish('Baked Macaroni', 'abcdefghijk', 90.0, true, true));
     _dishesList.add(Dish('Cheese Sandwich', 'abcdefghijk', 90.0, true, false));
+    _dishesList.add(Dish('Cheese Sandwich', 'abcdefghijk', 90.0, true, false));
+    _dishesList.add(Dish('Cheese Sandwich', 'abcdefghijk', 90.0, true, false));
+    _dishesList.add(Dish('Baked Macaroni', 'abcdefghijk', 90.0, true, true));
+
 
     _filteredDishesList = _dishesList;
 
@@ -49,17 +53,22 @@ class _HomepageState extends State<Homepage> {
 
     return Scaffold(
       backgroundColor: Design.backgroundPrimary,
-      bottomSheet: _placeOrderButton(),
+      bottomNavigationBar: _placeOrderButton(),
+      appBar: AppBar(
+        title: _searchBar(),
+        backgroundColor: Colors.transparent,
+      ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _searchBar(),
-              _dishesListView(),
-            ],
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 0.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _dishesListView(),
+              ],
+            ),
           ),
         ),
       ),
@@ -86,6 +95,7 @@ class _HomepageState extends State<Homepage> {
   Widget _dishesListView(){
     return ListView.builder(
       itemCount: _filteredDishesList.length,
+      physics: const ScrollPhysics(),
       shrinkWrap: true,
       itemBuilder: (context, index){
         return _dishItem(context, index);
@@ -128,14 +138,14 @@ class _HomepageState extends State<Homepage> {
   Widget _searchBar(){
     return TextField(
       controller: _filter,
-      style: TextStyle(
+      style: const TextStyle(
         color: Design.textPrimary,
         fontSize: Design.textMedium,
       ),
       decoration: InputDecoration(
-        contentPadding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 6.0),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 6.0),
         hintText: 'Search dishes...',
-        hintStyle: TextStyle(color: Design.textPrimary),
+        hintStyle: const TextStyle(color: Design.textPrimary),
         prefixIcon: Icon(Icons.search, size: 30.0, color: Design.accentPrimary,),
         enabledBorder: enabledCustomBorder(),
         focusedBorder: focusedCustomBorder(),
@@ -148,10 +158,10 @@ class _HomepageState extends State<Homepage> {
       width: MediaQuery.of(context).size.width,
       color: Design.backgroundPrimary,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
         decoration: BoxDecoration(
           // color: Design.accentSecondary,
-          borderRadius: BorderRadius.vertical(
+          borderRadius: const BorderRadius.vertical(
             top: Radius.circular(Design.radiusLarge),
           ),
         ),
@@ -174,14 +184,16 @@ class _HomepageState extends State<Homepage> {
     return showDialog<void>(
       context: context,
       builder: (context){
+        isJainWanted = _dishesList[index].isJainWanted;
         return StatefulBuilder(
           builder: (context, setStateOfQtySelectorPopup){
             return AlertDialog(
               contentPadding: EdgeInsets.zero,
               content: Container(
+                color: Design.backgroundPrimary,
                 width: MediaQuery.of(context).size.width * 0.7,
                 padding: EdgeInsets.zero,
-                child: _test(index),
+                child: _test(index, setStateOfQtySelectorPopup),
               ),
             );
           },
@@ -190,28 +202,42 @@ class _HomepageState extends State<Homepage> {
     );
   }
 
-  Widget _test(int index){
+  Widget _test(int index, Function setStateOfQtySelectorPopup){
 
-    double initAmount = _dishesList[index].quantity;
-    _foodAmountController.text = initAmount.toString();
+    _foodAmountController.text = _dishesList[index].quantity.toString();
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          _filteredDishesList[index].description,
-          style: TextStyle(
-            color: Design.textPrimary,
-            fontSize: Design.textSmall,
+        Padding(
+          padding: const EdgeInsets.fromLTRB(8.0, 8.0, 6.0, 0.0),
+          child: Text(
+            'About the dish',
+            style: const TextStyle(
+              color: Design.textPrimaryBright,
+              fontSize: Design.textMedium,
+            ),
           ),
         ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
+          child: Text(
+            _filteredDishesList[index].description,
+            style: const TextStyle(
+              color: Design.textPrimary,
+              fontSize: Design.textSmall,
+            ),
+            textAlign: TextAlign.justify,
+          ),
+        ),
+        SizedBox(height: 16.0,),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // IconButton to increase food amount by 0.1
             IconButton(
-              icon: Icon(Icons.add_circle_outline_sharp, size: 30.0,),
+              icon: Icon(Icons.add_circle_outline_sharp, size: 30.0, color: Design.accentPrimary,),
               onPressed: (){
                 double amt = double.parse(_foodAmountController.text);
                 amt = amt + 1;
@@ -228,6 +254,13 @@ class _HomepageState extends State<Homepage> {
                 controller: _foodAmountController,
                 keyboardType: TextInputType.number,
                 textAlign: TextAlign.center,
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                ),
+                style: TextStyle(
+                  fontSize: Design.textLarge,
+                  color: Design.textPrimary,
+                ),
                 onChanged: (data){
                   if (data == ""){
                     _foodAmountController.text = '0';
@@ -237,7 +270,7 @@ class _HomepageState extends State<Homepage> {
             ),
             // IconButton to decrease food amount by 0.1
             IconButton(
-              icon: Icon(Icons.remove_circle_outline_sharp, size: 30.0,),
+              icon: Icon(Icons.remove_circle_outline_sharp, size: 30.0, color: Design.accentPrimary,),
               onPressed: (){
                 double amt = double.parse(_foodAmountController.text);
                 amt = amt>0 ? amt - 1 : 0;
@@ -248,26 +281,75 @@ class _HomepageState extends State<Homepage> {
             ),
           ],
         ),
+        SizedBox(height: _dishesList[index].isJainAvailable ? 8.0 : 8.0,),
+        _dishesList[index].isJainAvailable ?
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            FlatButton(
-              child: Text('Confirm'),
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              onPressed: (){
-                _dishesList[index].quantity = double.tryParse(_foodAmountController.text);
-                Navigator.pop(context);
-              },
+            Text(
+                'Jain',
+              style: TextStyle(
+                color: Design.textPrimary,
+                fontSize: Design.textMedium,
+              ),
             ),
-            FlatButton(
-              child: Text('Cancel'),
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              onPressed: (){
-                Navigator.pop(context);
-              },
+            Theme(
+              data: ThemeData(unselectedWidgetColor: Design.accentSecondary),
+              child: Checkbox(
+                tristate: false,
+                value: isJainWanted,
+                activeColor: Design.accentSecondary,
+                onChanged: (value){
+                  isJainWanted = value;
+                  print(value);
+                  setStateOfQtySelectorPopup((){});
+                },
+              ),
             ),
           ],
-        ),
+        ) : SizedBox(height: 0, width: 0,),
+        // Container(
+        //   height: 1.5,
+        //   child: Divider(
+        //     color: Design.backgroundPrimary,
+        //   ),
+        // ),
+        Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: FlatButton(
+                  child: Text('CONFIRM'),
+                  textColor: Design.accentPrimary,
+                  height: 40.0,
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  onPressed: (){
+                    _dishesList[index].quantity = double.tryParse(_foodAmountController.text);
+                    _dishesList[index].isJainWanted = isJainWanted;
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              // Container(
+              //   height: 40.0,
+              //   width: 1.5,
+              //   child: VerticalDivider(
+              //     color: Design.backgroundPrimary,
+              //   ),
+              // ),
+              Expanded(
+                child: FlatButton(
+                  child: Text('CANCEL'),
+                  textColor: Design.accentTertiaryBright,
+                  height: 40.0,
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  onPressed: (){
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+            ],
+          ),
       ],
     );
   }
