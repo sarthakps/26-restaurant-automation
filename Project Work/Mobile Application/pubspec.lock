@@ -74,6 +74,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.12.10-nullsafety.3"
+  mdi:
+    dependency: "direct main"
+    description:
+      name: mdi
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.0.0"
   meta:
     dependency: transitive
     description:
