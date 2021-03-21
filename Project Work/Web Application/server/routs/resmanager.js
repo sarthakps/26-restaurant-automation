@@ -38,8 +38,10 @@ router.post('/login', async(req,res) => {
 
 router.get('/viewmenu', async(req, res) => {
     try {
-        const viewmenu = await pool.query("SELECT dish_name, dish_price FROM restaurant_db.menu");
-        res.json(viewmenu.rows);
+        const viewmenu = await pool.query("SELECT dish_id, dish_name, description, dish_price, status, jain_availability FROM restaurant_db.menu");
+        res.json({total_results: viewmenu.rowCount, dishes: viewmenu.rows});
+
+        console.log("total_results: " + viewmenu.rowCount, "dishes: " + viewmenu.rows);
     } catch (err) {
         console.log(err.message)
     }
