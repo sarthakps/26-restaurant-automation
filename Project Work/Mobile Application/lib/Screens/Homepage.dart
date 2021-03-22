@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mdi/mdi.dart';
 import 'package:restaurant_management/Objects/Dish.dart';
@@ -15,6 +16,7 @@ class _HomepageState extends State<Homepage> {
   TextEditingController _filter = TextEditingController();
   TextEditingController _foodAmountController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
+  ValueNotifier<bool> searchFocus = ValueNotifier<bool>(false);
   bool isJainWanted = false;
 
   List<Dish> _dishesList = List<Dish>();
@@ -41,6 +43,7 @@ class _HomepageState extends State<Homepage> {
 
     _searchFocusNode.addListener(() {
       print('has focus: ' + _searchFocusNode.hasFocus.toString());
+      searchFocus = ValueNotifier<bool>(_searchFocusNode.hasFocus);
     });
 
     _retrieveMenuFromServer();
@@ -152,6 +155,7 @@ class _HomepageState extends State<Homepage> {
   Widget _searchBar(){
     return TextField(
       controller: _filter,
+      focusNode: _searchFocusNode,
       style: const TextStyle(
         color: Design.textPrimary,
         fontSize: Design.textMedium,
@@ -161,7 +165,24 @@ class _HomepageState extends State<Homepage> {
         hintText: 'Search dishes...',
         hintStyle: const TextStyle(color: Design.textPrimary),
         prefixIcon: Icon(Icons.search, size: 30.0, color: Design.accentPrimary,),
-        suffixIcon: _searchFocusNode.hasFocus ? Icon(Icons.clear, size: 24.0, color: Design.accentTertiaryBright,) : null,
+        // suffixIcon: _searchFocusNode.hasFocus ? Icon(Icons.clear, size: 24.0, color: Design.accentTertiaryBright,) : null,
+        suffixIcon: ValueListenableBuilder(
+          valueListenable: searchFocus,
+          builder: (context, isFocused, child){
+            if(isFocused){
+              return InkWell(
+                borderRadius: BorderRadius.circular(24.0),
+                child: Icon(Icons.clear, size: 24.0, color: Design.accentTertiaryBright),
+                onTap: (){
+                  print('x pressed');
+                  _filter.text = '';
+                  _searchFocusNode.unfocus();
+                },
+              );
+            }
+            return SizedBox(height: 0, width: 0,);
+          },
+        ),
         enabledBorder: enabledCustomBorder(),
         focusedBorder: focusedCustomBorder(),
       ),
