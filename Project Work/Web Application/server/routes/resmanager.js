@@ -133,13 +133,20 @@ router.post('/mark_attendance',async(req,res) => {
 // ATTENDANCE
 router.get('/view_attendance', async (req,res)=>{
     try {
-            const results = await pool.query('SELECT user_id,user_name,time_stamp,attendance_status FROM ATTENDANCE');
-            //console.log(results.rows[0]);
-            res.status(200).json(results.rows);
-        } 
-    catch (err) {
-            console.log(err.stack)
+        const results = await pool.query('SELECT user_id,user_name,time_stamp,attendance_status FROM restaurant_db.ATTENDANCE');
+        //console.log(results.rows[0]);
+        if(!results.rows[0] && !results.rows.length)
+        {
+            res.status(400).json({
+                error:1,
+                msg: "No data found for a given user"   
+            }); 
         }
+        res.status(200).json(results.rows);
+    } 
+    catch (err) {
+        console.log(err.stack)
+    }
 })
 
 router.post('/view_attendance',async (req,res)=>{
@@ -153,7 +160,7 @@ router.post('/view_attendance',async (req,res)=>{
                 msg: "Empty field"   
             }); 
         }
-        const results = await pool.query(`SELECT user_id,user_name,time_stamp,attendance_status FROM ATTENDANCE where user_name like '%${req.body.name}%'`)
+        const results = await pool.query(`SELECT user_id,user_name,time_stamp,attendance_status FROM restaurant_db.ATTENDANCE where user_name like '%${req.body.name}%'`)
         //console.log(results)
         if(!results.rows[0] && !results.rows.length)
         {
@@ -164,18 +171,25 @@ router.post('/view_attendance',async (req,res)=>{
         }
         res.status(200).json(results.rows);
     }
-    catch{
+    catch(err){
         console.log(err.stack);
     }
 });
 
 // FEEDBACK
-router.get('/feeback',async (req,res)=>{
+router.get('/feedback',async (req,res)=>{
     try{
-        const results = await pool.query(`select FEEDBACK_ID,CATEGORY1,CATEGORY2,CATEGORY3,CATEGORY4 from feedback`);
+        const results = await pool.query(`select FEEDBACK_ID,CATEGORY1,CATEGORY2,CATEGORY3,CATEGORY4 from restaurant_db.feedback`);
+        if(!results.rows[0] && !results.rows.length)
+        {
+            res.status(400).json({
+                error:1,
+                msg: "No data found for a given user"   
+            }); 
+        }
         res.status(200).json(results.rows);
     }
-    catch{
+    catch(err){
         console.log(err.stack);
     }
 });
@@ -189,8 +203,7 @@ router.post('/feedback',async (req,res)=>{
                 msg: "Empty field"   
             }); 
         }
-        const results = await pool.query(`select FEEDBACK_ID,CATEGORY1,CATEGORY2,CATEGORY3,CATEGORY4 from feedback where CATEGORY1 like '%${query_detail}%' or CATEGORY2 like '%${query_detail}%' or CATEGORY3 like '%${query_detail}%' or CATEGORY4 like '%${query_detail}%'`);
-        res.status(200).json(results.rows);
+        const results = await pool.query(`select FEEDBACK_ID,CATEGORY1,CATEGORY2,CATEGORY3,CATEGORY4 from restaurant_db.feedback where CATEGORY1 like '%${query_detail}%' or CATEGORY2 like '%${query_detail}%' or CATEGORY3 like '%${query_detail}%' or CATEGORY4 like '%${query_detail}%'`);
         if(!results.rows[0] && !results.rows.length)
         {
             res.status(400).json({
@@ -198,8 +211,9 @@ router.post('/feedback',async (req,res)=>{
                 msg: "No data found for given details"   
             }); 
         }
+        res.status(200).json(results.rows);
     }
-    catch{
+    catch(err){
         console.log(err.stack);
     }
 });
