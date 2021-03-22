@@ -133,7 +133,7 @@ router.post('/mark_attendance',async(req,res) => {
 // ATTENDANCE
 router.get('/view_attendance', async (req,res)=>{
     try {
-            const results = await pool.query('SELECT attendance_id,user_name,time_stamp,attendance_status FROM ATTENDANCE');
+            const results = await pool.query('SELECT user_id,user_name,time_stamp,attendance_status FROM ATTENDANCE');
             //console.log(results.rows[0]);
             res.status(200).json(results.rows);
         } 
@@ -143,11 +143,25 @@ router.get('/view_attendance', async (req,res)=>{
 })
 
 router.post('/view_attendance',async (req,res)=>{
-    console.log(req.body);
+    // console.log(req.body);
     //res.send(req.body);
     try{
-        const results = await pool.query(`SELECT * FROM ATTENDANCE where user_name like '%${req.body.name}%'`)
+        if(!req.body.name)
+        {
+            res.status(400).json({
+                error:1,
+                msg: "Empty field"   
+            }); 
+        }
+        const results = await pool.query(`SELECT user_id,user_name,time_stamp,attendance_status FROM ATTENDANCE where user_name like '%${req.body.name}%'`)
         //console.log(results)
+        if(!results.rows[0] && !results.rows.length)
+        {
+            res.status(400).json({
+                error:1,
+                msg: "No data found for a given user"   
+            }); 
+        }
         res.status(200).json(results.rows);
     }
     catch{
@@ -168,8 +182,22 @@ router.get('/feeback',async (req,res)=>{
 router.post('/feedback',async (req,res)=>{
     const query_detail = req.body.detail
     try{
+        if(!req.body.detail)
+        {
+            res.status(400).json({
+                error:1,
+                msg: "Empty field"   
+            }); 
+        }
         const results = await pool.query(`select FEEDBACK_ID,CATEGORY1,CATEGORY2,CATEGORY3,CATEGORY4 from feedback where CATEGORY1 like '%${query_detail}%' or CATEGORY2 like '%${query_detail}%' or CATEGORY3 like '%${query_detail}%' or CATEGORY4 like '%${query_detail}%'`);
         res.status(200).json(results.rows);
+        if(!results.rows[0] && !results.rows.length)
+        {
+            res.status(400).json({
+                error:1,
+                msg: "No data found for given details"   
+            }); 
+        }
     }
     catch{
         console.log(err.stack);
