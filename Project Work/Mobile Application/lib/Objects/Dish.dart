@@ -7,6 +7,7 @@ class Dish {
   double _quantity = 0;
   bool _isJainAvailable;
   bool _isAvailable;
+  bool _isJainWanted = false;
 
   Dish(String name, String description, double price, bool isAvailable, bool isJainAvailable)
       : _name = name,
@@ -32,4 +33,10 @@ class Dish {
   bool get isJainAvailable => _isJainAvailable;
 
   bool get isAvailable => _isAvailable;
+
+  bool get isJainWanted => _isJainWanted;
+
+  set isJainWanted(bool value) {
+    _isJainWanted = value;
+  }
 }
