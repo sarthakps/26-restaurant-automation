@@ -14,7 +14,7 @@ app.use(cors())
 app.use(express.json())
 
 
-app.use('/restaurantmanager', require('./routs/resmanager'));
+app.use('/restaurantmanager', require('./routes/resmanager'));
 
 
 const PORT = process.env.PORT || 5000;
