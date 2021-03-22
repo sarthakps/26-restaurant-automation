@@ -16,6 +16,17 @@ class Dish {
         _isAvailable = isAvailable,
         _isJainAvailable = isJainAvailable;
 
+  factory Dish.fromJSONobject(Map object){
+    Dish dish = Dish(object['dish_name'], object['description'], double.tryParse(object['dish_price'].toString()),
+        object['status'] == 'available' ? true : false, object['jain_availability']);
+    dish.id = object['dish_id'];
+    return dish;
+  }
+
+  set id(int value) {
+    _id = value;
+  }
+
   int get id => _id;
 
   String get name => _name;

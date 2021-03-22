@@ -1,6 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.restaurant_management">
+
+    <uses-permission-sdk-23 android:name="android.permission.INTERNET"/>
+
    <application
+       android:usesCleartextTraffic="true"
         android:label="restaurant_management"
         android:icon="@mipmap/ic_launcher">
         <activity

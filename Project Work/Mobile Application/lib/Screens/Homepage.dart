@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mdi/mdi.dart';
 import 'package:restaurant_management/Objects/Dish.dart';
+import 'package:restaurant_management/Services/FromServer.dart';
 import 'package:restaurant_management/Values/Design.dart';
 
 class Homepage extends StatefulWidget {
@@ -13,6 +14,7 @@ class _HomepageState extends State<Homepage> {
 
   TextEditingController _filter = TextEditingController();
   TextEditingController _foodAmountController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
   bool isJainWanted = false;
 
   List<Dish> _dishesList = List<Dish>();
@@ -20,25 +22,28 @@ class _HomepageState extends State<Homepage> {
 
   @override
   void initState() {
-    _dishesList.add(Dish('Paneer Tikka Masala', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', 145.0, true, false));
-    _dishesList.add(Dish('Malai Kofta', 'abcdefghijk', 105.0, true, true));
-    _dishesList.add(Dish('Paneer Bhurji', 'abcdefghijk', 160.0, true, false));
-    _dishesList.add(Dish('Butter Naan', 'abcdefghijk', 90.0, true, true));
-    _dishesList.add(Dish('Paneer Lababdar', 'abcdefghijk', 145.0, true, false));
-    _dishesList.add(Dish('Masala Papad', 'abcdefghijk', 105.0, true, true));
-    _dishesList.add(Dish('Butter Milk', 'abcdefghijk', 160.0, true, false));
-    _dishesList.add(Dish('Fulka Roti', 'abcdefghijk', 90.0, true, true));
-    _dishesList.add(Dish('Veg Jaipuri', 'abcdefghijk', 145.0, true, false));
-    _dishesList.add(Dish('Lassi', 'abcdefghijk', 105.0, true, true));
-    _dishesList.add(Dish('Manchurian', 'abcdefghijk', 160.0, true, false));
-    _dishesList.add(Dish('Baked Macaroni', 'abcdefghijk', 90.0, true, true));
-    _dishesList.add(Dish('Cheese Sandwich', 'abcdefghijk', 90.0, true, false));
-    _dishesList.add(Dish('Cheese Sandwich', 'abcdefghijk', 90.0, true, false));
-    _dishesList.add(Dish('Cheese Sandwich', 'abcdefghijk', 90.0, true, false));
-    _dishesList.add(Dish('Baked Macaroni', 'abcdefghijk', 90.0, true, true));
+    // _dishesList.add(Dish('Paneer Tikka Masala', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', 145.0, true, false));
+    // _dishesList.add(Dish('Malai Kofta', 'abcdefghijk', 105.0, true, true));
+    // _dishesList.add(Dish('Paneer Bhurji', 'abcdefghijk', 160.0, true, false));
+    // _dishesList.add(Dish('Butter Naan', 'abcdefghijk', 90.0, true, true));
+    // _dishesList.add(Dish('Paneer Lababdar', 'abcdefghijk', 145.0, true, false));
+    // _dishesList.add(Dish('Masala Papad', 'abcdefghijk', 105.0, true, true));
+    // _dishesList.add(Dish('Butter Milk', 'abcdefghijk', 160.0, true, false));
+    // _dishesList.add(Dish('Fulka Roti', 'abcdefghijk', 90.0, true, true));
+    // _dishesList.add(Dish('Veg Jaipuri', 'abcdefghijk', 145.0, true, false));
+    // _dishesList.add(Dish('Lassi', 'abcdefghijk', 105.0, true, true));
+    // _dishesList.add(Dish('Manchurian', 'abcdefghijk', 160.0, true, false));
+    // _dishesList.add(Dish('Baked Macaroni', 'abcdefghijk', 90.0, true, true));
+    // _dishesList.add(Dish('Cheese Sandwich', 'abcdefghijk', 90.0, true, false));
+    // _dishesList.add(Dish('Cheese Sandwich', 'abcdefghijk', 90.0, true, false));
+    // _dishesList.add(Dish('Cheese Sandwich', 'abcdefghijk', 90.0, true, false));
+    // _dishesList.add(Dish('Baked Macaroni', 'abcdefghijk', 90.0, true, true));
 
+    _searchFocusNode.addListener(() {
+      print('has focus: ' + _searchFocusNode.hasFocus.toString());
+    });
 
-    _filteredDishesList = _dishesList;
+    _retrieveMenuFromServer();
 
     _filter.addListener(_filterDishes);
     _foodAmountController.text = '0';
@@ -46,11 +51,16 @@ class _HomepageState extends State<Homepage> {
     super.initState();
   }
 
+  Future<void> _retrieveMenuFromServer() async {
+    _dishesList = await FromServer.getDishes();
+    setState(() {
+      _filteredDishesList = _dishesList;
+    });
+
+  }
+
   @override
   Widget build(BuildContext context) {
-
-    print(_dishesList);
-
     return Scaffold(
       backgroundColor: Design.backgroundPrimary,
       bottomNavigationBar: _placeOrderButton(),
@@ -75,7 +85,8 @@ class _HomepageState extends State<Homepage> {
     );
   }
 
-  void _filterDishes(){
+  void _filterDishes() async {
+
     if (!(_filter.text.isEmpty)) {
       List<Dish> tempList = new List<Dish>();
       for (int i = 0; i < _dishesList.length; i++) {
@@ -84,12 +95,15 @@ class _HomepageState extends State<Homepage> {
         }
       }
       _filteredDishesList = tempList;
+
+      for(var dish in _filteredDishesList){
+        // print(dish.name + ' - ' + dish.isJainAvailable.toString());
+      }
+
     } else {
       _filteredDishesList = _dishesList;
     }
-    setState(() {
-      print(_filteredDishesList);
-    });
+    setState(() {});
   }
 
   Widget _dishesListView(){
@@ -147,6 +161,7 @@ class _HomepageState extends State<Homepage> {
         hintText: 'Search dishes...',
         hintStyle: const TextStyle(color: Design.textPrimary),
         prefixIcon: Icon(Icons.search, size: 30.0, color: Design.accentPrimary,),
+        suffixIcon: _searchFocusNode.hasFocus ? Icon(Icons.clear, size: 24.0, color: Design.accentTertiaryBright,) : null,
         enabledBorder: enabledCustomBorder(),
         focusedBorder: focusedCustomBorder(),
       ),
@@ -184,7 +199,10 @@ class _HomepageState extends State<Homepage> {
     return showDialog<void>(
       context: context,
       builder: (context){
-        isJainWanted = _dishesList[index].isJainWanted;
+        isJainWanted = _filteredDishesList[index].isJainWanted;
+        _foodAmountController.text = _filteredDishesList[index].quantity.toString();
+        print(_dishesList[index].isJainAvailable);
+        print(_dishesList[index].isAvailable);
         return StatefulBuilder(
           builder: (context, setStateOfQtySelectorPopup){
             return AlertDialog(
@@ -203,8 +221,6 @@ class _HomepageState extends State<Homepage> {
   }
 
   Widget _test(int index, Function setStateOfQtySelectorPopup){
-
-    _foodAmountController.text = _dishesList[index].quantity.toString();
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -241,8 +257,9 @@ class _HomepageState extends State<Homepage> {
               onPressed: (){
                 double amt = double.parse(_foodAmountController.text);
                 amt = amt + 1;
-                setState(() {
-                  _foodAmountController.text = amt.toStringAsFixed(1);
+                _foodAmountController.text = amt.toStringAsFixed(1);
+                setStateOfQtySelectorPopup(() {
+                  print('amt = ' + _foodAmountController.text);
                 });
               },
             ),
@@ -274,15 +291,15 @@ class _HomepageState extends State<Homepage> {
               onPressed: (){
                 double amt = double.parse(_foodAmountController.text);
                 amt = amt>0 ? amt - 1 : 0;
-                setState(() {
+                setStateOfQtySelectorPopup(() {
                   _foodAmountController.text = amt.toStringAsFixed(1);
                 });
               },
             ),
           ],
         ),
-        SizedBox(height: _dishesList[index].isJainAvailable ? 8.0 : 8.0,),
-        _dishesList[index].isJainAvailable ?
+        SizedBox(height: _filteredDishesList[index].isJainAvailable ? 8.0 : 8.0,),
+        _filteredDishesList[index].isJainAvailable ?
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -324,8 +341,8 @@ class _HomepageState extends State<Homepage> {
                   height: 40.0,
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   onPressed: (){
-                    _dishesList[index].quantity = double.tryParse(_foodAmountController.text);
-                    _dishesList[index].isJainWanted = isJainWanted;
+                    _filteredDishesList[index].quantity = double.tryParse(_foodAmountController.text);
+                    _filteredDishesList[index].isJainWanted = isJainWanted;
                     Navigator.pop(context);
                   },
                 ),
