@@ -133,46 +133,105 @@ router.post('/mark_attendance',async(req,res) => {
 // ATTENDANCE
 router.get('/view_attendance', async (req,res)=>{
     try {
-            const results = await pool.query('SELECT attendance_id,user_name,time_stamp,attendance_status FROM ATTENDANCE');
-            //console.log(results.rows[0]);
-            res.status(200).json(results.rows);
-        } 
-    catch (err) {
-            console.log(err.stack)
+        const results = await pool.query('SELECT user_id,user_name,time_stamp,attendance_status FROM restaurant_db.ATTENDANCE');
+        //console.log(results.rows[0]);
+        if(!results.rows[0] && !results.rows.length)
+        {
+            res.status(400).json({
+                error:1,
+                msg: "No attendance record found"   
+            }); 
         }
+        else{
+            res.status(200).json(results.rows);
+        }
+        
+    } 
+    catch (err) {
+        console.log(err.message)
+    }
 })
 
 router.post('/view_attendance',async (req,res)=>{
-    console.log(req.body);
+    // console.log(req.body);
     //res.send(req.body);
     try{
-        const results = await pool.query(`SELECT * FROM ATTENDANCE where user_name like '%${req.body.name}%'`)
-        //console.log(results)
-        res.status(200).json(results.rows);
+        if(!req.body.name)
+        {
+            res.status(400).json({
+                error:1,
+                msg: "Empty field"   
+            }); 
+        }
+        else{
+            const results = await pool.query(`SELECT user_id,user_name,time_stamp,attendance_status FROM restaurant_db.ATTENDANCE where user_name like '%${req.body.name}%'`)
+            //console.log(results)
+            if(!results.rows[0] && !results.rows.length)
+            {
+                res.status(400).json({
+                    error:1,
+                    msg: "No data found for a given user"   
+                }); 
+            }
+            else{
+                res.status(200).json(results.rows);
+            }
+        }        
+        
     }
-    catch{
-        console.log(err.stack);
+    catch(err){
+        console.log(err.message);
     }
 });
 
 // FEEDBACK
-router.get('/feeback',async (req,res)=>{
+router.get('/feedback',async (req,res)=>{
     try{
-        const results = await pool.query(`select FEEDBACK_ID,CATEGORY1,CATEGORY2,CATEGORY3,CATEGORY4 from feedback`);
-        res.status(200).json(results.rows);
+        const results = await pool.query(`select FEEDBACK_ID,CATEGORY1,CATEGORY2,CATEGORY3,CATEGORY4 from restaurant_db.feedback`);
+        if(!results.rows[0] && !results.rows.length)
+        {
+            res.status(400).json({
+                error:1,
+                msg: "No feedback record found"   
+            }); 
+        }
+        else{
+            res.status(200).json(results.rows);
+        }
+        
     }
-    catch{
-        console.log(err.stack);
+    catch(err){
+        console.log(err.message);
     }
 });
+
+
 router.post('/feedback',async (req,res)=>{
     const query_detail = req.body.detail
     try{
-        const results = await pool.query(`select FEEDBACK_ID,CATEGORY1,CATEGORY2,CATEGORY3,CATEGORY4 from feedback where CATEGORY1 like '%${query_detail}%' or CATEGORY2 like '%${query_detail}%' or CATEGORY3 like '%${query_detail}%' or CATEGORY4 like '%${query_detail}%'`);
-        res.status(200).json(results.rows);
+        if(!req.body.detail)
+        {
+            res.status(400).json({
+                error:1,
+                msg: "Empty field"   
+            }); 
+        }
+        else {
+            const results = await pool.query(`select FEEDBACK_ID,CATEGORY1,CATEGORY2,CATEGORY3,CATEGORY4 from restaurant_db.feedback where CATEGORY1 like '%${query_detail}%' or CATEGORY2 like '%${query_detail}%' or CATEGORY3 like '%${query_detail}%' or CATEGORY4 like '%${query_detail}%'`);
+            if(!results.rows[0] && !results.rows.length)
+            {
+                res.status(400).json({
+                    error:1,
+                    msg: "No feedback record found for given details"   
+                }); 
+            }
+            else{
+                res.status(200).json(results.rows);
+            }
+        }     
     }
-    catch{
-        console.log(err.stack);
+    catch(err){
+        console.log(err.message);
     }
 });
 
