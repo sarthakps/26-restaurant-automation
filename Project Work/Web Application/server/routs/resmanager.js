@@ -67,4 +67,82 @@ router.post('/revenue', async(req, res) => {
     }
 })
 
+
+
+router.post('/register_user',async(req,res) => {
+    
+    try {
+        const data = req.body;
+        if(!data.restaurant_id || !data.user_image || !data.usertype_id || !data.user_name || !data.email_id || !data.contact_no || !data.password){
+            
+            res.status(400).json({
+                error:1,
+                msg: "Provide all values"
+            }); 
+
+        } else { 
+           
+            const check_restaurant = await pool.query("SELECT restaurant_id FROM restaurant_db.restaurant WHERE $1 = restaurant_db.restaurant.restaurant_id ",[data.restaurant_id])
+            const check_usertype = await pool.query("SELECT usertype_id FROM restaurant_db.usertype WHERE $1 = restaurant_db.usertype.usertype_id",[data.usertype_id])
+            
+            if(!check_restaurant.rows[0] || !check_usertype.rows[0]){
+
+                res.status(400).json({
+                    error:2,
+                    msg: "Check whether the given usertype and restaurant id exists or not"
+                });
+
+            } else {
+            
+                const newUser = await pool.query(
+                "INSERT INTO restaurant_db.users(restaurant_id,user_image,usertype_id,user_name,email_id,contact_no,contact_no_optional,password) VALUES ($1, $2, $3,$4, $5,$6,$7,$8)",
+                [data.restaurant_id,data.user_image,data.usertype_id,data.user_name,data.email_id,data.contact_no,data.contact_no_optional,data.password]);
+                
+                res.json({msg:"User added" });
+            }
+        }
+    } catch (err) {
+        console.log(err.message)
+    }
+})
+
+
+router.post('/mark_attendance',async(req,res) => {
+    
+    try {
+        const data = req.body;
+        if(!data.restaurant_id || !data.user_id || !data.attendance_status){
+            
+            res.status(400).json({
+                error:1,
+                msg: "Provide all values"   
+            }); 
+
+        } else { 
+           
+            const check_restaurant = await pool.query("SELECT restaurant_id FROM restaurant_db.restaurant WHERE $1 = restaurant_db.restaurant.restaurant_id ",[data.restaurant_id])
+            const check_user = await pool.query("SELECT user_id FROM restaurant_db.users WHERE $1 = restaurant_db.users.user_id",[data.user_id])
+            const time_now= await pool.query("SELECT NOW()");
+            console.log(time_now.rows[0]['now']);
+            if(!check_restaurant.rows[0] || !check_user.rows[0]){
+
+                res.status(400).json({
+                    error:2,
+                    msg: "Check whether the given user id and restaurant id exists or not"
+                });
+
+            } else {
+            
+                const newUser = await pool.query(
+                "INSERT INTO restaurant_db.attendance(restaurant_id,user_id,time_stamp,attendance_status) VALUES ($1, $2, $3,$4)",
+                [data.restaurant_id,data.user_id,time_now.rows[0]['now'],data.attendance_status]);
+                
+                res.json({msg:"Attendance marked" });
+            }
+        }
+    } catch (err) {
+        console.log(err.message)
+    }
+})
+
 module.exports = router;
