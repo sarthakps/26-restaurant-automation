@@ -36,10 +36,21 @@ router.post('/login', async(req,res) => {
 })
 
 
-router.get('/viewmenu', async(req, res) => {
+router.post('/viewmenu', async(req, res) => {
     try {
-        const viewmenu = await pool.query("SELECT dish_id, dish_name, description, dish_price, status, jain_availability FROM restaurant_db.menu");
-        res.json({total_results: viewmenu.rowCount, dishes: viewmenu.rows});
+        const data = req.body;
+        const viewmenu = await pool.query("SELECT dish_id, dish_name, description, dish_price, status, jain_availability FROM restaurant_db.menu WHERE restaurant_id=$1", [data.restaurant_id]);
+
+        if(!viewmenu.rows[0] && !viewmenu.rows.length){
+            res.status(400).json({
+                error:1,
+                msg: "No menu item available for this restaurant"
+            });
+        }
+        else{
+            res.json({total_results: viewmenu.rowCount, dishes: viewmenu.rows});
+        }
+        
 
         console.log("total_results: " + viewmenu.rowCount, "dishes: " + viewmenu.rows);
     } catch (err) {
@@ -126,7 +137,6 @@ router.post('/mark_attendance',async(req,res) => {
         console.log(err.message)
     }
 })
-
 
 
 
@@ -217,7 +227,8 @@ router.post('/feedback',async (req,res)=>{
             }); 
         }
         else {
-            const results = await pool.query(`select FEEDBACK_ID,CATEGORY1,CATEGORY2,CATEGORY3,CATEGORY4 from restaurant_db.feedback where CATEGORY1 like '%${query_detail}%' or CATEGORY2 like '%${query_detail}%' or CATEGORY3 like '%${query_detail}%' or CATEGORY4 like '%${query_detail}%'`);
+           const results = await pool.query("select FEEDBACK_ID,CATEGORY1,CATEGORY2,CATEGORY3,CATEGORY4 from restaurant_db.feedback where CATEGORY1 = $1 or CATEGORY2 = $1 or CATEGORY3 = $1 or CATEGORY4 = $1", [query_detail]);
+
             if(!results.rows[0] && !results.rows.length)
             {
                 res.status(400).json({
@@ -234,7 +245,5 @@ router.post('/feedback',async (req,res)=>{
         console.log(err.message);
     }
 });
-
-
 
 module.exports = router;
