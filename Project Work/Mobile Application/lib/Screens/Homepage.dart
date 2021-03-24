@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mdi/mdi.dart';
 import 'package:restaurant_management/Objects/Dish.dart';
+import 'package:restaurant_management/Screens/ConfirmOrder.dart';
 import 'package:restaurant_management/Services/FromServer.dart';
 import 'package:restaurant_management/Values/Design.dart';
 
@@ -210,7 +211,19 @@ class _HomepageState extends State<Homepage> {
           child: Text(
             'PLACE ORDER',
           ),
-          onPressed: (){},
+          onPressed: () async {
+
+            List<Dish> orderedDishes = List<Dish>();
+            _dishesList.forEach((dish) {
+              if(dish.quantity > 0){
+                orderedDishes.add(dish);
+              }
+            });
+
+            Navigator.push(context,
+                MaterialPageRoute(
+                    builder: (context) => ConfirmOrder(orderedDishes)));
+          },
         ),
       ),
     );
