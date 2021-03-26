@@ -11,7 +11,9 @@ const ResLogin = (props) => {
         e.preventDefault();
         try {
             const body = {user_id, password};
-            const submitLogin = await fetch("http://localhost:5000/restaurantmanager/login", {
+
+            // proxy
+            const submitLogin = await fetch("/restaurantmanager/login", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(body)
@@ -33,6 +35,7 @@ const ResLogin = (props) => {
             }
 
         } catch (err) {
+           // console.warn(xhr.responseText)
             console.log(err.message);
         }
     }

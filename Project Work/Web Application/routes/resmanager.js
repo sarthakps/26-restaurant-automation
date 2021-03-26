@@ -22,7 +22,7 @@ router.post('/login', async(req,res) => {
         console.log("login data res", login.rows);
 
         if(!login.rows[0] && !login.rows.length){
-            res.json(400,{
+            res.status(400).json({
                 error:1,
                 msg: "some error"
             });
