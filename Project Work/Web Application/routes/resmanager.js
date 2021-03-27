@@ -16,8 +16,8 @@ const pool = require('../db')
 router.post('/login', async(req,res) => {
     try {
         const data = req.body;
-        pool.query("SET search_path TO 'restaurant_db';");
-        const login = await pool.query("SELECT user_id, password FROM manager WHERE user_id=$1 and password=$2", [data.user_id, data.password]);
+       // pool.query("SET search_path TO 'restaurant_db';");
+        const login = await pool.query("SELECT user_id, password FROM restaurant_db.manager WHERE user_id=$1 and password=$2", [data.user_id, data.password]);
 
         console.log("login data res", login.rows);
 
