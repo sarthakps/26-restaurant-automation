@@ -26,7 +26,7 @@ if(process.env.NODE_ENV === "production"){
 }
 
 app.use('/restaurantmanager', require('./routes/resmanager'));
-
+app.use('/waiter', require('./routes/waiter'));
 
 // catch all method
 // app.get("*", (req, res) => {
