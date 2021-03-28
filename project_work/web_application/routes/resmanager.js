@@ -116,7 +116,7 @@ router.post('/viewmenu',verifyToken, async(req, res) => {
         }else{
             //WHEN USER HAS VALID JWT TOKEN
             const data = req.body;
-            const viewmenu =  await pool.query("SELECT dish_id, dish_name, description, dish_price, status, jain_availability FROM restaurant_db.menu WHERE restaurant_id=$1", [data.restaurant_id]);
+            const viewmenu =  await pool.query("SELECT dish_id, dish_name, description, dish_price, status, jain_availability FROM menu WHERE restaurant_id=$1", [data.restaurant_id]);
             
             if(!viewmenu.rows[0] && !viewmenu.rows.length){
                 res.status(400).json({
