@@ -9,7 +9,7 @@ import ReveueAnalysis from './components/restaurantmanager/RevenueAnalysis'
 import RegisterUser from './components/restaurantmanager/RegisterUser'
 import RushHourPred from './components/restaurantmanager/RushHourPred'
 import Attendance from './components/restaurantmanager/Attendance'
-import FeedbackAnalysis from './components/restaurantmanager/FeedbackAnakysis'
+import FeedbackAnalysis from './components/restaurantmanager/FeedbackAnalysis'
 
 function App() {
   return (
