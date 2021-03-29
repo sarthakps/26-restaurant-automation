@@ -4,13 +4,16 @@ import Swal from "sweetalert2";
 
 
 const ResLogin = (props) => {
-    const [user_id, setUid] = useState("")
+    const [email_id, setUid] = useState("")
     const [password, setPassword] = useState("")
 
     const onSubmitForm = async e => {
         e.preventDefault();
         try {
-            const body = {user_id, password};
+            const body = {email_id, password};
+
+            var emailid = email_id;
+            localStorage.setItem("emailID", emailid);
 
             // proxy
             const submitLogin = await fetch("/restaurantmanager/login", {
@@ -21,17 +24,19 @@ const ResLogin = (props) => {
                 return res.json()
             })
 
-            console.log(submitLogin.user_id);
+            //console.log(submitLogin.msg);
 
-            if(submitLogin.user_id){
-                Swal.fire("Congrats!", "Successful Login", "success")
+            if(submitLogin.msg === "Successfully logged in!"){
+                Swal.fire("Congrats!", submitLogin.msg, "success")
                 props.history.push("/restaurantmanager/reshome")
 
-                var res_manager_id = submitLogin.user_id;
-                localStorage.setItem("resManID", res_manager_id);
+                var res_id = submitLogin.restaurant_id;
+                localStorage.setItem("resID", res_id);
+                //console.log("IN ResLogin file: ", res_id);
+
             }
             else{
-                Swal.fire("Sorry!", "Incorrect credentials", "error")
+                Swal.fire("Sorry!", submitLogin.msg, "error")
             }
 
         } catch (err) {
@@ -63,8 +68,8 @@ const ResLogin = (props) => {
              <div className="container">
              <form action="POST" onSubmit={onSubmitForm}>
                     <div >
-                      <label for="uid">User ID:</label>
-                      <input type="text" className="form-control" id="uid" placeholder="Enter username" name="uid" required value = {user_id} onChange={e => setUid(e.target.value)} />
+                      <label for="uid">Email ID:</label>
+                      <input type="text" className="form-control" id="uid" placeholder="Enter username" name="uid" required value = {email_id} onChange={e => setUid(e.target.value)} />
                     </div>
                     <div>
                     <label for="pwd">Password:</label>
