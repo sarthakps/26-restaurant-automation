@@ -15,14 +15,14 @@ const jwt=require('jsonwebtoken')
 
 
 // invalid password error
+//solution: changed query select * from manager ===> select * from users
 router.post('/login', async(req,res) => {
     try {
         const data = req.body;
         // check if a user with the given email ID exists in the database
         // if not, return error
         const login = await pool.query("SELECT * FROM manager WHERE email_id=$1", [data.email_id]);
-        console.log(login.rows.length)
-        console.log(login.rows[0])
+        
         if(login.rows.length == 0){
             return res.status(400).json({
                 error: 1,
@@ -32,24 +32,50 @@ router.post('/login', async(req,res) => {
 
         else{
             // validate password
-                bcrypt.compare(data.password, login.rows[0].password, function(err, result) {
+                // bcrypt.compare(data.password, login.rows[0].password, function(err, result) {
                     
-                    // handle bcrypt compare error
-                    if (err) { throw (err); }
-                
+                //     // handle bcrypt compare error
+                //     if (err) { throw (err); }
+                const result = await pool.query("SELECT * FROM manager WHERE email_id=$1", [data.email_id]);
                     // password matches
-                    if(result){
+                    console.log(result.rows[0]['password'])
+                    if(result.rows[0]['password'] === req.body.password){
 
                         //GET JWT TOKEN 
-                        jwt.sign({},'secretkey',{expiresIn: '1h'},(err,token)=>{
-                            //console.log(req.token)
+                        const emailid=data.email_id
+                        
+                        jwt.sign({emailid},'secretkey',{expiresIn: '5h'},async (err,token)=>{
+                            
                             if(err){
                                 console.log(err.message)
                             }else{
+                                
 
-                                //TOKEN CREATED WITHOUT ERROR  RETURN IT ALONG WITH LOGIN DATA
+                                //need to create fcm token dont know how
+                                const fcmToken="temporary_fcm_token"   
+                                const checkEntry =  await pool.query("SELECT email_id FROM fcm_jwt WHERE email_id=$1", [data.email_id]);
+                                
+                                // //if already logged in then update
+                                if(checkEntry && typeof(checkEntry.rows[0])!=='undefined')
+                                {
+                                    console.log('updating')
+                                    const newUser = await pool.query(
+                                        "UPDATE fcm_jwt SET last_jwt = $1 WHERE email_id=$2", [token, data.email_id]);
+                                        
+                                }//if there is no login info then insert
+                                else{
+                                        console.log('inserting')
+                                        const newUser = await pool.query(
+                                        "INSERT INTO fcm_jwt(email_id,fcm_token,last_jwt) VALUES ($1, $2, $3)",
+                                        [data.email_id, fcmToken, token]);
+                                        
+                                }
+
+
+
+                            //TOKEN CREATED WITHOUT ERROR  RETURN IT ALONG WITH LOGIN DATA
                             return  res.json({
-                                    token,
+                                    token: token,
                                     msg: "Successfully logged in!",
                                     user_id: login.rows[0].user_id,
                                     restaurant_id: login.rows[0].restaurant_id,
@@ -60,57 +86,38 @@ router.post('/login', async(req,res) => {
                             }
                             
                         }); 
-                    }
-                
-                
-                    // invalid password
+                    }// invalid password
                     else {
                         return res.status(400).json({
                             error:1,
                             msg: "Invalid password! Please try again!"
                         });
                     }
-                });
+                // });
                 
-                    //password matches
-                    // if(login.rows[0].password === data.password){
-
-                    //             //TOKEN CREATED WITHOUT ERROR  RETURN IT ALONG WITH LOGIN DATA
-                    //         return  res.json({
-                    //                 msg: "Successfully logged in!",
-                    //                 user_id: login.rows[0].user_id,
-                    //                 restaurant_id: login.rows[0].restaurant_id,
-                    //                 usertype_id: login.rows[0].usertype_id,
-                    //                 user_name: login.rows[0].user_name,
-                    //                 contact_no: login.rows[0].contact_no,
-                    //             });
-                    //         }
-                           
-                    //         // invalid password
-                    // else {
-                    //     return res.status(400).json({
-                    //         error:1,
-                    //         msg: "Invalid password! Please try again!"
-                    //     });
-                    // }
+                    
                  
-                    }
+            }
         
-    } catch (err) {
-        console.log(err.message);
-    }
+        } catch (err) {
+            console.log(err.message);
+        }
 })
 
 
 
 // check if jwt works or not. getting error code 403-forbidden
+
+//solution: check if you have passed email_id and restaurant_id in body
+
 router.post('/viewmenu',verifyToken, async(req, res) => {
     
     //INITIALIZE JWT VERIFICATION
     jwt.verify(req.token, 'secretkey',async (err,authData)=>{
         if(err){
 
-            //INVALID TOKEN/TIMEOUT
+            //INVALID TOKEN/TIMEOUT so delete the entry from databse 
+            // const deleted_info = await pool.query("DELETE FROM fcm_jwt WHERE EMAIL_ID=$1 ",[req.body.email_id])
             res.status(400).json({msg: "Session expired. Login again"})
             
         }else{
@@ -134,26 +141,7 @@ router.post('/viewmenu',verifyToken, async(req, res) => {
         }
     });
 
-    //console.log("in viewmenu api")
-    try {
-        const data = req.body;
-        const viewmenu = await pool.query("SELECT dish_id, dish_name, description, dish_price, status, jain_availability FROM menu WHERE restaurant_id=$1", [data.restaurant_id]);
-
-        if(!viewmenu.rows[0] && !viewmenu.rows.length){
-            res.status(400).json({
-                error:1,
-                msg: "No menu item available for this restaurant"
-            });
-        }
-        else{
-            res.json({total_results: viewmenu.rowCount, dishes: viewmenu.rows});
-        }
-        
-
-        //console.log("total_results: " + viewmenu.rowCount, "dishes: " + viewmenu.rows);
-    } catch (err) {
-        console.log(err.message)
-    }
+    
     
 })
 
@@ -162,34 +150,44 @@ router.post('/viewmenu',verifyToken, async(req, res) => {
 
 // works
 router.post('/revenue', async(req, res) => {
-    try {
-        const data = req.body;
 
-        const final = await pool.query("SELECT SUM(final_bill) FROM revenue WHERE time_stamp>=$1 and time_stamp<=$2", [data.from_time_stamp
-        , data.to_time_stamp]);
+    // jwt.verify(req.token, 'secretkey',async (err,authData)=>{
+    //     if(err){
 
-        console.log(final.rows[0])
+    //         //INVALID TOKEN/TIMEOUT 
+    //         res.status(400).json({msg: "Session expired. Login again"})
+            
+    //     }else{
+            
+                    try {
+                        const data = req.body;
 
-        if(!final.rows[0] && !final.rows.length){
-            res.json(400,{
-                error:1,
-                msg: "some error"
-            });
-        } else {
-            res.json(final.rows[0]);
-        }
+                        const final = await pool.query("SELECT SUM(final_bill) FROM revenue WHERE time_stamp>=$1 and time_stamp<=$2", [data.from_time_stamp
+                        , data.to_time_stamp]);
 
-    } catch (err) {
-        console.log(err.message)
-    }
+                        console.log(final.rows[0])
+
+                        if(!final.rows[0] && !final.rows.length){
+                            res.json(400,{
+                                error:1,
+                                msg: "some error"
+                            });
+                        } else {
+                            res.json(final.rows[0]);
+                        }
+
+                    } catch (err) {
+                        console.log(err.message)
+                    }
+            // }      
 })
 
 
 // works
 router.post('/register_user',async(req,res) => {  
+
     try {
         const data = req.body;
-        // console.log(data.usertype_id);
 
         // check if one or more mandatory field is empty
         // return error if true
@@ -285,151 +283,196 @@ router.post('/register_user',async(req,res) => {
 
 // works
 router.post('/mark_attendance',async(req,res) => {
-    
-    try {
-        const data = req.body;
-        if(!data.restaurant_id || !data.user_id || !data.attendance_status){
-            
-            res.status(400).json({
-                error:1,
-                msg: "Provide all values"   
-            }); 
+    // jwt.verify(req.token, 'secretkey',async (err,authData)=>{
+    //     if(err){
 
-        } else { 
-           
-            const time_now= await pool.query("SELECT NOW()");
+    //         //INVALID TOKEN/TIMEOUT 
+    //         res.status(400).json({msg: "Session expired. Login again"})
             
-            const username = await pool.query("SELECT user_name from users WHERE user_id=$1", [data.user_id])
-            const username2 = username.rows[0].user_name;
-            const newUser = await pool.query(
-            "INSERT INTO attendance(restaurant_id,user_id, user_name, time_stamp,attendance_status) VALUES ($1, $2, $3, $4, $5)",
-                [data.restaurant_id,data.user_id, username2, time_now.rows[0]['now'],data.attendance_status]);
-                
-            res.json({msg:"Attendance marked" });
-        }
-    } catch (err) {
-        console.log(err.message)
-    }
+    //     }else{
+    
+                try {
+                    const data = req.body;
+                    if(!data.restaurant_id || !data.user_id || !data.attendance_status){
+                        
+                        res.status(400).json({
+                            error:1,
+                            msg: "Provide all values"   
+                        }); 
+
+                    } else { 
+                    
+                        const time_now= await pool.query("SELECT NOW()");
+                        
+                        const username = await pool.query("SELECT user_name from users WHERE user_id=$1", [data.user_id])
+                        const username2 = username.rows[0].user_name;
+                        const newUser = await pool.query(
+                        "INSERT INTO attendance(restaurant_id,user_id, user_name, time_stamp,attendance_status) VALUES ($1, $2, $3, $4, $5)",
+                            [data.restaurant_id,data.user_id, username2, time_now.rows[0]['now'],data.attendance_status]);
+                            
+                        res.json({msg:"Attendance marked" });
+                    }
+                } catch (err) {
+                    console.log(err.message)
+                }
+            // }
 })
 
 
 // works
 // ATTENDANCE
 router.get('/view_attendance', async (req,res)=>{
-    try {
-        const results = await pool.query('SELECT user_id,user_name,time_stamp,attendance_status FROM ATTENDANCE');
-        //console.log(results.rows[0]);
-        if(!results.rows[0] && !results.rows.length)
-        {
-            res.status(400).json({
-                error:1,
-                msg: "No attendance record found"   
-            }); 
-        }
-        else{
-            res.status(200).json(results.rows);
-        }
-        
-    } 
-    catch (err) {
-        console.log(err.message)
-    }
+// jwt.verify(req.token, 'secretkey',async (err,authData)=>{
+    //     if(err){
+
+    //         //INVALID TOKEN/TIMEOUT 
+    //         res.status(400).json({msg: "Session expired. Login again"})
+            
+    //     }else{
+    
+                try {
+                    const results = await pool.query('SELECT user_id,user_name,time_stamp,attendance_status FROM ATTENDANCE');
+                    //console.log(results.rows[0]);
+                    if(!results.rows[0] && !results.rows.length)
+                    {
+                        res.status(400).json({
+                            error:1,
+                            msg: "No attendance record found"   
+                        }); 
+                    }
+                    else{
+                        res.status(200).json(results.rows);
+                    }
+                    
+                } 
+                catch (err) {
+                    console.log(err.message)
+                }
+            // }
 })
 
 
 // works
 router.post('/view_attendance',async (req,res)=>{
-    // console.log(req.body);
-    //res.send(req.body);
-    try{
-        if(!req.body.user_name)
-        {
-            res.status(400).json({
-                error:1,
-                msg: "Empty field"   
-            }); 
-        }
-        else{
-            const results = await pool.query(`SELECT user_id,user_name,time_stamp,attendance_status FROM ATTENDANCE where user_name like '%${req.body.user_name}%'`)
-            //console.log(results)
-            if(!results.rows[0] && !results.rows.length)
-            {
-                res.status(400).json({
-                    error:1,
-                    msg: "No data found for a given user"   
-                }); 
-            }
-            else{
-                res.status(200).json(results.rows);
-            }
-        }        
-        
-    }
-    catch(err){
-        console.log(err.message);
-    }
+    // jwt.verify(req.token, 'secretkey',async (err,authData)=>{
+    //     if(err){
+
+    //         //INVALID TOKEN/TIMEOUT
+    //         res.status(400).json({msg: "Session expired. Login again"})
+            
+    //     }else{
+    
+                try{
+                    if(!req.body.user_name)
+                    {
+                        res.status(400).json({
+                            error:1,
+                            msg: "Empty field"   
+                        }); 
+                    }
+                    else{
+                        const results = await pool.query(`SELECT user_id,user_name,time_stamp,attendance_status FROM ATTENDANCE where user_name like '%${req.body.user_name}%'`)
+                        //console.log(results)
+                        if(!results.rows[0] && !results.rows.length)
+                        {
+                            res.status(400).json({
+                                error:1,
+                                msg: "No data found for a given user"   
+                            }); 
+                        }
+                        else{
+                            res.status(200).json(results.rows);
+                        }
+                    }        
+                    
+                }
+                catch(err){
+                    console.log(err.message);
+                }
+            // }
 });
 
 // FEEDBACK
 router.get('/feedback',async (req,res)=>{
-    try{
-        const results = await pool.query(`select FEEDBACK_ID,CATEGORY1,CATEGORY2,CATEGORY3,CATEGORY4 from feedback`);
-        if(!results.rows[0] && !results.rows.length)
-        {
-            res.status(400).json({
-                error:1,
-                msg: "No feedback record found"   
-            }); 
-        }
-        else{
-            res.status(200).json(results.rows);
-        }
-        
-    }
-    catch(err){
-        console.log(err.message);
-    }
+
+    // jwt.verify(req.token, 'secretkey',async (err,authData)=>{
+    //     if(err){
+
+    //         //INVALID TOKEN/TIMEOUT
+    //         res.status(400).json({msg: "Session expired. Login again"})
+            
+    //     }else{
+    
+                try{
+                    const results = await pool.query(`select FEEDBACK_ID,CATEGORY1,CATEGORY2,CATEGORY3,CATEGORY4 from feedback`);
+                    if(!results.rows[0] && !results.rows.length)
+                    {
+                        res.status(400).json({
+                            error:1,
+                            msg: "No feedback record found"   
+                        }); 
+                    }
+                    else{
+                        res.status(200).json(results.rows);
+                    }
+                    
+                }
+                catch(err){
+                    console.log(err.message);
+                }
+            // }       
 });
 
 
 router.post('/feedback',async (req,res)=>{
-    const query_detail = req.body.detail
-    try{
-        if(!req.body.detail)
-        {
-            res.status(400).json({
-                error:1,
-                msg: "Empty field"   
-            }); 
-        }
-        else {
-           const results = await pool.query("select FEEDBACK_ID,CATEGORY1,CATEGORY2,CATEGORY3,CATEGORY4 from feedback where CATEGORY1 = $1 or CATEGORY2 = $1 or CATEGORY3 = $1 or CATEGORY4 = $1", [query_detail]);
+    // jwt.verify(req.token, 'secretkey',async (err,authData)=>{
+    //     if(err){
 
-            if(!results.rows[0] && !results.rows.length)
-            {
-                res.status(400).json({
-                    error:1,
-                    msg: "No feedback record found for given details"   
-                }); 
-            }
-            else{
-                res.status(200).json(results.rows);
-            }
-        }     
-    }
-    catch(err){
-        console.log(err.message);
-    }
+    //         //INVALID TOKEN/TIMEOUT 
+    //         res.status(400).json({msg: "Session expired. Login again"})
+            
+    //     }else{
+    
+                const query_detail = req.body.detail
+                try{
+                    if(!req.body.detail)
+                    {
+                        res.status(400).json({
+                            error:1,
+                            msg: "Empty field"   
+                        }); 
+                    }
+                    else {
+                    const results = await pool.query("select FEEDBACK_ID,CATEGORY1,CATEGORY2,CATEGORY3,CATEGORY4 from feedback where CATEGORY1 = $1 or CATEGORY2 = $1 or CATEGORY3 = $1 or CATEGORY4 = $1", [query_detail]);
+
+                        if(!results.rows[0] && !results.rows.length)
+                        {
+                            res.status(400).json({
+                                error:1,
+                                msg: "No feedback record found for given details"   
+                            }); 
+                        }
+                        else{
+                            res.status(200).json(results.rows);
+                        }
+                    }     
+                }
+                catch(err){
+                    console.log(err.message);
+                }
+
+            // }
 });
 
 
 async function verifyToken(req,res,next){
 
-    const bearerToken = req.headers['authorization'];
-    
+    const data =req.body
+    const checkEntry =  await pool.query("SELECT last_jwt FROM fcm_jwt WHERE email_id=$1", [data.email_id]);
+    const bearerToken = checkEntry.rows[0];
     
     if(typeof(bearerToken)!=='undefined'){
-        req.token=bearerToken;
+        req.token=bearerToken['last_jwt'];
         next();
     }else{
         res.sendStatus(403);
