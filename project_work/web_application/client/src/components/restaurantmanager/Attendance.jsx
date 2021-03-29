@@ -9,7 +9,7 @@ const Attendance = () => {
     const getAttendance = async () => {
         try {
 
-            const atten = await fetch("/restaurantmanager//view_attendance")
+            const atten = await fetch("/restaurantmanager/view_attendance")
             const jsonData = await atten.json();
 
             //console.log(jsonData)
