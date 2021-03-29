@@ -1,20 +1,28 @@
-import React, { Fragment, useState, useEffect } from "react"
-import { BrowserRouter as Router, Route, Switch, Link, Redirect, useRouteMatch } from "react-router-dom"
+import React, { Fragment, useState, useEffect } from "react";
+import { BrowserRouter as Router, Route, Switch, Link, Redirect, useRouteMatch } from "react-router-dom";
 
 const Attendance = () => {
 
     const [resatten, setResatten] = useState([]);
 
-
     const getAttendance = async () => {
         try {
+            const restaurant_id = localStorage.getItem("resID");
+            const body = {restaurant_id};
 
-            const atten = await fetch("/restaurantmanager/view_attendance")
-            const jsonData = await atten.json();
+            const atten = await fetch("/restaurantmanager/view_attendance", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(body)
+            }).then(res => {
+                return res.json()
+            })
+
+            //const jsonData = await atten.json();
 
             //console.log(jsonData)
 
-            setResatten(jsonData)
+            setResatten(atten)
 
         } catch (err) {
             console.error(err.message)
@@ -24,7 +32,6 @@ const Attendance = () => {
     useEffect(() => {
         getAttendance();
     }, [])
-
 
 
     return (
