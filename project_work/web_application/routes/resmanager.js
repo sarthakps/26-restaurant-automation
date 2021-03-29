@@ -16,6 +16,7 @@ const jwt=require('jsonwebtoken')
 
 // invalid password error
 //solution: changed query select * from manager ===> select * from users
+// SOLVED
 router.post('/login', async(req,res) => {
     try {
         const data = req.body;
@@ -74,7 +75,7 @@ router.post('/login', async(req,res) => {
 
 
                             //TOKEN CREATED WITHOUT ERROR  RETURN IT ALONG WITH LOGIN DATA
-                            return  res.json({
+                            return  res.status(200).json({
                                     token: token,
                                     msg: "Successfully logged in!",
                                     user_id: login.rows[0].user_id,
@@ -107,9 +108,8 @@ router.post('/login', async(req,res) => {
 
 
 // check if jwt works or not. getting error code 403-forbidden
-
 //solution: check if you have passed email_id and restaurant_id in body
-
+// SOLVED
 router.post('/viewmenu',verifyToken, async(req, res) => {
     
     //INITIALIZE JWT VERIFICATION
@@ -126,25 +126,20 @@ router.post('/viewmenu',verifyToken, async(req, res) => {
             const viewmenu =  await pool.query("SELECT dish_id, dish_name, description, dish_price, status, jain_availability FROM menu WHERE restaurant_id=$1", [data.restaurant_id]);
             
             if(!viewmenu.rows[0] && !viewmenu.rows.length){
-                res.status(400).json({
+                return res.status(400).json({
                     error:1,
                     msg: "No menu item available for this restaurant"
                 });
+              
             }
             else{
-                res.json({total_results: viewmenu.rowCount, dishes: viewmenu.rows});
-            }
-            
-
-            console.log("total_results: " + viewmenu.rowCount, "dishes: " + viewmenu.rows);
-
+                return res.json({total_results: viewmenu.rowCount, dishes: viewmenu.rows});
+            }    
+            //console.log("total_results: " + viewmenu.rowCount, "dishes: " + viewmenu.rows);
         }
-    });
-
-    
+    });   
     
 })
-
 
 
 
@@ -184,14 +179,13 @@ router.post('/revenue', async(req, res) => {
 
 
 // works
-router.post('/register_user',async(req,res) => {  
+router.post('/register-user',async(req,res) => {  
 
     try {
         const data = req.body;
 
         // check if one or more mandatory field is empty
         // return error if true
-        console.log(data)
         if(!data.restaurant_id || !data.user_image || !data.usertype_id || !data.user_name || !data.email_id || !data.contact_no || !data.password){
             return res.status(400).json({
                 error: 1,
@@ -270,9 +264,9 @@ router.post('/register_user',async(req,res) => {
         // inserting new user into the database
         const newUser = await pool.query(
         "INSERT INTO users(restaurant_id,user_image,usertype_id,user_name,email_id,contact_no,contact_no_optional,password) VALUES ($1, $2, $3,$4, $5,$6,$7,$8)",
-        [data.restaurant_id, data.user_image, usertypeid, data.user_name, data.email_id, data.contact_no, data.contact_no_optional, hashedPassword]);
+        [data.restaurant_id, data.user_image, usertypeid, data.user_name, data.email_id, data.contact_no, data.contact_no2, hashedPassword]);
 
-        return res.status(201).json({
+        return res.status(200).json({
             msg: "Registered successfully!"
         });
     } catch (err) {
@@ -321,7 +315,7 @@ router.post('/mark_attendance',async(req,res) => {
 
 // works
 // ATTENDANCE
-router.get('/view_attendance', async (req,res)=>{
+router.post('/view_attendance', async (req,res)=>{
 // jwt.verify(req.token, 'secretkey',async (err,authData)=>{
     //     if(err){
 
@@ -329,9 +323,11 @@ router.get('/view_attendance', async (req,res)=>{
     //         res.status(400).json({msg: "Session expired. Login again"})
             
     //     }else{
+
+    const data = req.body;
     
                 try {
-                    const results = await pool.query('SELECT user_id,user_name,time_stamp,attendance_status FROM ATTENDANCE');
+                    const results = await pool.query('SELECT user_id,user_name,time_stamp,attendance_status FROM ATTENDANCE WHERE restaurant_id=$1', [data.restaurant_id]);
                     //console.log(results.rows[0]);
                     if(!results.rows[0] && !results.rows.length)
                     {
@@ -353,44 +349,44 @@ router.get('/view_attendance', async (req,res)=>{
 
 
 // works
-router.post('/view_attendance',async (req,res)=>{
-    // jwt.verify(req.token, 'secretkey',async (err,authData)=>{
-    //     if(err){
+// router.post('/view_attendance',async (req,res)=>{
+//     // jwt.verify(req.token, 'secretkey',async (err,authData)=>{
+//     //     if(err){
 
-    //         //INVALID TOKEN/TIMEOUT
-    //         res.status(400).json({msg: "Session expired. Login again"})
+//     //         //INVALID TOKEN/TIMEOUT
+//     //         res.status(400).json({msg: "Session expired. Login again"})
             
-    //     }else{
+//     //     }else{
     
-                try{
-                    if(!req.body.user_name)
-                    {
-                        res.status(400).json({
-                            error:1,
-                            msg: "Empty field"   
-                        }); 
-                    }
-                    else{
-                        const results = await pool.query(`SELECT user_id,user_name,time_stamp,attendance_status FROM ATTENDANCE where user_name like '%${req.body.user_name}%'`)
-                        //console.log(results)
-                        if(!results.rows[0] && !results.rows.length)
-                        {
-                            res.status(400).json({
-                                error:1,
-                                msg: "No data found for a given user"   
-                            }); 
-                        }
-                        else{
-                            res.status(200).json(results.rows);
-                        }
-                    }        
+//                 try{
+//                     if(!req.body.user_name)
+//                     {
+//                         res.status(400).json({
+//                             error:1,
+//                             msg: "Empty field"   
+//                         }); 
+//                     }
+//                     else{
+//                         const results = await pool.query(`SELECT user_id,user_name,time_stamp,attendance_status FROM ATTENDANCE where user_name like '%${req.body.user_name}%'`)
+//                         //console.log(results)
+//                         if(!results.rows[0] && !results.rows.length)
+//                         {
+//                             res.status(400).json({
+//                                 error:1,
+//                                 msg: "No data found for a given user"   
+//                             }); 
+//                         }
+//                         else{
+//                             res.status(200).json(results.rows);
+//                         }
+//                     }        
                     
-                }
-                catch(err){
-                    console.log(err.message);
-                }
-            // }
-});
+//                 }
+//                 catch(err){
+//                     console.log(err.message);
+//                 }
+//             // }
+// });
 
 // FEEDBACK
 router.get('/feedback',async (req,res)=>{
