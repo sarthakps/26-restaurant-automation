@@ -354,6 +354,7 @@ const Menu = () => {
 
 
     return (
+      <body>
         <div className="container text-center">
             <br />
             <h1>Menu Page</h1>
@@ -463,6 +464,7 @@ const Menu = () => {
         <br />
         <br />
         </div>
+        </body>
     )
 }
 

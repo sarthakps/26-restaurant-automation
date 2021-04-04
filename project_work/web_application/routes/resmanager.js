@@ -51,7 +51,6 @@ router.post('/login', async(req,res) => {
                                 console.log(err.message)
                             }else{
                                 
-
                                 //need to create fcm token dont know how
                                 const fcmToken="temporary_fcm_token"   
                                 const checkEntry =  await pool.query("SELECT email_id FROM fcm_jwt WHERE email_id=$1", [data.email_id]);
@@ -71,8 +70,6 @@ router.post('/login', async(req,res) => {
                                         [data.email_id, fcmToken, token]);
                                         
                                 }
-
-
 
                             //TOKEN CREATED WITHOUT ERROR  RETURN IT ALONG WITH LOGIN DATA
                             return  res.status(200).json({
@@ -156,19 +153,18 @@ router.post('/revenue', async(req, res) => {
             
                     try {
                         const data = req.body;
+                        const final = await pool.query("SELECT bill_id, table_no, no_of_occupants, final_bill, time_stamp FROM revenue WHERE restaurant_id=$1", [data.restaurant_id]);
+   
+                        var myArr = final.rows;
+                        var answer = await iter(myArr);
 
-                        const final = await pool.query("SELECT SUM(final_bill) FROM revenue WHERE time_stamp>=$1 and time_stamp<=$2", [data.from_time_stamp
-                        , data.to_time_stamp]);
-
-                        console.log(final.rows[0])
-
-                        if(!final.rows[0] && !final.rows.length){
-                            res.json(400,{
+                        if(!answer[0] && !answer.length){
+                            res.status(400).json({
                                 error:1,
                                 msg: "some error"
                             });
                         } else {
-                            res.json(final.rows[0]);
+                            res.json({"ans": answer});
                         }
 
                     } catch (err) {
@@ -327,18 +323,29 @@ router.post('/view_attendance', async (req,res)=>{
     const data = req.body;
     
                 try {
-                    const results = await pool.query('SELECT user_id,user_name,time_stamp,attendance_status FROM ATTENDANCE WHERE restaurant_id=$1', [data.restaurant_id]);
-                    //console.log(results.rows[0]);
-                    if(!results.rows[0] && !results.rows.length)
+
+                    if(!req.body.restaurant_id)
                     {
                         res.status(400).json({
                             error:1,
-                            msg: "No attendance record found"   
+                            msg: "Provide a restaurant ID"   
                         }); 
                     }
                     else{
-                        res.status(200).json(results.rows);
+                        const results = await pool.query('SELECT user_id,user_name,time_stamp,attendance_status FROM ATTENDANCE WHERE restaurant_id=$1', [data.restaurant_id]);
+                        //console.log(results.rows[0]);
+                        if(!results.rows[0] && !results.rows.length)
+                        {
+                            res.status(400).json({
+                                error:1,
+                                msg: "No attendance record found"   
+                            }); 
+                        }
+                        else{
+                            res.status(200).json(results.rows);
+                        }
                     }
+                    
                     
                 } 
                 catch (err) {
@@ -389,7 +396,7 @@ router.post('/view_attendance', async (req,res)=>{
 // });
 
 // FEEDBACK
-router.get('/feedback',async (req,res)=>{
+router.post('/feedback',async (req,res)=>{
 
     // jwt.verify(req.token, 'secretkey',async (err,authData)=>{
     //     if(err){
@@ -400,7 +407,8 @@ router.get('/feedback',async (req,res)=>{
     //     }else{
     
                 try{
-                    const results = await pool.query(`select FEEDBACK_ID,CATEGORY1,CATEGORY2,CATEGORY3,CATEGORY4 from feedback`);
+                    const data = req.body;
+                    const results = await pool.query(`select FEEDBACK_ID,CATEGORY1,CATEGORY2,CATEGORY3,CATEGORY4 from feedback WHERE restaurant_id=$1`, [data.restaurant_id]);
                     if(!results.rows[0] && !results.rows.length)
                     {
                         res.status(400).json({
@@ -420,46 +428,77 @@ router.get('/feedback',async (req,res)=>{
 });
 
 
-router.post('/feedback',async (req,res)=>{
-    // jwt.verify(req.token, 'secretkey',async (err,authData)=>{
-    //     if(err){
+// router.post('/feedback_specific',async (req,res)=>{
+//     // jwt.verify(req.token, 'secretkey',async (err,authData)=>{
+//     //     if(err){
 
-    //         //INVALID TOKEN/TIMEOUT 
-    //         res.status(400).json({msg: "Session expired. Login again"})
+//     //         //INVALID TOKEN/TIMEOUT 
+//     //         res.status(400).json({msg: "Session expired. Login again"})
             
-    //     }else{
+//     //     }else{
     
-                const query_detail = req.body.detail
-                try{
-                    if(!req.body.detail)
-                    {
-                        res.status(400).json({
-                            error:1,
-                            msg: "Empty field"   
-                        }); 
-                    }
-                    else {
-                    const results = await pool.query("select FEEDBACK_ID,CATEGORY1,CATEGORY2,CATEGORY3,CATEGORY4 from feedback where CATEGORY1 = $1 or CATEGORY2 = $1 or CATEGORY3 = $1 or CATEGORY4 = $1", [query_detail]);
+//                 const query_detail = req.body.detail
+//                 try{
+//                     if(!req.body.detail)
+//                     {
+//                         res.status(400).json({
+//                             error:1,
+//                             msg: "Empty field"   
+//                         }); 
+//                     }
+//                     else {
+//                     const results = await pool.query("select FEEDBACK_ID,CATEGORY1,CATEGORY2,CATEGORY3,CATEGORY4 from feedback where CATEGORY1 = $1 or CATEGORY2 = $1 or CATEGORY3 = $1 or CATEGORY4 = $1", [query_detail]);
 
-                        if(!results.rows[0] && !results.rows.length)
-                        {
-                            res.status(400).json({
-                                error:1,
-                                msg: "No feedback record found for given details"   
-                            }); 
-                        }
-                        else{
-                            res.status(200).json(results.rows);
-                        }
-                    }     
-                }
-                catch(err){
-                    console.log(err.message);
-                }
+//                         if(!results.rows[0] && !results.rows.length)
+//                         {
+//                             res.status(400).json({
+//                                 error:1,
+//                                 msg: "No feedback record found for given details"   
+//                             }); 
+//                         }
+//                         else{
+//                             res.status(200).json(results.rows);
+//                         }
+//                     }     
+//                 }
+//                 catch(err){
+//                     console.log(err.message);
+//                 }
 
-            // }
-});
+//             // }
+// });
 
+
+async function iter(myArr){
+
+    var response = [];
+    var date = new Date();
+    var currentISODate = ISODateString(date);
+    myArr.forEach((element, index, array) => {
+        var date2 = element.time_stamp.split(" ");
+
+        if(date2[0] == currentISODate){
+            response.push({
+                "bill_id" : element.bill_id,
+                "table_no": element.table_no,
+                "no_of_occupants": element.no_of_occupants,
+                "final_bill": element.final_bill,
+                "time_stamp": date2[0] + " " + date2[1],
+            })
+            //sum += element.final_bill;
+        }
+
+    });
+
+    return response;
+}
+
+function ISODateString(d){
+    function pad(n){return n<10 ? '0'+n : n}
+    return d.getUTCFullYear()+'-'
+         + pad(d.getUTCMonth()+1)+'-'
+         + pad(d.getUTCDate())}
+   
 
 async function verifyToken(req,res,next){
 
