@@ -2,7 +2,6 @@ import React,{Fragment, useState } from "react";
 import {BrowserRouter as Router, Route, Switch, Link, Redirect, useRouteMatch } from "react-router-dom";
 import Swal from "sweetalert2";
 
-
 const ResLogin = (props) => {
     const [email_id, setUid] = useState("")
     const [password, setPassword] = useState("")
@@ -46,9 +45,10 @@ const ResLogin = (props) => {
     }
 
     return (
-        <Fragment>
+  
+<Fragment>
 
-        <div id="resloginpage">
+     <div id="resloginpage">
         
               <div class="title">
                   <br />
@@ -59,7 +59,7 @@ const ResLogin = (props) => {
               </div>
               <br />
                 
-                <br/>
+                <br/> 
                 
                 <div className="container text-center">
                   <h2 class="login-hone">Login : </h2>
@@ -84,14 +84,18 @@ const ResLogin = (props) => {
           <br /> 
           <br />
           <br />       
+
+
+  
     
              <div className="container text-center">
                     <Link to={"/"}><button className="btn btn-warning"><span>Go to Main page</span></button></Link>
             </div>
-            
+
             </div>
             
-        </Fragment>
+            
+            </Fragment>
     )
 
 }

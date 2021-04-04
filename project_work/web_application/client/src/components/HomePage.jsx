@@ -14,10 +14,10 @@ const HomePage = () => {
                    <Link to="/restaurantmanager/login"><button className="btn btn-dark btn-lg">Restaurant Manager</button></Link>
                    <br />
                    <br />
-                   <Link to="/restaurantmanager/login"><button className="btn btn-dark btn-lg">Inventory Manager</button></Link>
+                   <Link to="/"><button className="btn btn-dark btn-lg">Inventory Manager</button></Link>
                     <br />
                     <br />
-                    <Link to="/restaurantmanager/login"><button className="btn btn-dark btn-lg">Kitechen Manager</button></Link>
+                    <Link to="/"><button className="btn btn-dark btn-lg">Kitechen Manager</button></Link>
                 </div>
             </div>
         </Fragment>
