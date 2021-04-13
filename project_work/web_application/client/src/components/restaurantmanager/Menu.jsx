@@ -1,7 +1,6 @@
 import React, {Fragment, useEffect, useState} from "react"
 import {BrowserRouter as Router, Route, Link, Redirect, useRouteMatch } from "react-router-dom"
 import Swal from "sweetalert2";
-import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { MuiThemeProvider, createMuiTheme, fade, lighten, makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -11,23 +10,17 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-import TableSortLabel from '@material-ui/core/TableSortLabel';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 // import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
-// import DeleteIcon from '@material-ui/icons/Delete';
-import FilterListIcon from '@material-ui/icons/FilterList';
-import SearchIcon from '@material-ui/icons/Search';
-import TextField from '@material-ui/core/TextField';
-import blueGrey from "@material-ui/core/colors/blueGrey";
-import lightGreen from "@material-ui/core/colors/lightGreen";
-import Button from '@material-ui/core/Button';
 
+// import './revenue.css'
+
+import EnhancedTableToolbar from './EnhancedTableToolBar'
+import EnhancedTableHead from './EnhancedTableHead'
   
   function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -66,145 +59,139 @@ import Button from '@material-ui/core/Button';
     { id: 'jain_availability', numeric: false, disablePadding: false, label: 'Jain Availability' }
   ];
   
-  function EnhancedTableHead(props) {
-    const { classes, order, orderBy, rowCount, onRequestSort } = props;
-    const createSortHandler = (property) => (event) => {
-      onRequestSort(event, property);
-    };
+  // function EnhancedTableHead(props) {
+  //   const { classes, order, orderBy, rowCount, onRequestSort } = props;
+  //   const createSortHandler = (property) => (event) => {
+  //     onRequestSort(event, property);
+  //   };
   
-    return (
-      <TableHead>
-        <TableRow>
-          <TableCell padding="checkbox">
-            {/* <Checkbox
-            //   indeterminate={numSelected > 0 && numSelected < rowCount}
-            //   checked={rowCount > 0 && numSelected === rowCount}
-            //   onChange={onSelectAllClick}
-              inputProps={{ 'aria-label': 'select all feedbacks' }}
-            /> */}
-          </TableCell>
-          {headCells.map((headCell) => (
-            <TableCell
-              key={headCell.id}
-              align={headCell.numeric ? 'center' : 'right'}
-              padding={headCell.disablePadding ? 'none' : 'default'}
-              sortDirection={orderBy === headCell.id ? order : false}
-            >
-              <TableSortLabel
-                active={orderBy === headCell.id}
-                direction={orderBy === headCell.id ? order : 'asc'}
-                onClick={createSortHandler(headCell.id)}
-              >
-                {headCell.label}
-                {orderBy === headCell.id ? (
-                  <span className={classes.visuallyHidden}>
-                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                  </span>
-                ) : null}
-              </TableSortLabel>
-            </TableCell>
-          ))}
-        </TableRow>
-      </TableHead>
-    );
-  }
+  //   return (
+  //     <TableHead>
+  //       <TableRow>
+  //         <TableCell padding="checkbox">
+  //         </TableCell>
+  //         {headCells.map((headCell) => (
+  //           <TableCell
+  //             key={headCell.id}
+  //             align={headCell.numeric ? 'center' : 'right'}
+  //             padding={headCell.disablePadding ? 'none' : 'default'}
+  //             sortDirection={orderBy === headCell.id ? order : false}
+  //           >
+  //             <TableSortLabel
+  //               active={orderBy === headCell.id}
+  //               direction={orderBy === headCell.id ? order : 'asc'}
+  //               onClick={createSortHandler(headCell.id)}
+  //             >
+  //               {headCell.label}
+  //               {orderBy === headCell.id ? (
+  //                 <span className={classes.visuallyHidden}>
+  //                   {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+  //                 </span>
+  //               ) : null}
+  //             </TableSortLabel>
+  //           </TableCell>
+  //         ))}
+  //       </TableRow>
+  //     </TableHead>
+  //   );
+  // }
   
-  EnhancedTableHead.propTypes = {
-    classes: PropTypes.object.isRequired,
-    // numSelected: PropTypes.number.isRequired,
-    onRequestSort: PropTypes.func.isRequired,
-    // onSelectAllClick: PropTypes.func.isRequired,
-    order: PropTypes.oneOf(['asc', 'desc']).isRequired,
-    orderBy: PropTypes.string.isRequired,
-    rowCount: PropTypes.number.isRequired,
-  };
+  // EnhancedTableHead.propTypes = {
+  //   classes: PropTypes.object.isRequired,
+  //   // numSelected: PropTypes.number.isRequired,
+  //   onRequestSort: PropTypes.func.isRequired,
+  //   // onSelectAllClick: PropTypes.func.isRequired,
+  //   order: PropTypes.oneOf(['asc', 'desc']).isRequired,
+  //   orderBy: PropTypes.string.isRequired,
+  //   rowCount: PropTypes.number.isRequired,
+  // };
   
 
-  const theme2 = createMuiTheme({
-    palette: {
-      primary: {
-        light: lightGreen[300],
-        main: lightGreen[500],
-        dark: lightGreen[700]
-      },
-      secondary: {
-        light: blueGrey[300],
-        main: blueGrey[500],
-        dark: blueGrey[700]
-      }
-    }
-  });
+  // const theme2 = createMuiTheme({
+  //   palette: {
+  //     primary: {
+  //       light: lightGreen[300],
+  //       main: lightGreen[500],
+  //       dark: lightGreen[700]
+  //     },
+  //     secondary: {
+  //       light: blueGrey[300],
+  //       main: blueGrey[500],
+  //       dark: blueGrey[700]
+  //     }
+  //   }
+  // });
 
 
-  const useToolbarStyles = makeStyles((theme, theme2) => ({
-    root: {
-      paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(1),
-    },
-    highlight:
-      theme.palette.type === 'light'
-        ? {
-            color: theme.palette.secondary.main,
-            backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-          }
-        : {
-            color: theme.palette.text.primary,
-            backgroundColor: theme.palette.secondary.dark,
-          },
-    title: {
-      flex: '1 1 100%',
-    },
-    searchContainer: {
-        display: "flex",
-        backgroundColor: fade(theme.palette.secondary.light, 0.05),
-        paddingLeft: "20px",
-        paddingRight: "20px",
-        marginTop: "5px",
-        marginBottom: "5px",
-      },
-      searchIcon: {
-        alignSelf: "flex-end",
-        marginBottom: "15px",
-      },
-      searchInput: {
-        width: "200px",
-        margin: "15px",
-      },
-  }));
+  // const useToolbarStyles = makeStyles((theme, theme2) => ({
+  //   root: {
+  //     paddingLeft: theme.spacing(2),
+  //     paddingRight: theme.spacing(1),
+  //   },
+  //   highlight:
+  //     theme.palette.type === 'light'
+  //       ? {
+  //           color: theme.palette.secondary.main,
+  //           backgroundColor: lighten(theme.palette.secondary.light, 0.85),
+  //         }
+  //       : {
+  //           color: theme.palette.text.primary,
+  //           backgroundColor: theme.palette.secondary.dark,
+  //         },
+  //   title: {
+  //     flex: '1 1 100%',
+  //   },
+  //   searchContainer: {
+  //       display: "flex",
+  //       backgroundColor: fade(theme.palette.secondary.light, 0.05),
+  //       paddingLeft: "20px",
+  //       paddingRight: "20px",
+  //       marginTop: "5px",
+  //       marginBottom: "5px",
+  //     },
+  //     searchIcon: {
+  //       alignSelf: "flex-end",
+  //       marginBottom: "15px",
+  //     },
+  //     searchInput: {
+  //       width: "200px",
+  //       margin: "15px",
+  //     },
+  // }));
   
   
 
-  const EnhancedTableToolbar = (props) => {
-    const {onFilterChange, filter } = props;
-    const classes = useToolbarStyles();
+//   const EnhancedTableToolbar = (props) => {
+//     const {onFilterChange, filter } = props;
+//     const classes = useToolbarStyles();
     
 
-// const handleSearchChange = (e) => {
-//         setFilter(e.target.value);
-//     };
-    // const { numSelected } = props;
+// // const handleSearchChange = (e) => {
+// //         setFilter(e.target.value);
+// //     };
+//     // const { numSelected } = props;
   
-    return (
-        <Fragment>
-        <Toolbar>
-            <div className={classes.searchContainer}>
-                <SearchIcon className={classes.searchIcon}/>
-                <TextField className={classes.searchInput}
-                    onChange={onFilterChange}
-                    label="search menu"
-                    varient="standard"
-                />
-            </div>
-        </Toolbar>
-      <Toolbar>
+//     return (
+//         <Fragment>
+//         <Toolbar>
+//             <div className={classes.searchContainer}>
+//                 <SearchIcon className={classes.searchIcon}/>
+//                 <TextField className={classes.searchInput}
+//                     onChange={onFilterChange}
+//                     label="search menu"
+//                     varient="standard"
+//                 />
+//             </div>
+//         </Toolbar>
+//       <Toolbar>
         
-          <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-            Menu
-          </Typography>     
-      </Toolbar>
-      </Fragment>
-    );
-  };
+//           <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
+//             Menu
+//           </Typography>     
+//       </Toolbar>
+//       </Fragment>
+//     );
+//   };
   
 //   EnhancedTableToolbar.propTypes = {
 //     // numSelected: PropTypes.number.isRequired,
@@ -315,25 +302,25 @@ const Menu = () => {
 //     setSelected([]);
 //   };
 
-  const handleClick = (event, feedback_id) => {
-    const selectedIndex = selected.indexOf(feedback_id);
-    let newSelected = [];
+  // const handleClick = (event, feedback_id) => {
+  //   const selectedIndex = selected.indexOf(feedback_id);
+  //   let newSelected = [];
 
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, feedback_id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
-      );
-    }
+  //   if (selectedIndex === -1) {
+  //     newSelected = newSelected.concat(selected, feedback_id);
+  //   } else if (selectedIndex === 0) {
+  //     newSelected = newSelected.concat(selected.slice(1));
+  //   } else if (selectedIndex === selected.length - 1) {
+  //     newSelected = newSelected.concat(selected.slice(0, -1));
+  //   } else if (selectedIndex > 0) {
+  //     newSelected = newSelected.concat(
+  //       selected.slice(0, selectedIndex),
+  //       selected.slice(selectedIndex + 1),
+  //     );
+  //   }
 
-    setSelected(newSelected);
-  };
+  //   setSelected(newSelected);
+  // };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -354,14 +341,14 @@ const Menu = () => {
 
 
     return (
-      <body>
+      <body style={{background:"#000c0c"}}>
         <div className="container text-center">
             <br />
-            <h1>Menu Page</h1>
+            <h1 style={{color:"white", fontFamily: "caviar_dreamsbold,sans-serif", letterSpacing: "0.16em", color: "#c9ab81 !important", fontSize: "60px"}}>Menu Page</h1>
             <br />
 
 <div className={classes.root}>
-      <Paper className={classes.paper}>
+      <Paper className={classes.paper} style={{background:"#000c0c", fontSize:"22px"}}>
       <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
@@ -370,10 +357,12 @@ const Menu = () => {
           page={page}
           onChangePage={handleChangePage}
           onChangeRowsPerPage={handleChangeRowsPerPage}
+          style={{color:"white" ,  fontSize:"22px"}}
         />
         <EnhancedTableToolbar
             filter={filter}
             onFilterChange={handleFilterChange}
+            style={{fontColor:"white" ,  fontSize:"22px"}}
         />
         <h4>{filter}</h4>
         <TableContainer>
@@ -385,12 +374,12 @@ const Menu = () => {
           >
             <EnhancedTableHead
               classes={classes}
-            //   numSelected={selected.length}
+              headCells={headCells}
               order={order}
               orderBy={orderBy}
-            //   onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
               rowCount={resmenu.length}
+              style={{color:"white" ,  fontSize:"22px"}}
             />
             <TableBody>
               {stableSort(resmenu, getComparator(order, orderBy, filter))
@@ -409,7 +398,6 @@ const Menu = () => {
                         
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row.dish_id)}
                       role="checkbox"
                     //   aria-checked={isItemSelected}
                       tabIndex={-1}
@@ -459,7 +447,9 @@ const Menu = () => {
         <br />
         <br />
     
+          <div className="container text-center">      
         <Link to="/restaurantmanager/reshome"><button type="button" class="btn btn-outline-dark">Go to Home Page</button></Link>
+        </div>
 
         <br />
         <br />

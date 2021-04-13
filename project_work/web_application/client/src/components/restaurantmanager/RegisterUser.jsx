@@ -102,6 +102,8 @@ const RegisterUser = () => {
                 />
             </label>
             </div>
+
+            
             <br />
             <form action="/action_page.php"  class="needs-validation" novalidate onSubmit={onSubmitProfile}>
             

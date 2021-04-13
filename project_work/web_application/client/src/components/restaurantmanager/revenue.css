@@ -1,6 +1,6 @@
 .w3-tangerine {
   /* font-family: "Tangerine", serif; */
-  font-family: open sans condensed, sans-serif;
+  font-family: caviar_dreamsbold, sans-serif;
   color: #c9ab81;
 }
 
@@ -33,21 +33,7 @@
 .btn-outline-dark:hover {
   background-color: transperent !important;
   border: 1px solid #c9ab81;
-  /* webkit-transition: color .2s ease-in-out,background-color .2s ease-in-out,border-color .2s ease-in-out;
-    -o-transition: color .2s ease-in-out,background-color .2s ease-in-out,border-color .2s ease-in-out;
-  transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out,
-    border-color 0.2s ease-in-out;  */
-  /* transition-property: color, background-color, border-color;
-  transition-duration: 0.2s, 0.2s, 0.2s;
-  transition-timing-function: ease-in-out, ease-in-out, ease-in-out;
-  transition-delay: 0s, 0s, 0s; */
 }
-
-/* .btn-outline-dark:hover {
-  color: #222;
-  background-color: #a9927d;
-  border-color: #5e503f;
-} */
 
 .MuiPaper-root {
   background-color: whitesmoke;

@@ -92,9 +92,7 @@ router.post('/login', async(req,res) => {
                         });
                     }
                 // });
-                
-                    
-                 
+                         
             }
         
         } catch (err) {
@@ -355,46 +353,6 @@ router.post('/view_attendance', async (req,res)=>{
 })
 
 
-// works
-// router.post('/view_attendance',async (req,res)=>{
-//     // jwt.verify(req.token, 'secretkey',async (err,authData)=>{
-//     //     if(err){
-
-//     //         //INVALID TOKEN/TIMEOUT
-//     //         res.status(400).json({msg: "Session expired. Login again"})
-            
-//     //     }else{
-    
-//                 try{
-//                     if(!req.body.user_name)
-//                     {
-//                         res.status(400).json({
-//                             error:1,
-//                             msg: "Empty field"   
-//                         }); 
-//                     }
-//                     else{
-//                         const results = await pool.query(`SELECT user_id,user_name,time_stamp,attendance_status FROM ATTENDANCE where user_name like '%${req.body.user_name}%'`)
-//                         //console.log(results)
-//                         if(!results.rows[0] && !results.rows.length)
-//                         {
-//                             res.status(400).json({
-//                                 error:1,
-//                                 msg: "No data found for a given user"   
-//                             }); 
-//                         }
-//                         else{
-//                             res.status(200).json(results.rows);
-//                         }
-//                     }        
-                    
-//                 }
-//                 catch(err){
-//                     console.log(err.message);
-//                 }
-//             // }
-// });
-
 // FEEDBACK
 router.post('/feedback',async (req,res)=>{
 
@@ -427,46 +385,6 @@ router.post('/feedback',async (req,res)=>{
             // }       
 });
 
-
-// router.post('/feedback_specific',async (req,res)=>{
-//     // jwt.verify(req.token, 'secretkey',async (err,authData)=>{
-//     //     if(err){
-
-//     //         //INVALID TOKEN/TIMEOUT 
-//     //         res.status(400).json({msg: "Session expired. Login again"})
-            
-//     //     }else{
-    
-//                 const query_detail = req.body.detail
-//                 try{
-//                     if(!req.body.detail)
-//                     {
-//                         res.status(400).json({
-//                             error:1,
-//                             msg: "Empty field"   
-//                         }); 
-//                     }
-//                     else {
-//                     const results = await pool.query("select FEEDBACK_ID,CATEGORY1,CATEGORY2,CATEGORY3,CATEGORY4 from feedback where CATEGORY1 = $1 or CATEGORY2 = $1 or CATEGORY3 = $1 or CATEGORY4 = $1", [query_detail]);
-
-//                         if(!results.rows[0] && !results.rows.length)
-//                         {
-//                             res.status(400).json({
-//                                 error:1,
-//                                 msg: "No feedback record found for given details"   
-//                             }); 
-//                         }
-//                         else{
-//                             res.status(200).json(results.rows);
-//                         }
-//                     }     
-//                 }
-//                 catch(err){
-//                     console.log(err.message);
-//                 }
-
-//             // }
-// });
 
 
 async function iter(myArr){
@@ -512,8 +430,6 @@ async function verifyToken(req,res,next){
     }else{
         res.sendStatus(403);
     }
-
-
 }
 
 module.exports = router;

@@ -28,22 +28,13 @@ import TextField from '@material-ui/core/TextField';
 import blueGrey from "@material-ui/core/colors/blueGrey";
 import lightGreen from "@material-ui/core/colors/lightGreen";
 import Button from '@material-ui/core/Button';
-import './revenue.css'
+// import './revenue.css'
 import DateRangePicker from '@wojtekmaj/react-daterange-picker';
 import { RangeDatePicker } from 'react-google-flight-datepicker';
 import 'react-google-flight-datepicker/dist/main.css';
 
-
-// const WhiteBorderTextField = styled(TextField)`
-//   & label.Mui-focused {
-//     color: white;
-//   }
-//   & .MuiOutlinedInput-root {
-//     &.Mui-focused fieldset {
-//       border-color: white;
-//     }
-//   }
-// `;
+import EnhancedTableToolbar from './EnhancedTableToolBar'
+import EnhancedTableHead from './EnhancedTableHead'
 
   function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -81,60 +72,60 @@ import 'react-google-flight-datepicker/dist/main.css';
     { id: 'time_stamp', numeric: true, disablePadding: false, label: 'Date' }
   ];
   
-  function EnhancedTableHead(props) {
-    const { classes, order, orderBy, rowCount, onRequestSort } = props;
-    const createSortHandler = (property) => (event) => {
-      onRequestSort(event, property);
-    };
+  // function EnhancedTableHead(props) {
+  //   const { classes, order, orderBy, rowCount, onRequestSort } = props;
+  //   const createSortHandler = (property) => (event) => {
+  //     onRequestSort(event, property);
+  //   };
   
-    return (
-      <TableHead>
-        <TableRow style={{color:"white"}}>
-          <TableCell padding="checkbox" style={{color:"white", fontSize:"20px"}}>
-            {/* <Checkbox
-            //   indeterminate={numSelected > 0 && numSelected < rowCount}
-            //   checked={rowCount > 0 && numSelected === rowCount}
-            //   onChange={onSelectAllClick}
-              inputProps={{ 'aria-label': 'select all feedbacks' }}
-            /> */}
-          </TableCell>
-          {headCells.map((headCell) => (
-            <TableCell
-              key={headCell.id}
-              align={headCell.numeric ? 'center' : 'right'}
-              padding={headCell.disablePadding ? 'none' : 'default'}
-              sortDirection={orderBy === headCell.id ? order : false}
-              style={{color:"white", fontSize:"18px", paddingTop: "80px"}}
-            >
-              <TableSortLabel
-                active={orderBy === headCell.id}
-                direction={orderBy === headCell.id ? order : 'asc'}
-                onClick={createSortHandler(headCell.id)}
-                style={{color:"white"}}
-              >
-                {headCell.label}
-                {orderBy === headCell.id ? (
-                  <span className={classes.visuallyHidden}>
-                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                  </span>
-                ) : null}
-              </TableSortLabel>
-            </TableCell>
-          ))}
-        </TableRow>
-      </TableHead>
-    );
-  }
+  //   return (
+  //     <TableHead>
+  //       <TableRow style={{color:"white"}}>
+  //         <TableCell padding="checkbox" style={{color:"white", fontSize:"20px"}}>
+  //           {/* <Checkbox
+  //           //   indeterminate={numSelected > 0 && numSelected < rowCount}
+  //           //   checked={rowCount > 0 && numSelected === rowCount}
+  //           //   onChange={onSelectAllClick}
+  //             inputProps={{ 'aria-label': 'select all feedbacks' }}
+  //           /> */}
+  //         </TableCell>
+  //         {headCells.map((headCell) => (
+  //           <TableCell
+  //             key={headCell.id}
+  //             align={headCell.numeric ? 'center' : 'right'}
+  //             padding={headCell.disablePadding ? 'none' : 'default'}
+  //             sortDirection={orderBy === headCell.id ? order : false}
+  //             style={{color:"white", fontSize:"18px", paddingTop: "80px"}}
+  //           >
+  //             <TableSortLabel
+  //               active={orderBy === headCell.id}
+  //               direction={orderBy === headCell.id ? order : 'asc'}
+  //               onClick={createSortHandler(headCell.id)}
+  //               style={{color:"white"}}
+  //             >
+  //               {headCell.label}
+  //               {orderBy === headCell.id ? (
+  //                 <span className={classes.visuallyHidden}>
+  //                   {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+  //                 </span>
+  //               ) : null}
+  //             </TableSortLabel>
+  //           </TableCell>
+  //         ))}
+  //       </TableRow>
+  //     </TableHead>
+  //   );
+  // }
   
-  EnhancedTableHead.propTypes = {
-    classes: PropTypes.object.isRequired,
-    // numSelected: PropTypes.number.isRequired,
-    onRequestSort: PropTypes.func.isRequired,
-    // onSelectAllClick: PropTypes.func.isRequired,
-    order: PropTypes.oneOf(['asc', 'desc']).isRequired,
-    orderBy: PropTypes.string.isRequired,
-    rowCount: PropTypes.number.isRequired,
-  };
+  // EnhancedTableHead.propTypes = {
+  //   classes: PropTypes.object.isRequired,
+  //   // numSelected: PropTypes.number.isRequired,
+  //   onRequestSort: PropTypes.func.isRequired,
+  //   // onSelectAllClick: PropTypes.func.isRequired,
+  //   order: PropTypes.oneOf(['asc', 'desc']).isRequired,
+  //   orderBy: PropTypes.string.isRequired,
+  //   rowCount: PropTypes.number.isRequired,
+  // };
   
 
   // const theme2 = createMuiTheme({
@@ -153,105 +144,105 @@ import 'react-google-flight-datepicker/dist/main.css';
   // });
 
 
-  const useToolbarStyles = makeStyles((theme, theme2) => ({
-    root: {
-      paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(1),
-      border: 'solid 3px #0ff',
-    },
-    highlight:
-      theme.palette.type === 'light'
-        ? {
-            color: theme.palette.secondary.main,
-            backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-          }
-        : {
-            color: theme.palette.text.primary,
-            backgroundColor: theme.palette.secondary.dark,
-          },
-    title: {
-      flex: '1 1 100%',
-    },
-    searchContainer: {
-        display: "flex",
-        backgroundColor: fade(theme.palette.secondary.light, 0.05),
-        paddingLeft: "20px",
-        paddingRight: "20px",
-        marginTop: "5px",
-        marginBottom: "5px",
-      },
-      searchIcon: {
-        alignSelf: "flex-end",
-        marginBottom: "15px",
-      },
-      searchInput: {
-        width: "200px",
-        margin: "15px",
-        color: "white"
-      },
-  }));
+  // const useToolbarStyles = makeStyles((theme, theme2) => ({
+  //   root: {
+  //     paddingLeft: theme.spacing(2),
+  //     paddingRight: theme.spacing(1),
+  //     border: 'solid 3px #0ff',
+  //   },
+  //   highlight:
+  //     theme.palette.type === 'light'
+  //       ? {
+  //           color: theme.palette.secondary.main,
+  //           backgroundColor: lighten(theme.palette.secondary.light, 0.85),
+  //         }
+  //       : {
+  //           color: theme.palette.text.primary,
+  //           backgroundColor: theme.palette.secondary.dark,
+  //         },
+  //   title: {
+  //     flex: '1 1 100%',
+  //   },
+  //   searchContainer: {
+  //       display: "flex",
+  //       backgroundColor: fade(theme.palette.secondary.light, 0.05),
+  //       paddingLeft: "20px",
+  //       paddingRight: "20px",
+  //       marginTop: "5px",
+  //       marginBottom: "5px",
+  //     },
+  //     searchIcon: {
+  //       alignSelf: "flex-end",
+  //       marginBottom: "15px",
+  //     },
+  //     searchInput: {
+  //       width: "200px",
+  //       margin: "15px",
+  //       color: "white"
+  //     },
+  // }));
   
  
 
-  const EnhancedTableToolbar = (props) => {
-    const {onFilterChange, filter, date1, date2, setDate1, setDate2, onDateChange } = props;
-    const classes = useToolbarStyles();
-    //const [value, onChange] = useState([new Date(), new Date()]);
+//   const EnhancedTableToolbar = (props) => {
+//     const {onFilterChange, filter, date1, date2, setDate1, setDate2, onDateChange } = props;
+//     const classes = useToolbarStyles();
+//     //const [value, onChange] = useState([new Date(), new Date()]);
     
     
 
-// const handleSearchChange = (e) => {
-//         setFilter(e.target.value);
-//     };
-    // const { numSelected } = props;
+// // const handleSearchChange = (e) => {
+// //         setFilter(e.target.value);
+// //     };
+//     // const { numSelected } = props;
   
-    return (
-        <Fragment>
-        <Toolbar style={{color:"white"}}>
-            {/* <div className={classes.searchContainer} style={{color:"white"}}>
-                <SearchIcon className={classes.searchIcon} style={{color:"white"}}/>
-                <TextField className={classes.searchInput}
-                    onChange={onFilterChange}
-                    label="search revenue"
-                    varient="standard"
-                    InputProps={{
-                      classes: {
-                          input: classes.multilineColor
-                      }
-                  }}
-                />
-            </div> */}
-            <p style={{paddingRight:"20px"}}>choose a range : - </p>
-            {/* <DateRangePicker
-              onChange={onChange}
-              value={value}
-              style={{color: "white"}}
-            /> */}
-            <RangeDatePicker
-              startDate={new Date()}
-              endDate={new Date()}
-              onChange={(startDate, endDate) => onDateChange(startDate, endDate)}
-              // onChange={onDateChange}
-              minDate={new Date(1900, 0, 1)}
-              maxDate={new Date(2100, 0, 1)}
-              dateFormat="D"
-              monthFormat="MMM YYYY"
-              startDatePlaceholder="Start Date"
-              endDatePlaceholder="End Date"
-              disabled={false}
-              className="my-own-class-name"
-              startWeekDay="monday"
-            />
-        </Toolbar>
-      <Toolbar>
+//     return (
+//         <Fragment>
+//         <Toolbar style={{color:"white"}}>
+//             {/* <div className={classes.searchContainer} style={{color:"white"}}>
+//                 <SearchIcon className={classes.searchIcon} style={{color:"white"}}/>
+//                 <TextField className={classes.searchInput}
+//                     onChange={onFilterChange}
+//                     label="search revenue"
+//                     varient="standard"
+//                     InputProps={{
+//                       classes: {
+//                           input: classes.multilineColor
+//                       }
+//                   }}
+//                 />
+//             </div> */}
+//             <p style={{paddingRight:"20px"}}>choose a range : - </p>
+//             {/* <DateRangePicker
+//               onChange={onChange}
+//               value={value}
+//               style={{color: "white"}}
+//             /> */}
+//             <RangeDatePicker
+//               startDate={new Date()}
+//               endDate={new Date()}
+//               onChange={(startDate, endDate) => onDateChange(startDate, endDate)}
+//               // onChange={onDateChange}
+//               minDate={new Date(1900, 0, 1)}
+//               maxDate={new Date(2100, 0, 1)}
+//               dateFormat="D"
+//               monthFormat="MMM YYYY"
+//               startDatePlaceholder="Start Date"
+//               endDatePlaceholder="End Date"
+//               disabled={false}
+//               className="my-own-class-name"
+//               startWeekDay="monday"
+//             />
+//         </Toolbar>
+//       <Toolbar>
         
-          <Typography className={classes.title} variant="h6" id="tableTitle" component="div" style={{color:"white", fontSize:"30px", marginTop:"50px"}}>
-            Revenue Analysis
-          </Typography>     
-      </Toolbar>
-      </Fragment>
-    );
-  };
+//           <Typography className={classes.title} variant="h6" id="tableTitle" component="div" style={{color:"white", fontSize:"30px", marginTop:"50px"}}>
+//             Revenue Analysis
+//           </Typography>     
+//       </Toolbar>
+//       </Fragment>
+//     );
+//   };
   
 //   EnhancedTableToolbar.propTypes = {
 //     // numSelected: PropTypes.number.isRequired,
@@ -369,25 +360,25 @@ const RevenueAnalysis = () => {
   //     setFilter(e.target.value.toLowerCase());
   // };
 
-  const handleClick = (event, feedback_id) => {
-    const selectedIndex = selected.indexOf(feedback_id);
-    let newSelected = [];
+  // const handleClick = (event, feedback_id) => {
+  //   const selectedIndex = selected.indexOf(feedback_id);
+  //   let newSelected = [];
 
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, feedback_id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
-      );
-    }
+  //   if (selectedIndex === -1) {
+  //     newSelected = newSelected.concat(selected, feedback_id);
+  //   } else if (selectedIndex === 0) {
+  //     newSelected = newSelected.concat(selected.slice(1));
+  //   } else if (selectedIndex === selected.length - 1) {
+  //     newSelected = newSelected.concat(selected.slice(0, -1));
+  //   } else if (selectedIndex > 0) {
+  //     newSelected = newSelected.concat(
+  //       selected.slice(0, selectedIndex),
+  //       selected.slice(selectedIndex + 1),
+  //     );
+  //   }
 
-    setSelected(newSelected);
-  };
+  //   setSelected(newSelected);
+  // };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -408,7 +399,7 @@ const RevenueAnalysis = () => {
 
 
     return (
-      <body  style={{background:"#0a0908"}}>
+      <body  style={{background:"#000c0c"}}>
         <div className="container text-center" >
             <br />
             <div class="w3-container w3-tangerine">
@@ -418,7 +409,7 @@ const RevenueAnalysis = () => {
             <br />
 
 <div className={classes.root} >
-      <Paper className={classes.paper}  style={{background:"#0a0908", fontSize:"22px"}}>
+      <Paper className={classes.paper}  style={{background:"#000c0c", fontSize:"22px", borderColor:"yellow"}}>
       <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
@@ -432,14 +423,10 @@ const RevenueAnalysis = () => {
           // classes={{ul: classes.ul}}
         />
         <EnhancedTableToolbar
-            // filter={filter}
-            // onFilterChange={handleFilterChange}
-            // startDate={new Date()}
-            // endDate={new Date()}
             onDateChange={(startDate, endDate) => onHanldeDateChange(startDate, endDate)}
             style={{color:"white", fontSize:"22px"}}
         />
-        {/* <h4>{filter}</h4> */}
+        <h4>{filter}</h4>
         <TableContainer>
           <Table
             className={classes.table}
@@ -450,10 +437,9 @@ const RevenueAnalysis = () => {
           >
             <EnhancedTableHead
               classes={classes}
-            //   numSelected={selected.length}
+              headCells={headCells}
               order={order}
               orderBy={orderBy}
-            //   onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
               rowCount={revenue.length}
               style={{color:"white", fontSize:"22px"}}
@@ -474,20 +460,12 @@ const RevenueAnalysis = () => {
                         
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row.bill_id)}
                       role="checkbox"
-                    //   aria-checked={isItemSelected}
                       tabIndex={-1}
                       key={row.bill_id}
                       style={{color:"white", fontSize:"22px"}}
-                    //   selected={isItemSelected}
                     >
                       <TableCell padding="checkbox" style={{color:"white", fontSize:"22px"}}>
-                        {/* <Checkbox
-                        //   checked={isItemSelected}
-                          inputProps={{ 'aria-labelledby': labelId }}
-                        /> */}
-                        
                       </TableCell>
                      
                       <TableCell component="th" scope="row" padding="none align={headCell.numeric ? 'center' : 'right'}" style={{color:"white", fontSize:"20px"}}>
@@ -525,7 +503,9 @@ const RevenueAnalysis = () => {
         <br/>
         <br/>
     
-        <Link to="/restaurantmanager/reshome"><button type="button" class="btn btn-outline-dark">Go to Home Page</button></Link>
+        <div className="container text-center">      
+        <Link to="/restaurantmanager/reshome"><button type="button" class="btn btn-outline-dark btn-lg">Go to Home Page</button></Link>
+        </div>
         {/* <button className="goback"><span>Go to Main page</span></button> */}
 
         <br />

@@ -21,13 +21,15 @@ import Tooltip from '@material-ui/core/Tooltip';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 // import DeleteIcon from '@material-ui/icons/Delete';
-import FilterListIcon from '@material-ui/icons/FilterList';
-import SearchIcon from '@material-ui/icons/Search';
-import TextField from '@material-ui/core/TextField';
-import blueGrey from "@material-ui/core/colors/blueGrey";
-import lightGreen from "@material-ui/core/colors/lightGreen";
-import Button from '@material-ui/core/Button';
+// import FilterListIcon from '@material-ui/icons/FilterList';
+// import SearchIcon from '@material-ui/icons/Search';
+// import TextField from '@material-ui/core/TextField';
+// import blueGrey from "@material-ui/core/colors/blueGrey";
+// import lightGreen from "@material-ui/core/colors/lightGreen";
+// import Button from '@material-ui/core/Button';
 
+import EnhancedTableHead from './EnhancedTableHead'
+import EnhancedTableToolbar from './EnhancedTableToolBar'
   
   function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -64,145 +66,123 @@ const headCells = [
     { id: 'attedance_status', numeric: false, disablePadding: false, label: 'Attendance Status' },
   ];
   
-  function EnhancedTableHead(props) {
-    const { classes, order, orderBy, rowCount, onRequestSort } = props;
-    const createSortHandler = (property) => (event) => {
-      onRequestSort(event, property);
-    };
-  
-    return (
-      <TableHead>
-        <TableRow>
-          <TableCell padding="checkbox">
-            {/* <Checkbox
-            //   indeterminate={numSelected > 0 && numSelected < rowCount}
-            //   checked={rowCount > 0 && numSelected === rowCount}
-            //   onChange={onSelectAllClick}
-              inputProps={{ 'aria-label': 'select all feedbacks' }}
-            /> */}
-          </TableCell>
-          {headCells.map((headCell) => (
-            <TableCell
-              key={headCell.id}
-              align={headCell.numeric ? 'left' : 'right'}
-              padding={headCell.disablePadding ? 'none' : 'default'}
-              sortDirection={orderBy === headCell.id ? order : false}
-            >
-              <TableSortLabel
-                active={orderBy === headCell.id}
-                direction={orderBy === headCell.id ? order : 'asc'}
-                onClick={createSortHandler(headCell.id)}
-              >
-                {headCell.label}
-                {orderBy === headCell.id ? (
-                  <span className={classes.visuallyHidden}>
-                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                  </span>
-                ) : null}
-              </TableSortLabel>
-            </TableCell>
-          ))}
-        </TableRow>
-      </TableHead>
-    );
-  }
-  
-  EnhancedTableHead.propTypes = {
-    classes: PropTypes.object.isRequired,
-    // numSelected: PropTypes.number.isRequired,
-    onRequestSort: PropTypes.func.isRequired,
-    // onSelectAllClick: PropTypes.func.isRequired,
-    order: PropTypes.oneOf(['asc', 'desc']).isRequired,
-    orderBy: PropTypes.string.isRequired,
-    rowCount: PropTypes.number.isRequired,
-  };
-  
 
-  const theme2 = createMuiTheme({
-    palette: {
-      primary: {
-        light: lightGreen[300],
-        main: lightGreen[500],
-        dark: lightGreen[700]
-      },
-      secondary: {
-        light: blueGrey[300],
-        main: blueGrey[500],
-        dark: blueGrey[700]
-      }
-    }
-  });
+  // function EnhancedTableHead(props) {
+  //   const { classes, order, orderBy, rowCount, onRequestSort } = props;
+  //   const createSortHandler = (property) => (event) => {
+  //     onRequestSort(event, property);
+  //   };
+  
+  //   return (
+  //     <TableHead>
+  //       <TableRow>
+  //         <TableCell padding="checkbox">
+  //         </TableCell>
+  //         {headCells.map((headCell) => (
+  //           <TableCell
+  //             key={headCell.id}
+  //             align={headCell.numeric ? 'left' : 'right'}
+  //             padding={headCell.disablePadding ? 'none' : 'default'}
+  //             sortDirection={orderBy === headCell.id ? order : false}
+  //           >
+  //             <TableSortLabel
+  //               active={orderBy === headCell.id}
+  //               direction={orderBy === headCell.id ? order : 'asc'}
+  //               onClick={createSortHandler(headCell.id)}
+  //             >
+  //               {headCell.label}
+  //               {orderBy === headCell.id ? (
+  //                 <span className={classes.visuallyHidden}>
+  //                   {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+  //                 </span>
+  //               ) : null}
+  //             </TableSortLabel>
+  //           </TableCell>
+  //         ))}
+  //       </TableRow>
+  //     </TableHead>
+  //   );
+  // }
+  
+  // EnhancedTableHead.propTypes = {
+  //   classes: PropTypes.object.isRequired,
+  //   // numSelected: PropTypes.number.isRequired,
+  //   onRequestSort: PropTypes.func.isRequired,
+  //   // onSelectAllClick: PropTypes.func.isRequired,
+  //   order: PropTypes.oneOf(['asc', 'desc']).isRequired,
+  //   orderBy: PropTypes.string.isRequired,
+  //   rowCount: PropTypes.number.isRequired,
+  // };
 
 
-  const useToolbarStyles = makeStyles((theme, theme2) => ({
-    root: {
-      paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(1),
-    },
-    highlight:
-      theme.palette.type === 'light'
-        ? {
-            color: theme.palette.secondary.main,
-            backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-          }
-        : {
-            color: theme.palette.text.primary,
-            backgroundColor: theme.palette.secondary.dark,
-          },
-    title: {
-      flex: '1 1 100%',
-    },
-    searchContainer: {
-        display: "flex",
-        backgroundColor: fade(theme.palette.secondary.light, 0.05),
-        paddingLeft: "20px",
-        paddingRight: "20px",
-        marginTop: "5px",
-        marginBottom: "5px",
-      },
-      searchIcon: {
-        alignSelf: "flex-end",
-        marginBottom: "15px",
-      },
-      searchInput: {
-        width: "200px",
-        margin: "15px",
-      },
-  }));
-  
-  
+  // const useToolbarStyles = makeStyles((theme, theme2) => ({
+  //   root: {
+  //     paddingLeft: theme.spacing(2),
+  //     paddingRight: theme.spacing(1),
+  //   },
+  //   highlight:
+  //     theme.palette.type === 'light'
+  //       ? {
+  //           color: theme.palette.secondary.main,
+  //           backgroundColor: lighten(theme.palette.secondary.light, 0.85),
+  //         }
+  //       : {
+  //           color: theme.palette.text.primary,
+  //           backgroundColor: theme.palette.secondary.dark,
+  //         },
+  //   title: {
+  //     flex: '1 1 100%',
+  //   },
+  //   searchContainer: {
+  //       display: "flex",
+  //       backgroundColor: fade(theme.palette.secondary.light, 0.05),
+  //       paddingLeft: "20px",
+  //       paddingRight: "20px",
+  //       marginTop: "5px",
+  //       marginBottom: "5px",
+  //     },
+  //     searchIcon: {
+  //       alignSelf: "flex-end",
+  //       marginBottom: "15px",
+  //     },
+  //     searchInput: {
+  //       width: "200px",
+  //       margin: "15px",
+  //     },
+  // }));
+   
 
-  const EnhancedTableToolbar = (props) => {
-    const {onFilterChange, filter } = props;
-    const classes = useToolbarStyles();
+//   const EnhancedTableToolbar = (props) => {
+//     const {onFilterChange, filter } = props;
+//     const classes = useToolbarStyles();
     
 
-// const handleSearchChange = (e) => {
-//         setFilter(e.target.value);
-//     };
-    // const { numSelected } = props;
+// // const handleSearchChange = (e) => {
+// //         setFilter(e.target.value);
+// //     };
+//     // const { numSelected } = props;
   
-    return (
-        <Fragment>
-        <Toolbar>
-            <div className={classes.searchContainer}>
-                <SearchIcon className={classes.searchIcon}/>
-                <TextField className={classes.searchInput}
-                    onChange={onFilterChange}
-                    label="search menu"
-                    varient="standard"
-                />
-            </div>
-        </Toolbar>
-      <Toolbar>
+//     return (
+//         <Fragment>
+//         <Toolbar>
+//             <div className={classes.searchContainer}>
+//                 <SearchIcon className={classes.searchIcon}/>
+//                 <TextField className={classes.searchInput}
+//                     onChange={onFilterChange}
+//                     label="search menu"
+//                     varient="standard"
+//                 />
+//             </div>
+//         </Toolbar>
+//       <Toolbar>
         
-          <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-            Menu
-          </Typography>     
-      </Toolbar>
-      </Fragment>
-    );
-  };
+//           <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
+//             Menu
+//           </Typography>     
+//       </Toolbar>
+//       </Fragment>
+//     );
+//   };
   
 //   EnhancedTableToolbar.propTypes = {
 //     // numSelected: PropTypes.number.isRequired,
@@ -233,9 +213,6 @@ const headCells = [
   }));
 
 const Attendance = () => {
-    //const [resatten, setResatten] = useState([]);
-     
-
     const [resatten, setResatten] = useState([]);
 
     const getAttendance = async () => {
@@ -250,11 +227,8 @@ const Attendance = () => {
             }).then(res => {
                 return res.json()
             })
-
             //const jsonData = await atten.json();
-
             //console.log(jsonData)
-
             setResatten(atten)
 
         } catch (err) {
@@ -270,7 +244,7 @@ const Attendance = () => {
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('');
-  const [selected, setSelected] = React.useState([]);
+  // const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -286,25 +260,25 @@ const Attendance = () => {
       setFilter(e.target.value.toLowerCase());
   };
 
-  const handleClick = (event, feedback_id) => {
-    const selectedIndex = selected.indexOf(feedback_id);
-    let newSelected = [];
+  // const handleClick = (event, feedback_id) => {
+  //   const selectedIndex = selected.indexOf(feedback_id);
+  //   let newSelected = [];
 
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, feedback_id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
-      );
-    }
+  //   if (selectedIndex === -1) {
+  //     newSelected = newSelected.concat(selected, feedback_id);
+  //   } else if (selectedIndex === 0) {
+  //     newSelected = newSelected.concat(selected.slice(1));
+  //   } else if (selectedIndex === selected.length - 1) {
+  //     newSelected = newSelected.concat(selected.slice(0, -1));
+  //   } else if (selectedIndex > 0) {
+  //     newSelected = newSelected.concat(
+  //       selected.slice(0, selectedIndex),
+  //       selected.slice(selectedIndex + 1),
+  //     );
+  //   }
 
-    setSelected(newSelected);
-  };
+  //   setSelected(newSelected);
+  // };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -318,8 +292,6 @@ const Attendance = () => {
   const handleChangeDense = (event) => {
     setDense(event.target.checked);
   };
-
-//   const isSelected = (feedback_id) => selected.indexOf(feedback_id) !== -1;
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, resatten.length - page * rowsPerPage);
 
@@ -355,10 +327,9 @@ const Attendance = () => {
           >
             <EnhancedTableHead
               classes={classes}
-            //   numSelected={selected.length}
+              headCells={headCells}
               order={order}
               orderBy={orderBy}
-            //   onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
               rowCount={resatten.length}
             />
@@ -366,8 +337,7 @@ const Attendance = () => {
               {stableSort(resatten, getComparator(order, orderBy, filter))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => { 
-                    
-                  //const isItemSelected = isSelected(row.feedback_id);
+      
                   const labelId = `enhanced-table-checkbox-${index}`;
                   
 
@@ -379,18 +349,12 @@ const Attendance = () => {
                         
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row.user_id)}
+                      // onClick={(event) => handleClick(event, row.user_id)}
                       role="checkbox"
-                    //   aria-checked={isItemSelected}
                       tabIndex={-1}
                       key={row.user_id}
-                    //   selected={isItemSelected}
                     >
                       <TableCell padding="checkbox">
-                        {/* <Checkbox
-                        //   checked={isItemSelected}
-                          inputProps={{ 'aria-labelledby': labelId }}
-                        /> */}
                       </TableCell>
 
                       <TableCell component="th" scope="row" padding="none">
@@ -420,9 +384,7 @@ const Attendance = () => {
         control={<Switch checked={dense} onChange={handleChangeDense} />}
         label="Dense padding"
       />
-    </div>
-
-            
+    </div>         
         <br />
         <br />
         <br />

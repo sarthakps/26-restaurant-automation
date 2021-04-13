@@ -1,4 +1,4 @@
-const express = require("express")
+const express = require("express");
 
 const bodyParser = require('body-parser');
 const router = express.Router();
@@ -27,6 +27,8 @@ if(process.env.NODE_ENV === "production"){
 
 app.use('/restaurantmanager', require('./routes/resmanager'));
 app.use('/waiter', require('./routes/waiter'));
+app.use('/kitchenpersonnel', require('./routes/kitchenpersonnel'));
+app.use('/invmanager', require('./routes/invmanager'))
 
 // catch all method
 // app.get("*", (req, res) => {

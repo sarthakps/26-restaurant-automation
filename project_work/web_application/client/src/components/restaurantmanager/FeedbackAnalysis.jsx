@@ -27,6 +27,9 @@ import TextField from '@material-ui/core/TextField';
 import blueGrey from "@material-ui/core/colors/blueGrey";
 import lightGreen from "@material-ui/core/colors/lightGreen";
 
+import EnhancedTableToolbar from './EnhancedTableToolBar'
+import EnhancedTableHead from './EnhancedTableHead'
+
   
   function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -62,140 +65,140 @@ import lightGreen from "@material-ui/core/colors/lightGreen";
     { id: 'category4', numeric: true, disablePadding: false, label: 'Category4' },
   ];
   
-  function EnhancedTableHead(props) {
-    const { classes, order, orderBy, rowCount, onRequestSort } = props;
-    const createSortHandler = (property) => (event) => {
-      onRequestSort(event, property);
-    };
+//   function EnhancedTableHead(props) {
+//     const { classes, order, orderBy, rowCount, onRequestSort } = props;
+//     const createSortHandler = (property) => (event) => {
+//       onRequestSort(event, property);
+//     };
   
-    return (
-      <TableHead>
-        <TableRow>
-          <TableCell padding="checkbox">
-          </TableCell>
-          {headCells.map((headCell) => (
-            <TableCell
-              key={headCell.id}
-              align={headCell.numeric ? 'right' : 'left'}
-              padding={headCell.disablePadding ? 'none' : 'default'}
-              sortDirection={orderBy === headCell.id ? order : false}
-            >
-              <TableSortLabel
-                active={orderBy === headCell.id}
-                direction={orderBy === headCell.id ? order : 'asc'}
-                onClick={createSortHandler(headCell.id)}
-              >
-                {headCell.label}
-                {orderBy === headCell.id ? (
-                  <span className={classes.visuallyHidden}>
-                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                  </span>
-                ) : null}
-              </TableSortLabel>
-            </TableCell>
-          ))}
-        </TableRow>
-      </TableHead>
-    );
-  }
+//     return (
+//       <TableHead>
+//         <TableRow>
+//           <TableCell padding="checkbox">
+//           </TableCell>
+//           {headCells.map((headCell) => (
+//             <TableCell
+//               key={headCell.id}
+//               align={headCell.numeric ? 'right' : 'left'}
+//               padding={headCell.disablePadding ? 'none' : 'default'}
+//               sortDirection={orderBy === headCell.id ? order : false}
+//             >
+//               <TableSortLabel
+//                 active={orderBy === headCell.id}
+//                 direction={orderBy === headCell.id ? order : 'asc'}
+//                 onClick={createSortHandler(headCell.id)}
+//               >
+//                 {headCell.label}
+//                 {orderBy === headCell.id ? (
+//                   <span className={classes.visuallyHidden}>
+//                     {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+//                   </span>
+//                 ) : null}
+//               </TableSortLabel>
+//             </TableCell>
+//           ))}
+//         </TableRow>
+//       </TableHead>
+//     );
+//   }
   
-  EnhancedTableHead.propTypes = {
-    classes: PropTypes.object.isRequired,
-    // numSelected: PropTypes.number.isRequired,
-    onRequestSort: PropTypes.func.isRequired,
-    // onSelectAllClick: PropTypes.func.isRequired,
-    order: PropTypes.oneOf(['asc', 'desc']).isRequired,
-    orderBy: PropTypes.string.isRequired,
-    rowCount: PropTypes.number.isRequired,
-  };
-  
-
-  const theme2 = createMuiTheme({
-    palette: {
-      primary: {
-        light: lightGreen[300],
-        main: lightGreen[500],
-        dark: lightGreen[700]
-      },
-      secondary: {
-        light: blueGrey[300],
-        main: blueGrey[500],
-        dark: blueGrey[700]
-      }
-    }
-  });
-
-
-  const useToolbarStyles = makeStyles((theme, theme2) => ({
-    root: {
-      paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(1),
-    },
-    highlight:
-      theme.palette.type === 'light'
-        ? {
-            color: theme.palette.secondary.main,
-            backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-          }
-        : {
-            color: theme.palette.text.primary,
-            backgroundColor: theme.palette.secondary.dark,
-          },
-    title: {
-      flex: '1 1 100%',
-    },
-    searchContainer: {
-        display: "flex",
-        backgroundColor: fade(theme.palette.secondary.light, 0.05),
-        paddingLeft: "20px",
-        paddingRight: "20px",
-        marginTop: "5px",
-        marginBottom: "5px",
-      },
-      searchIcon: {
-        alignSelf: "flex-end",
-        marginBottom: "15px",
-      },
-      searchInput: {
-        width: "200px",
-        margin: "15px",
-      },
-  }));
-  
+//   EnhancedTableHead.propTypes = {
+//     classes: PropTypes.object.isRequired,
+//     // numSelected: PropTypes.number.isRequired,
+//     onRequestSort: PropTypes.func.isRequired,
+//     // onSelectAllClick: PropTypes.func.isRequired,
+//     order: PropTypes.oneOf(['asc', 'desc']).isRequired,
+//     orderBy: PropTypes.string.isRequired,
+//     rowCount: PropTypes.number.isRequired,
+//   };
   
 
-  const EnhancedTableToolbar = (props) => {
-    const {onFilterChange, filter } = props;
-    const classes = useToolbarStyles();
+//   const theme2 = createMuiTheme({
+//     palette: {
+//       primary: {
+//         light: lightGreen[300],
+//         main: lightGreen[500],
+//         dark: lightGreen[700]
+//       },
+//       secondary: {
+//         light: blueGrey[300],
+//         main: blueGrey[500],
+//         dark: blueGrey[700]
+//       }
+//     }
+//   });
+
+
+//   const useToolbarStyles = makeStyles((theme, theme2) => ({
+//     root: {
+//       paddingLeft: theme.spacing(2),
+//       paddingRight: theme.spacing(1),
+//     },
+//     highlight:
+//       theme.palette.type === 'light'
+//         ? {
+//             color: theme.palette.secondary.main,
+//             backgroundColor: lighten(theme.palette.secondary.light, 0.85),
+//           }
+//         : {
+//             color: theme.palette.text.primary,
+//             backgroundColor: theme.palette.secondary.dark,
+//           },
+//     title: {
+//       flex: '1 1 100%',
+//     },
+//     searchContainer: {
+//         display: "flex",
+//         backgroundColor: fade(theme.palette.secondary.light, 0.05),
+//         paddingLeft: "20px",
+//         paddingRight: "20px",
+//         marginTop: "5px",
+//         marginBottom: "5px",
+//       },
+//       searchIcon: {
+//         alignSelf: "flex-end",
+//         marginBottom: "15px",
+//       },
+//       searchInput: {
+//         width: "200px",
+//         margin: "15px",
+//       },
+//   }));
+  
+  
+
+//   const EnhancedTableToolbar = (props) => {
+//     const {onFilterChange, filter } = props;
+//     const classes = useToolbarStyles();
     
 
-// const handleSearchChange = (e) => {
-//         setFilter(e.target.value);
-//     };
-    // const { numSelected } = props;
+// // const handleSearchChange = (e) => {
+// //         setFilter(e.target.value);
+// //     };
+//     // const { numSelected } = props;
   
-    return (
-        <Fragment>
-        <Toolbar>
-            <div className={classes.searchContainer}>
-                <SearchIcon className={classes.searchIcon}/>
-                <TextField className={classes.searchInput}
-                    onChange={onFilterChange}
-                    label="search feedbacks"
-                    varient="standard"
-                />
-            </div>
-        </Toolbar>
-      <Toolbar>
+//     return (
+//         <Fragment>
+//         <Toolbar>
+//             <div className={classes.searchContainer}>
+//                 <SearchIcon className={classes.searchIcon}/>
+//                 <TextField className={classes.searchInput}
+//                     onChange={onFilterChange}
+//                     label="search feedbacks"
+//                     varient="standard"
+//                 />
+//             </div>
+//         </Toolbar>
+//       <Toolbar>
         
-          <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-            Customer Feedbacks
-          </Typography>
+//           <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
+//             Customer Feedbacks
+//           </Typography>
       
-      </Toolbar>
-      </Fragment>
-    );
-  };
+//       </Toolbar>
+//       </Fragment>
+//     );
+//   };
   
 //   EnhancedTableToolbar.propTypes = {
 //     // numSelected: PropTypes.number.isRequired,
@@ -338,10 +341,9 @@ const FeedbackAnalysis = () => {
           >
             <EnhancedTableHead
               classes={classes}
-            //   numSelected={selected.length}
+              headCells={headCells}
               order={order}
               orderBy={orderBy}
-            //   onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
               rowCount={feedback.length}
             />
