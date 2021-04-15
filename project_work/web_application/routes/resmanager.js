@@ -385,7 +385,48 @@ router.post('/feedback',async (req,res)=>{
             // }       
 });
 
+// delete stff member : requires restaurant_id and user_id
+router.post('/delete_staff', async(req, res) => {
+    try{
+        const data = req.body;
+        // Check for empty field
+        if(!data.user_id || !data.restaurant_id)
+        {
+            return res.status(400).json({
+                error: 1,
+                msg: "One or more required field is empty!"
+            });
+        }
+        else
+        {
+            //Get email_id from user_id
+            const EmailOfUser = await pool.query("SELECT email_id FROM users WHERE restaurant_id=$1 and user_id=$2", [data.restaurant_id,data.user_id]);
+            if(!EmailOfUser.rows[0] && !EmailOfUser.rows.length && !EmailOfUser.rows[0].email_id)
+            {
+                return res.status(400).json({
+                    error:1,
+                    msg: "A user with given user id does not exists for this restaurant"
+                });
+            }
+            else{
+                // console.log(EmailOfUser.rows[0].email_id);
+                // Remove entry from FCM_JWT
+                const isLoggedIn = await pool.query("DELETE FROM fcm_jwt WHERE email_id=$1", [EmailOfUser.rows[0].email_id]);
+                // Remove entry from Attendance table
+                const result1 = await pool.query("DELETE FROM attendance WHERE restaurant_id=$1 and user_id=$2", [data.restaurant_id,data.user_id]);
+                // Remove entry from Users table
+                const result2 = await pool.query("DELETE FROM users WHERE restaurant_id=$1 and user_id=$2", [data.restaurant_id,data.user_id]);
+                return res.status(200).json({
+                    msg: "Deleted successfully!"
+                });
+            }
+        }
 
+    }catch(err)
+    {
+        console.log(err.message);
+    }
+});
 
 async function iter(myArr){
 
