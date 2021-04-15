@@ -148,7 +148,7 @@ router.put('/inventory', verifyToken, async(req, res) => {
             //WHEN USER HAS VALID JWT TOKEN
             try {
                 const data = req.body;
-                    if(!data.item_name || !data.available_qty || !data.restaurant_id){
+                    if(!data.item_name || !data.available_qty || !data.restaurant_id || !data.inventory_id){
                         return res.status(400).json({
                             error: 1,
                             msg: "One or more required field is empty!"
