@@ -1,9 +1,7 @@
-
-// @flow
-const express = require("express")
+const express = require("express");
 
 const bodyParser = require('body-parser');
-const router= express.Router();
+const router = express.Router();
 const fs = require('fs');
 
 const cors = require('cors')
@@ -33,6 +31,10 @@ router.post('/login', async(req,res) => {
                     console.log(result1)
                     // handle bcrypt compare error
                     if (result1==false) { 
+                        return res.status(400).json({
+                            error:1,
+                            msg: "Invalid password! Please try again!"
+                        });
                         throw (err); 
                     }else{
                         
@@ -91,9 +93,6 @@ router.post('/login', async(req,res) => {
                     //         msg: "Invalid password! Please try again!"
                     //     });
                     // }
-
-                    
-                
                 });
                          
             }
@@ -102,7 +101,6 @@ router.post('/login', async(req,res) => {
             console.log(err.message);
         }
 })
-
 
 router.put('/menu', verifyToken, async(req, res) => {
     jwt.verify(req.token, 'secretkey',async (err,authData)=>{
@@ -116,14 +114,9 @@ router.put('/menu', verifyToken, async(req, res) => {
             //WHEN USER HAS VALID JWT TOKEN
             try {
                 const data = req.body;
-                if(!data.dish_name || !data.dish_price || !data.status || !data.description || !data.jain_availability || !data.dish_id || !data.restaurant_id){
-                    return res.status(400).json({
-                        error: 1,
-                        msg: "One or more required field is empty!"
-                    }); 
-                }
+        
                 const upd = await pool.query("UPDATE menu SET dish_name=$1, dish_price=$2, status=$3, description=$4, jain_availability=$5 WHERE restaurant_id=$6 and dish_id=$7", [data.dish_name, data.dish_price, data.status, data.description, data.jain_availability, data.restaurant_id, data.dish_id]);
-                // console.log(upd);
+                //console.log(upd);
                 res.status(200).json({msg: "Updated status successfully!"});
         
             } catch (err) {
@@ -135,7 +128,38 @@ router.put('/menu', verifyToken, async(req, res) => {
     });   
 })
 
-//update inventory
+
+router.post('/view_inventory',verifyToken, async(req, res) => {
+    
+    //INITIALIZE JWT VERIFICATION
+    jwt.verify(req.token, 'secretkey',async (err,authData)=>{
+        if(err){
+
+            //INVALID TOKEN/TIMEOUT so delete the entry from databse 
+            // const deleted_info = await pool.query("DELETE FROM fcm_jwt WHERE EMAIL_ID=$1 ",[req.body.email_id])
+            res.status(400).json({msg: "Session expired. Login again"})
+            
+        }else{
+            //WHEN USER HAS VALID JWT TOKEN
+            const data = req.body;
+            const viewinv =  await pool.query("SELECT inventory_id, item_name, available_qty FROM inventory WHERE restaurant_id=$1", [data.restaurant_id]);
+            
+            if(!viewinv.rows[0] && !viewinv.rows.length){
+                return res.status(400).json({
+                    error:1,
+                    msg: "No menu item available for this restaurant"
+                });
+              
+            }
+            else{
+                return res.json({total_results: viewinv.rowCount, dishes: viewinv.rows});
+            }    
+            //console.log("total_results: " + viewmenu.rowCount, "dishes: " + viewmenu.rows);
+        }
+    });   
+    
+})
+
 router.put('/inventory', verifyToken, async(req, res) => {
     jwt.verify(req.token, 'secretkey',async (err,authData)=>{
         if(err){
@@ -154,7 +178,7 @@ router.put('/inventory', verifyToken, async(req, res) => {
                             msg: "One or more required field is empty!"
                         }); 
                     }
-                console.log(data)
+                //console.log(data)
                 const upd = await pool.query("UPDATE inventory SET item_name=$1, available_qty=$2 WHERE restaurant_id=$3 and inventory_id=$4", [data.item_name, data.available_qty, data.restaurant_id,data.inventory_id]);
                 console.log(upd);
                 res.status(200).json({msg: "Updated inventory successfully!"});
@@ -167,6 +191,7 @@ router.put('/inventory', verifyToken, async(req, res) => {
         }
     });   
 })
+
 
 async function verifyToken(req,res,next){
 
