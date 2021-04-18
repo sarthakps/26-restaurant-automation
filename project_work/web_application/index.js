@@ -1,6 +1,5 @@
-const express = require("express");
+const express = require("express")
 
-const bodyParser = require('body-parser');
 const router = express.Router();
 const fs = require('fs');
 
@@ -11,6 +10,11 @@ const path = require('path')
 
 const app = express()
 app.use(cors())
+
+var bodyParser = require('body-parser');
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+
 app.use(express.json())
 
 app.use(express.static("client/build"))
@@ -27,8 +31,8 @@ if(process.env.NODE_ENV === "production"){
 
 app.use('/restaurantmanager', require('./routes/resmanager'));
 app.use('/waiter', require('./routes/waiter'));
-app.use('/kitchenpersonnel', require('./routes/kitchenpersonnel'));
-app.use('/invmanager', require('./routes/invmanager'))
+app.use('/inventorymanager', require('./routes/invmanager'))
+app.use('/kitchenpersonnel', require('./routes/kitchenpersonnel'))
 
 // catch all method
 // app.get("*", (req, res) => {
