@@ -30,13 +30,13 @@ function EnhancedTableHead(props) {
               align={headCell.numeric ? 'left' : 'right'}
               padding={headCell.disablePadding ? 'none' : 'default'}
               sortDirection={orderBy === headCell.id ? order : false}
-              style={{color:"white"}}
+              style={{color:"black"}}
             >
               <TableSortLabel
                 active={orderBy === headCell.id}
                 direction={orderBy === headCell.id ? order : 'asc'}
                 onClick={createSortHandler(headCell.id)}
-                style={{color:"white", fontSize:"20px"}}
+                style={{color:"black", fontSize:"20px"}}
               >
                 {headCell.label}
                 {orderBy === headCell.id ? (

@@ -9,7 +9,7 @@
 
 .btn-outline-dark {
   margin-top: 20px;
-  border-radius: 0px;
+  border-radius: 5px;
   border-color: #c9ab81;
   padding-top: 15px;
   padding-bottom: 15px;
@@ -26,7 +26,6 @@
 }
 
 .w3-tangerine {
-  /* font-family: "Tangerine", serif; */
   font-family: josefin sans, sans-serif;
   color: #c9ab81;
 }
@@ -37,11 +36,6 @@
 }
 
 .row {
-  /* margin-left: 2%;
-  padding-right: 60px; */
-  /* position: relative;
-  display: flex;
-  align-items: center; */
   justify-content: center;
 }
 
@@ -55,7 +49,6 @@
 }
 
 .container {
-  margin-top: 100px;
   justify-content: center;
 }
 
@@ -63,29 +56,17 @@
   width: 380px;
 }
 
-/* .container {
-  margin-top: 100px;
-  grid-template-columns: auto auto auto auto;
-  /* grid-template-rows: 200px 200px; */
-/* align-items: start;
-  align-self: center;
-  justify-content: center;
-  display: grid;
-  margin-left: 50px; */
-/* grid-template-columns: 30px 200px auto 100px; */
 
 .card {
   width: 380px;
   text-align: center;
 }
 
-/* Hover Scroll Effect */
 .frame1 {
   width: 380px;
   height: 210px;
   overflow: hidden;
   margin-right: 100px;
-  /* margin-right: 500px; */
 }
 .frame1 img {
   object-fit: cover;
@@ -96,7 +77,6 @@
 .frame1:hover img {
   object-fit: cover;
   width: 100%;
-  /* Considering frame height   */
   transform: translateY(calc(-100% + 300px));
   transition: 10s ease-out;
 }
@@ -105,7 +85,6 @@
   width: 370px;
   height: 210px;
   overflow: hidden;
-  /* margin-left: 60px; */
 }
 .frame2 img {
   object-fit: cover;
@@ -116,7 +95,6 @@
 .frame2:hover img {
   object-fit: cover;
   width: 100%;
-  /* Considering frame height   */
   transform: translateY(calc(-100% + 300px));
   transition: 10s ease-out;
 }
@@ -125,7 +103,6 @@
   width: 370px;
   height: 210px;
   overflow: hidden;
-  /* margin-left: 60px; */
 }
 .frame3 img {
   object-fit: cover;
@@ -136,17 +113,7 @@
 .frame3:hover img {
   object-fit: cover;
   width: 100%;
-  /* Considering frame height   */
   transform: translateY(calc(-100% + 300px));
   transition: 10s ease-out;
 }
 
-/*OR */
-/* .frameimg:hover{
-    object-fit: cover;
-    width:100%;
-    transform: translateY(-100%);
-    transition: 2s ease-out;
-  } */
-
-/* With background image  */
