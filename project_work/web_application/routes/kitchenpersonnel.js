@@ -10,6 +10,12 @@ const bcrypt = require('bcryptjs')
 //importing jwt
 const jwt=require('jsonwebtoken')
 
+// var store = require('store')
+const HandyStorage = require('handy-storage');
+const storage = new HandyStorage({
+    beautify: true
+});
+
 
 router.post('/login', async(req,res) => {
     try {
@@ -115,7 +121,7 @@ router.post('/ordered_dishes', verifyToken, async(req, res) => {
             //WHEN USER HAS VALID JWT TOKEN
             try {
                 const data = req.body;
-                const final = await pool.query("SELECT order_id, restaurant_id, table_no, dish_id, dish_qty, no_of_occupants FROM ordered_dishes WHERE restaurant_id=$1", [data.restaurant_id]);
+                const final = await pool.query("SELECT order_id, table_no, dish_id, dish_qty, no_of_occupants, time_stamp FROM ordered_dishes WHERE restaurant_id=$1", [data.restaurant_id]);
 
                 if(!final.rows[0] && !final.rows.length){
                     res.status(400).json({
@@ -123,7 +129,41 @@ router.post('/ordered_dishes', verifyToken, async(req, res) => {
                         msg: "some error"
                     });
                 } else {
-                    res.json({"ans": final.rows});
+
+                    const array = final.rows;
+                    const final2 = await iter(array);
+                    //console.log("final2", final2)
+
+                    // const final_ans = await getDishName(final2)
+                    // var final_ans = []
+                    // final2.forEach(async(element, index, array) => {
+
+                    //     const dishName = await pool.query("SELECT dish_name from menu WHERE dish_id=$1", [element.dish_id]);
+                
+                    //     if(dishName.rows[0]){
+                    //         final_ans.push({
+                    //             "order_id" : element.order_id,
+                    //             "table_no": element.table_no,
+                    //             "dish_name": dishName.rows[0].dish_name,
+                    //             "dish_qty": element.dish_qty,
+                    //             "no_of_occupants": element.no_of_occupants,
+                    //             "time_stamp": element.time_stamp
+                    //         })
+                    //     }
+                    //     // Store current user 
+                    //         // store.set('tempo', final_ans)
+                    //         //storage.setState(final_ans)
+
+                            
+                    // });
+
+                    // Get current user 
+                    // console.log("STORAGE", storage);
+
+                    //const tempo = localStorage.getItem("answer");
+                    //console.log("ans", final2)
+
+                    res.json({"ans": final2});
                 }
 
             } catch (err) {
@@ -133,6 +173,61 @@ router.post('/ordered_dishes', verifyToken, async(req, res) => {
 })
             
 })
+
+
+function ISODateString(d){
+    function pad(n){return n<10 ? '0'+n : n}
+    return d.getUTCFullYear()+'-'
+         + pad(d.getUTCMonth()+1)+'-'
+         + pad(d.getUTCDate())}
+
+
+async function iter(myArr){
+
+    var response = [];
+    var date = new Date();
+    var currentISODate = ISODateString(date);
+    myArr.forEach((element, index, array) => {
+        var date2 = element.time_stamp.split(" ");
+
+        //order_id, table_no, dish_id, dish_qty, no_of_occupants
+        if(date2[0] == currentISODate){
+            response.push({
+                "order_id" : element.order_id,
+                "table_no": element.table_no,
+                "dish_id": element.dish_id,
+                "dish_qty": element.dish_qty,
+                "no_of_occupants": element.no_of_occupants,
+                "time_stamp": date2[1]
+            })
+        }
+    });
+    return response;
+}
+
+async function getDishName(myArr){
+
+    var response = [];
+    var temp = []
+    myArr.forEach(async(element, index, array) => {
+
+        const dishName = await pool.query("SELECT dish_name from menu WHERE dish_id=$1", [element.dish_id]);
+
+        if(dishName.rows[0]){
+            response.push({
+                "order_id" : element.order_id,
+                "table_no": element.table_no,
+                "dish_name": dishName.rows[0].dish_name,
+                "dish_qty": element.dish_qty,
+                "no_of_occupants": element.no_of_occupants,
+                "time_stamp": element.time_stamp
+            })
+        }
+        
+    });
+    console.log("RESPONSE", temp)
+    return response;
+}
 
 
 async function verifyToken(req,res,next){
