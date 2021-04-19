@@ -27,7 +27,7 @@ function EnhancedTableHead(props) {
           {headCells.map((headCell) => (
             <TableCell
               key={headCell.id}
-              align={headCell.numeric ? 'left' : 'right'}
+              align={headCell.numeric ? 'left' : 'center'}
               padding={headCell.disablePadding ? 'none' : 'default'}
               sortDirection={orderBy === headCell.id ? order : false}
               style={{color:"black"}}

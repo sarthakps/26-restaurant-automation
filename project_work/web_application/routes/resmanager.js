@@ -138,7 +138,40 @@ router.post('/viewmenu',verifyToken, async(req, res) => {
     
 })
 
-// get the list of all uses
+
+// ALL USERS
+router.post('/allusers',verifyToken, async(req, res) => {
+    
+    //INITIALIZE JWT VERIFICATION
+    jwt.verify(req.token, 'secretkey',async (err,authData)=>{
+        if(err){
+
+            //INVALID TOKEN/TIMEOUT so delete the entry from databse 
+            // const deleted_info = await pool.query("DELETE FROM fcm_jwt WHERE EMAIL_ID=$1 ",[req.body.email_id])
+            res.status(400).json({msg: "Session expired. Login again"})
+            
+        }else{
+            //WHEN USER HAS VALID JWT TOKEN
+            const data = req.body;
+            const viewUsers =  await pool.query("SELECT user_id, user_name, user_image, usertype_id FROM users WHERE restaurant_id=$1", [data.restaurant_id]);
+            
+            if(!viewUsers.rows[0] && !viewUsers.rows.length){
+                return res.status(400).json({
+                    error:1,
+                    msg: "No menu item available for this restaurant"
+                });
+              
+            }
+            else{
+                return res.json({total_results: viewUsers.rowCount, users: viewUsers.rows});
+            }    
+            //console.log("total_results: " + viewmenu.rowCount, "dishes: " + viewmenu.rows);
+        }
+    });   
+    
+})
+
+// get the list of all uses for marking attendance
 router.post('/viewusers',verifyToken, async(req, res) => {
     
     //INITIALIZE JWT VERIFICATION
