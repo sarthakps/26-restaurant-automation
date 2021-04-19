@@ -58,7 +58,7 @@ const EnhancedTableToolbar = (props) => {
                 <SearchIcon className={classes.searchIcon}/>
                 <TextField className={classes.searchInput}
                     onChange={onFilterChange}
-                    label="search menu"
+                    label="search"
                     varient="standard"
                 />
             </div>

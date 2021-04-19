@@ -20,14 +20,6 @@ import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
-// import DeleteIcon from '@material-ui/icons/Delete';
-// import FilterListIcon from '@material-ui/icons/FilterList';
-// import SearchIcon from '@material-ui/icons/Search';
-// import TextField from '@material-ui/core/TextField';
-// import blueGrey from "@material-ui/core/colors/blueGrey";
-// import lightGreen from "@material-ui/core/colors/lightGreen";
-// import Button from '@material-ui/core/Button';
-
 import EnhancedTableHead from './EnhancedTableHead'
 import EnhancedTableToolbar from './EnhancedTableToolBar'
   
@@ -66,127 +58,6 @@ const headCells = [
     { id: 'attedance_status', numeric: false, disablePadding: false, label: 'Attendance Status' },
   ];
   
-
-  // function EnhancedTableHead(props) {
-  //   const { classes, order, orderBy, rowCount, onRequestSort } = props;
-  //   const createSortHandler = (property) => (event) => {
-  //     onRequestSort(event, property);
-  //   };
-  
-  //   return (
-  //     <TableHead>
-  //       <TableRow>
-  //         <TableCell padding="checkbox">
-  //         </TableCell>
-  //         {headCells.map((headCell) => (
-  //           <TableCell
-  //             key={headCell.id}
-  //             align={headCell.numeric ? 'left' : 'right'}
-  //             padding={headCell.disablePadding ? 'none' : 'default'}
-  //             sortDirection={orderBy === headCell.id ? order : false}
-  //           >
-  //             <TableSortLabel
-  //               active={orderBy === headCell.id}
-  //               direction={orderBy === headCell.id ? order : 'asc'}
-  //               onClick={createSortHandler(headCell.id)}
-  //             >
-  //               {headCell.label}
-  //               {orderBy === headCell.id ? (
-  //                 <span className={classes.visuallyHidden}>
-  //                   {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-  //                 </span>
-  //               ) : null}
-  //             </TableSortLabel>
-  //           </TableCell>
-  //         ))}
-  //       </TableRow>
-  //     </TableHead>
-  //   );
-  // }
-  
-  // EnhancedTableHead.propTypes = {
-  //   classes: PropTypes.object.isRequired,
-  //   // numSelected: PropTypes.number.isRequired,
-  //   onRequestSort: PropTypes.func.isRequired,
-  //   // onSelectAllClick: PropTypes.func.isRequired,
-  //   order: PropTypes.oneOf(['asc', 'desc']).isRequired,
-  //   orderBy: PropTypes.string.isRequired,
-  //   rowCount: PropTypes.number.isRequired,
-  // };
-
-
-  // const useToolbarStyles = makeStyles((theme, theme2) => ({
-  //   root: {
-  //     paddingLeft: theme.spacing(2),
-  //     paddingRight: theme.spacing(1),
-  //   },
-  //   highlight:
-  //     theme.palette.type === 'light'
-  //       ? {
-  //           color: theme.palette.secondary.main,
-  //           backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-  //         }
-  //       : {
-  //           color: theme.palette.text.primary,
-  //           backgroundColor: theme.palette.secondary.dark,
-  //         },
-  //   title: {
-  //     flex: '1 1 100%',
-  //   },
-  //   searchContainer: {
-  //       display: "flex",
-  //       backgroundColor: fade(theme.palette.secondary.light, 0.05),
-  //       paddingLeft: "20px",
-  //       paddingRight: "20px",
-  //       marginTop: "5px",
-  //       marginBottom: "5px",
-  //     },
-  //     searchIcon: {
-  //       alignSelf: "flex-end",
-  //       marginBottom: "15px",
-  //     },
-  //     searchInput: {
-  //       width: "200px",
-  //       margin: "15px",
-  //     },
-  // }));
-   
-
-//   const EnhancedTableToolbar = (props) => {
-//     const {onFilterChange, filter } = props;
-//     const classes = useToolbarStyles();
-    
-
-// // const handleSearchChange = (e) => {
-// //         setFilter(e.target.value);
-// //     };
-//     // const { numSelected } = props;
-  
-//     return (
-//         <Fragment>
-//         <Toolbar>
-//             <div className={classes.searchContainer}>
-//                 <SearchIcon className={classes.searchIcon}/>
-//                 <TextField className={classes.searchInput}
-//                     onChange={onFilterChange}
-//                     label="search menu"
-//                     varient="standard"
-//                 />
-//             </div>
-//         </Toolbar>
-//       <Toolbar>
-        
-//           <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-//             Menu
-//           </Typography>     
-//       </Toolbar>
-//       </Fragment>
-//     );
-//   };
-  
-//   EnhancedTableToolbar.propTypes = {
-//     // numSelected: PropTypes.number.isRequired,
-//   };
   
   const useStyles = makeStyles((theme) => ({
     root: {
@@ -260,25 +131,6 @@ const Attendance = () => {
       setFilter(e.target.value.toLowerCase());
   };
 
-  // const handleClick = (event, feedback_id) => {
-  //   const selectedIndex = selected.indexOf(feedback_id);
-  //   let newSelected = [];
-
-  //   if (selectedIndex === -1) {
-  //     newSelected = newSelected.concat(selected, feedback_id);
-  //   } else if (selectedIndex === 0) {
-  //     newSelected = newSelected.concat(selected.slice(1));
-  //   } else if (selectedIndex === selected.length - 1) {
-  //     newSelected = newSelected.concat(selected.slice(0, -1));
-  //   } else if (selectedIndex > 0) {
-  //     newSelected = newSelected.concat(
-  //       selected.slice(0, selectedIndex),
-  //       selected.slice(selectedIndex + 1),
-  //     );
-  //   }
-
-  //   setSelected(newSelected);
-  // };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);

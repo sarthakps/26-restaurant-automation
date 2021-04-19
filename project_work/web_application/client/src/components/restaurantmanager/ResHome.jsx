@@ -125,6 +125,14 @@ const ResHome = () => {
     </div>
 </div>
 
+<div class="title" style={{textAlign: "center"}}>
+    <Link to="/restaurantmanager/mark-attendance"><button type="button" class="btn btn-outline-dark btn-lg">Mark Attendance</button></Link>
+</div>
+
+<div class="title" style={{textAlign: "center"}}>
+    <Link to="/restaurantmanager/remove-user"><button type="button" class="btn btn-outline-dark btn-lg">Remove a User</button></Link>
+</div>
+
 
     {/* <div class="container text-center">
         <div class="row">
