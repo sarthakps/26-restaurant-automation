@@ -18,8 +18,11 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import { Button } from '@material-ui/core'
 
-// import EditMenuModal from './EditMenuModal'
 import EditInvModal from './EditInvModal'
+import Lottie from 'react-lottie';
+import animationData from '../../images/updateinv.json'
+import Header from '../restaurantmanager/Header'
+import '../stylebutton.css'
 
 import EnhancedTableToolbar from '../restaurantmanager/EnhancedTableToolBar'
 import EnhancedTableHead from '../restaurantmanager/EnhancedTableHead'
@@ -81,6 +84,8 @@ const headCells = [
       position: 'absolute',
       top: 20,
       width: 1,
+      // color: '#000000',
+      // fontColor: '#000000'
     },
   }));
 
@@ -171,16 +176,36 @@ const UpdateInventory = () => {
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, resmenu.length - page * rowsPerPage);
 
+  const user_image = localStorage.getItem("user_image")
+
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: animationData,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice"
+    }
+  };
+
 
     return (
-      <body style={{background:"#ffffff"}}>
+      <body style={{background:"#F2F4F3"}}>
+
+        <Header logout={"log out"} avatar={user_image} logoutpath={"/inventorymanager/login"}/>
+
+       {/* LOTTIFILES DIV TAG */}
+
+       <h1>Inventory update page</h1>
+
+        
+
         <div className="container text-center">
             <br />
-            <h1 style={{color:"white", fontFamily: "caviar_dreamsbold,sans-serif", letterSpacing: "0.16em", color: "#c9ab81 !important", fontSize: "60px"}}> Update Inventory Page</h1>
+           
             <br />
 
 <div className={classes.root}>
-      <Paper className={classes.paper} style={{background:"#ffffff", fontSize:"22px"}}>
+      <Paper className={classes.paper} style={{background:"#F2F4F3", fontSize:"22px", boxShadow:"0px", marginTop: "200px"}}>
       <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
@@ -189,14 +214,14 @@ const UpdateInventory = () => {
           page={page}
           onChangePage={handleChangePage}
           onChangeRowsPerPage={handleChangeRowsPerPage}
-          style={{color:"#000000" ,  fontSize:"22px"}}
+          style={{color:"#5e503f" ,  fontSize:"22px"}}
         />
         <EnhancedTableToolbar
             filter={filter}
             onFilterChange={handleFilterChange}
-            style={{fontColor:"#000000" ,  fontSize:"22px"}}
+            style={{fontSize:"22px"}}
         />
-        <h4>{filter}</h4>
+        <h4 style={{color: "white"}}>{filter}</h4>
         <TableContainer>
           <Table
             className={classes.table}
@@ -211,14 +236,13 @@ const UpdateInventory = () => {
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
               rowCount={resmenu.length}
-              style={{color:"#000000" ,  fontSize:"22px"}}
+              style={{color:"#DAA520" ,  fontSize:"22px"}}
             />
             <TableBody>
               {stableSort(resmenu, getComparator(order, orderBy, filter))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => { 
                     
-                  //const isItemSelected = isSelected(row.feedback_id);
                   const labelId = `enhanced-table-checkbox-${index}`;
                   
 
@@ -231,26 +255,20 @@ const UpdateInventory = () => {
                     <TableRow
                       hover
                       role="checkbox"
-                    //   aria-checked={isItemSelected}
                       tabIndex={-1}
                       key={row.inventory_id}
-                    //   selected={isItemSelected}
                     >
                       <TableCell padding="checkbox">
-                        {/* <Checkbox
-                        //   checked={isItemSelected}
-                          inputProps={{ 'aria-labelledby': labelId }}
-                        /> */}
                       </TableCell>
 
-                      <TableCell component="th" scope="row" padding="none">
+                      <TableCell component="th" scope="row" padding="none" style={{color: "5e503f"}}>
                         {row.inventory_id}
                       </TableCell>
-                      <TableCell align="center">{row.item_name}</TableCell>
+                      <TableCell align="center" style={{color: "5e503f"}}>{row.item_name}</TableCell>
                    
-                        <TableCell align="center">{row.available_qty}</TableCell>
+                        <TableCell align="center" style={{color: "5e503f"}}>{row.available_qty}</TableCell>
                    
-                      <TableCell  align="center"><EditInvModal row={row}/></TableCell>
+                      <TableCell  align="center" style={{color: "5e503f"}}><EditInvModal row={row}/></TableCell>
                       <TableCell><Button>Delete</Button></TableCell>
                     </TableRow>
                     
@@ -270,6 +288,7 @@ const UpdateInventory = () => {
       <FormControlLabel
         control={<Switch checked={dense} onChange={handleChangeDense} />}
         label="Dense padding"
+        style={{color: "#5e503f"}}
       />
     </div>
 
@@ -282,7 +301,7 @@ const UpdateInventory = () => {
         <br />
     
           <div className="container text-center">      
-        <Link to="/inventorymanager/invhome"><button type="button" class="btn btn-outline-dark">Go to Home Page</button></Link>
+        <Link to="/inventorymanager/invhome"><button type="button" id="inventory" class="btn btn-outline-dark btn-lg">Go to Home Page</button></Link>
         </div>
 
         <br />
