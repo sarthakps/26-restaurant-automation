@@ -18,6 +18,10 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 
 import EditMenuModal from './EditMenuModal'
+import Lottie from 'react-lottie';
+import animationData from '../../images/updatemenu.json'
+import Header from '../restaurantmanager/Header'
+import '../stylebutton.css'
 
 import EnhancedTableToolbar from '../restaurantmanager/EnhancedTableToolBar'
 import EnhancedTableHead from '../restaurantmanager/EnhancedTableHead'
@@ -93,6 +97,8 @@ const UpdateMenu = () => {
 
             const res_id = localStorage.getItem("resID");
             const email_id = localStorage.getItem("emailID");
+            
+
             console.log("In Update Menu file EMAIL ID : ", email_id);
             const body = {restaurant_id:res_id, email_id};  // send email_id by localStorage method
 
@@ -173,16 +179,32 @@ const UpdateMenu = () => {
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, resmenu.length - page * rowsPerPage);
 
+  const user_image = localStorage.getItem("user_image")
+
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: animationData,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice"
+    }
+  };
 
     return (
-      <body style={{background:"#ffffff"}}>
+      <body style={{background:"#0A0908"}}>
+
+        <Header logout={"log out"} avatar={user_image} logoutpath={"/inventorymanager/login"}/>
+
+        {/* LOTTIE */}
+
         <div className="container text-center">
             <br />
-            <h1 style={{color:"white", fontFamily: "caviar_dreamsbold,sans-serif", letterSpacing: "0.16em", color: "#c9ab81 !important", fontSize: "60px"}}> Update Menu Page</h1>
+            <h1 style={{fontFamily: "font-family:Georgia, 'Times New Roman', Times, serif", letterSpacing: "0.10em", color: "#F2F4F8", fontSize: "50px",  marginTop: "10%"}}> Update Menu Page</h1>
             <br />
 
+
 <div className={classes.root}>
-      <Paper className={classes.paper} style={{background:"#ffffff", fontSize:"22px"}}>
+      <Paper className={classes.paper} style={{background:"#0A0908", fontSize:"22px", boxShadow:"0px", marginTop: "200px"}}>
       <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
@@ -191,14 +213,15 @@ const UpdateMenu = () => {
           page={page}
           onChangePage={handleChangePage}
           onChangeRowsPerPage={handleChangeRowsPerPage}
-          style={{color:"#000000" ,  fontSize:"22px"}}
+          style={{color:"#A9927D" ,  fontSize:"22px"}}
         />
         <EnhancedTableToolbar
             filter={filter}
             onFilterChange={handleFilterChange}
-            style={{fontColor:"#000000" ,  fontSize:"22px"}}
+            colorp={"#F2F4F8"}
+            style={{fontSize:"22px"}}
         />
-        <h4>{filter}</h4>
+        <h4 style={{color: "white"}}>{filter}</h4>
         <TableContainer>
           <Table
             className={classes.table}
@@ -213,14 +236,13 @@ const UpdateMenu = () => {
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
               rowCount={resmenu.length}
-              style={{color:"#000000" ,  fontSize:"22px"}}
+              style={{color:"#F2F4F8" ,  fontSize:"22px"}}
             />
             <TableBody>
               {stableSort(resmenu, getComparator(order, orderBy, filter))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => { 
                     
-                  //const isItemSelected = isSelected(row.feedback_id);
                   const labelId = `enhanced-table-checkbox-${index}`;
                   
 
@@ -233,28 +255,23 @@ const UpdateMenu = () => {
                     <TableRow
                       hover
                       role="checkbox"
-                    //   aria-checked={isItemSelected}
                       tabIndex={-1}
                       key={row.dish_id}
-                    //   selected={isItemSelected}
+                      style={{color:"#F2F4F8"}}
                     >
                       <TableCell padding="checkbox">
-                        {/* <Checkbox
-                        //   checked={isItemSelected}
-                          inputProps={{ 'aria-labelledby': labelId }}
-                        /> */}
                       </TableCell>
 
-                      <TableCell component="th" scope="row" padding="none">
+                      <TableCell component="th" scope="row" padding="none" style={{color:"#F2F4F8"}}>
                         {row.dish_id}
                       </TableCell>
-                      <TableCell align="center">{row.dish_name}</TableCell>
+                      <TableCell align="center" style={{color:"#F2F4F8"}}>{row.dish_name}</TableCell>
                    
-                        <TableCell align="center">{row.description}</TableCell>
+                        <TableCell align="center" style={{color:"#F2F4F8"}}>{row.description}</TableCell>
                    
-                      <TableCell align="center">{row.dish_price}</TableCell>
-                      <TableCell align="center">{row.status}</TableCell>
-                      <TableCell align="center">{row.jain_availability ? 'yes' : 'no'}</TableCell>
+                      <TableCell align="center" style={{color:"#F2F4F8"}}>{row.dish_price}</TableCell>
+                      <TableCell align="center" style={{color:"#F2F4F8"}}>{row.status}</TableCell>
+                      <TableCell align="center" style={{color:"#F2F4F8"}}>{row.jain_availability ? 'yes' : 'no'}</TableCell>
                       <TableCell><EditMenuModal row={row}/></TableCell>
                     </TableRow>
                     
@@ -274,6 +291,7 @@ const UpdateMenu = () => {
       <FormControlLabel
         control={<Switch checked={dense} onChange={handleChangeDense} />}
         label="Dense padding"
+        style={{color: "white"}}
       />
     </div>
 
@@ -281,12 +299,11 @@ const UpdateMenu = () => {
         <br />
         <br />
         <br />
-        {/* <EditMenuModal /> */}
         <br/>
         <br />
     
           <div className="container text-center">      
-        <Link to="/inventorymanager/invhome"><button type="button" class="btn btn-outline-dark">Go to Home Page</button></Link>
+        <Link to="/inventorymanager/invhome"><button type="button" class="btn btn-outline-dark btn-lg">Go to Home Page</button></Link>
         </div>
 
         <br />
