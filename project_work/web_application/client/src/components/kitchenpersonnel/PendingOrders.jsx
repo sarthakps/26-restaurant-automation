@@ -17,6 +17,12 @@ import Tooltip from '@material-ui/core/Tooltip';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 
+import Header from '../restaurantmanager/Header'
+import Lottie from 'react-lottie';
+import animationData from '../../images/updateinv.json'
+import Card from '../restaurantmanager/Card'
+import '../stylebutton.css'
+
 import EnhancedTableToolbar from '../restaurantmanager/EnhancedTableToolBar'
 import EnhancedTableHead from '../restaurantmanager/EnhancedTableHead'
   
@@ -50,6 +56,7 @@ import EnhancedTableHead from '../restaurantmanager/EnhancedTableHead'
 
   const headCells = [
     { id: 'order_id', numeric: true, disablePadding: true, label: 'ID' },
+    { id: 'dish_name', numeric: false, disablePadding: true, label: 'Dish Name' },
     { id: 'dish_qty', numeric: false, disablePadding: false, label: 'Dish Quantity' },
     { id: 'table_no', numeric: false, disablePadding: false, label: 'Table No.' },
     { id: 'Time', numeric: false, disablePadding: false, label: 'Time of Order' },
@@ -169,17 +176,37 @@ const Menu = () => {
 //   const isSelected = (feedback_id) => selected.indexOf(feedback_id) !== -1;
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, resmenu.length - page * rowsPerPage);
+  const user_image = localStorage.getItem("user_image")
 
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: animationData,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice"
+    }
+  };
 
     return (
-      <body style={{background:"white"}}>
+      <body style={{background:"#F2F4F3"}}>
+
+      <Header logout={"log out"} avatar={user_image} logoutpath={"/kitchenpersonnel/login"}/>
+
+      <div style={{height: "250px", backgroundColor: "#0A0908"}}>
+        <Lottie 
+                options={defaultOptions}
+                  height={280}
+                  width={280}
+                  style={{float: "left", marginLeft: "5%", marginTop: "5%"}}
+                />
+
+<h1 style={{fontFamily: "font-family:Georgia, 'Times New Roman', Times, serif", letterSpacing: "0.10em", color: "#F2F4F8", fontSize: "50px", paddingTop: "10%", paddingLeft: "35%"}}>Pending Orders</h1>
+        </div>
+
         <div className="container text-center">
-            <br />
-            <h1 style={{color:"black", fontFamily: "caviar_dreamsbold,sans-serif", letterSpacing: "0.16em", fontSize: "60px"}}>Pending Orders Page</h1>
-            <br />
 
 <div className={classes.root}>
-      <Paper className={classes.paper} style={{background:"white", fontSize:"22px"}}>
+      <Paper className={classes.paper} style={{background:"#F2F4F3", fontSize:"22px", boxShadow:"0px", marginTop: "200px"}}>
       <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
@@ -188,14 +215,14 @@ const Menu = () => {
           page={page}
           onChangePage={handleChangePage}
           onChangeRowsPerPage={handleChangeRowsPerPage}
-          style={{color:"black" ,  fontSize:"22px"}}
+          style={{color:"#5e503f" ,  fontSize:"22px"}}
         />
         <EnhancedTableToolbar
             filter={filter}
             onFilterChange={handleFilterChange}
-            style={{fontColor:"white" ,  fontSize:"22px"}}
+            style={{fontSize:"22px"}}
         />
-        <h4>{filter}</h4>
+        <h4 style={{color: "white"}}>{filter}</h4>
         <TableContainer>
           <Table
             className={classes.table}
@@ -210,7 +237,7 @@ const Menu = () => {
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
               rowCount={resmenu.length}
-              style={{color:"white" ,  fontSize:"22px"}}
+              style={{color:"#DAA520" ,  fontSize:"22px"}}
             />
             <TableBody>
               {stableSort(resmenu, getComparator(order, orderBy, filter))
@@ -230,27 +257,28 @@ const Menu = () => {
                     <TableRow
                       hover
                       role="checkbox"
-                    //   aria-checked={isItemSelected}
                       tabIndex={-1}
                       key={row.order_id}
-                    //   selected={isItemSelected}
                     >
                       <TableCell padding="checkbox">
-                        {/* <Checkbox
-                        //   checked={isItemSelected}
-                          inputProps={{ 'aria-labelledby': labelId }}
-                        /> */}
                       </TableCell>
 
-                      <TableCell component="th" scope="row" padding="none">
+                      <TableCell component="th" scope="row" padding="none" style={{color:"#5e503f"}}>
                         {row.order_id}
                       </TableCell>
-                      <TableCell align="center">{row.dish_qty}</TableCell>
+                      <TableCell align="center" component="th" scope="row" padding="none" style={{color:"#5e503f"}}>
+                        {row.dish_name}
+                      </TableCell>
+                      <TableCell align="center" style={{color:"#5e503f"}}>{row.dish_qty}</TableCell>
                    
-                        <TableCell align="center">{row.table_no}</TableCell>
-                        <TableCell align="center">{row.time_stamp}</TableCell>
-                      <TableCell align="center">{row.no_of_occupants}</TableCell>
+                        <TableCell align="center" style={{color:"#5e503f"}}>{row.table_no}</TableCell>
+                        <TableCell align="center" style={{color:"#5e503f"}}>{row.time_stamp}</TableCell>
+                      <TableCell align="center" style={{color:"#5e503f"}}>{row.no_of_occupants}</TableCell>
+                      <TableCell align="center" ><button type="button" id="inventory" class="btn btn-outline-dark">Ready</button></TableCell>
                     </TableRow>
+
+                    {/* <Card cardwidth={"800px"} borderradius={"5px"} h2={row.dish_qty} h3={row.time_stamp} p={row.no_of_occupants} />
+                    <br/> */}
                     
                     </Fragment>
                   );
@@ -268,6 +296,7 @@ const Menu = () => {
       <FormControlLabel
         control={<Switch checked={dense} onChange={handleChangeDense} />}
         label="Dense padding"
+        style={{color: "white"}}
       />
     </div>
 
@@ -277,7 +306,7 @@ const Menu = () => {
         <br />
     
           <div className="container text-center">      
-        <Link to="/kitchenpersonnel/login"><button type="button" class="btn btn-outline-dark">LogOut</button></Link>
+        <Link to="/kitchenpersonnel/login"><button type="button" id="inventory" class="btn btn-outline-dark">Log Out</button></Link>
         </div>
 
         <br />
