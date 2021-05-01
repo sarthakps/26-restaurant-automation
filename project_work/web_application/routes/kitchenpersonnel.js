@@ -87,6 +87,7 @@ router.post('/login', async(req,res) => {
                                         usertype_id: login.rows[0].usertype_id,
                                         user_name: login.rows[0].user_name,
                                         contact_no: login.rows[0].contact_no,
+                                        user_image: login.rows[0].user_image
                                     });
                                 }
                             
@@ -132,38 +133,36 @@ router.post('/ordered_dishes', verifyToken, async(req, res) => {
 
                     const array = final.rows;
                     const final2 = await iter(array);
-                    //console.log("final2", final2)
+       
+                    const dishName = await pool.query("SELECT dish_id, dish_name from menu");
+                    const dishName2 = dishName.rows;
 
-                    // const final_ans = await getDishName(final2)
-                    // var final_ans = []
-                    // final2.forEach(async(element, index, array) => {
+                    var final_ans = []
+                    final2.forEach((element, index, array) => {
+                        var final_dishid = element.dish_id;
+                        var order_id = element.order_id;
+                        var table_no = element.table_no;
+                        var dish_qty = element.dish_qty;
+                        var no_of_occupants = element.no_of_occupants;
+                        var time_stamp = element.time_stamp;
 
-                    //     const dishName = await pool.query("SELECT dish_name from menu WHERE dish_id=$1", [element.dish_id]);
-                
-                    //     if(dishName.rows[0]){
-                    //         final_ans.push({
-                    //             "order_id" : element.order_id,
-                    //             "table_no": element.table_no,
-                    //             "dish_name": dishName.rows[0].dish_name,
-                    //             "dish_qty": element.dish_qty,
-                    //             "no_of_occupants": element.no_of_occupants,
-                    //             "time_stamp": element.time_stamp
-                    //         })
-                    //     }
-                    //     // Store current user 
-                    //         // store.set('tempo', final_ans)
-                    //         //storage.setState(final_ans)
-
+                        dishName2.forEach((element, index, array) => {
+                            if(element.dish_id == final_dishid){
+                                final_ans.push({
+                                    "order_id" : order_id,
+                                    "table_no": table_no,
+                                    "dish_name": element.dish_name,
+                                    "dish_qty": dish_qty,
+                                    "no_of_occupants": no_of_occupants,
+                                    "time_stamp": time_stamp
+                                })
+                            }
+                        })     
                             
-                    // });
+                    });
 
-                    // Get current user 
-                    // console.log("STORAGE", storage);
-
-                    //const tempo = localStorage.getItem("answer");
-                    //console.log("ans", final2)
-
-                    res.json({"ans": final2});
+                    console.log(final_ans)
+                    res.json({"ans": final_ans});
                 }
 
             } catch (err) {
