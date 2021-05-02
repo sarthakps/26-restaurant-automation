@@ -51,3 +51,34 @@ const ResHome = () => {
     <Header logout={"log out"} avatar={""}  logoutpath={"/restaurantmanager/login"} height={"50px"} height={"65px"} color={"black"} color2={"white"}/>
     <br />
     <br />   
+
+    <div className="row" style={{ width: "100%", marginTop: "20px"}}>
+            <Card cardimg={menu} borderradius={"0px"} url={"/restaurantmanager/menu"} cardwidth={"25%"} borderradius={2} h3={"Menu"} marginRight={"3%"} marginLeft={"5%"}/>
+            <Card cardimg={revenue2} url={"/restaurantmanager/revenue"} cardwidth={"25%"} borderradius={2} h3={"Revenue"} marginRight={"3%"} marginLeft={"5%"}/>
+            <Card cardimg={rush} url={"/restaurantmanager/rush-hour-prediction"} cardwidth={"25%"} borderradius={2} h3={"Rush Hour Analysis"} marginRight={"3%"} marginLeft={"5%"}/>
+            
+    </div>
+
+    <div className="row" style={{marginTop: "150px", width: "100%"}}>
+            <Card cardimg={viewatten} url={"/restaurantmanager/attendance"} cardwidth={"25%"} borderradius={2} h3={"View Attendance"} marginRight={"3%"} marginLeft={"5%"}/>
+            <Card cardimg={markatten} url={"/restaurantmanager/mark-attendance"} cardwidth={"25%"} borderradius={2} h3={"Mark Attendance"} marginRight={"3%"} marginLeft={"5%"}/>
+            <Card cardimg={feedback} url={"/restaurantmanager/feedback-analysis"} cardwidth={"25%"} borderradius={2} h3={"Feedback Analysis"} marginRight={"3%"} marginLeft={"5%"}/>
+    </div>
+
+    <div className="row" style={{marginTop: "150px", paddingBottom: "200px", width: "100%"}}>
+    <Card cardimg={register1} url={"/restaurantmanager/register-user"} cardwidth={"25%"} borderradius={2} h3={"Register User"} marginRight={"3%"} marginLeft={"5%"}/>
+            <Card cardimg={remove} url={"/restaurantmanager/remove-user"} cardwidth={"25%"} borderradius={2} h3={"Remove a User"} marginRight={"3%"} marginLeft={"5%"}/>
+    </div>
+
+    <div ref={divRef} >
+                    <Footer />
+                </div>
+    
+    </body>
+    </Fragment>
+
+
+    )
+}
+
+export default ResHome
