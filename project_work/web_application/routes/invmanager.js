@@ -1,7 +1,9 @@
-const express = require("express");
+
+// @flow
+const express = require("express")
 
 const bodyParser = require('body-parser');
-const router = express.Router();
+const router= express.Router();
 const fs = require('fs');
 
 const cors = require('cors')
@@ -102,6 +104,7 @@ router.post('/login', async(req,res) => {
         }
 })
 
+
 router.put('/menu', verifyToken, async(req, res) => {
     jwt.verify(req.token, 'secretkey',async (err,authData)=>{
         if(err){
@@ -114,9 +117,14 @@ router.put('/menu', verifyToken, async(req, res) => {
             //WHEN USER HAS VALID JWT TOKEN
             try {
                 const data = req.body;
-        
+                if(!data.dish_name || !data.dish_price || !data.status || !data.description || !data.jain_availability || !data.dish_id || !data.restaurant_id){
+                    return res.status(400).json({
+                        error: 1,
+                        msg: "One or more required field is empty!"
+                    }); 
+                }
                 const upd = await pool.query("UPDATE menu SET dish_name=$1, dish_price=$2, status=$3, description=$4, jain_availability=$5 WHERE restaurant_id=$6 and dish_id=$7", [data.dish_name, data.dish_price, data.status, data.description, data.jain_availability, data.restaurant_id, data.dish_id]);
-                //console.log(upd);
+                // console.log(upd);
                 res.status(200).json({msg: "Updated status successfully!"});
         
             } catch (err) {
@@ -128,6 +136,38 @@ router.put('/menu', verifyToken, async(req, res) => {
     });   
 })
 
+//update inventory
+router.put('/inventory', verifyToken, async(req, res) => {
+    jwt.verify(req.token, 'secretkey',async (err,authData)=>{
+        if(err){
+    
+            //INVALID TOKEN/TIMEOUT so delete the entry from databse 
+            // const deleted_info = await pool.query("DELETE FROM fcm_jwt WHERE EMAIL_ID=$1 ",[req.body.email_id])
+            res.status(400).json({msg: "Session expired. Login again"})
+            
+        }else{
+            //WHEN USER HAS VALID JWT TOKEN
+            try {
+                const data = req.body;
+                    if(!data.item_name || !data.available_qty || !data.restaurant_id || !data.inventory_id){
+                        return res.status(400).json({
+                            error: 1,
+                            msg: "One or more required field is empty!"
+                        }); 
+                    }
+                console.log(data)
+                const upd = await pool.query("UPDATE inventory SET item_name=$1, available_qty=$2 WHERE restaurant_id=$3 and inventory_id=$4", [data.item_name, data.available_qty, data.restaurant_id,data.inventory_id]);
+                console.log(upd);
+                res.status(200).json({msg: "Updated inventory successfully!"});
+        
+            } catch (err) {
+                console.error(err);
+                res.json({msg : "Error"});
+            }
+            
+        }
+    });   
+})
 
 router.post('/view_inventory',verifyToken, async(req, res) => {
     

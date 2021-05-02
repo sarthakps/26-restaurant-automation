@@ -33,45 +33,47 @@ router.post('/login', async(req,res) => {
 
         else{
             // validate password
-                // bcrypt.compare(data.password, login.rows[0].password, function(err, result) {
+                bcrypt.compare(data.password, login.rows[0].password, async function(err, result2) {
                     
-                //     // handle bcrypt compare error
-                //     if (err) { throw (err); }
-                const result = await pool.query("SELECT * FROM manager WHERE email_id=$1", [data.email_id]);
+                     // handle bcrypt compare error
+                    if (err) { 
+                        throw (err); 
+                    }
+                    const result = await pool.query("SELECT * FROM manager WHERE email_id=$1", [data.email_id]);
                     // password matches
-                    console.log(result.rows[0]['password'])
-                    if(result.rows[0]['password'] === req.body.password){
+                    // console.log(result.rows[0]['password'])
+                    // if(result.rows[0]['password'] === req.body.password){
 
-                        //GET JWT TOKEN 
-                        const emailid=data.email_id
+                    //GET JWT TOKEN 
+                    const emailid=data.email_id
+                    
+                    jwt.sign({emailid},'secretkey',{expiresIn: '5h'},async (err,token)=>{
                         
-                        jwt.sign({emailid},'secretkey',{expiresIn: '5h'},async (err,token)=>{
+                        if(err){
+                            console.log(err.message)
+                        }else{
                             
-                            if(err){
-                                console.log(err.message)
-                            }else{
-                                
-                                //need to create fcm token dont know how
-                                const fcmToken="temporary_fcm_token"   
-                                const checkEntry =  await pool.query("SELECT email_id FROM fcm_jwt WHERE email_id=$1", [data.email_id]);
-                                
-                                // //if already logged in then update
-                                if(checkEntry && typeof(checkEntry.rows[0])!=='undefined')
-                                {
-                                    console.log('updating')
+                            //need to create fcm token dont know how
+                            const fcmToken="temporary_fcm_token"   
+                            const checkEntry =  await pool.query("SELECT email_id FROM fcm_jwt WHERE email_id=$1", [data.email_id]);
+                            
+                            // //if already logged in then update
+                            if(checkEntry && typeof(checkEntry.rows[0])!=='undefined')
+                            {
+                                console.log('updating')
+                                const newUser = await pool.query(
+                                    "UPDATE fcm_jwt SET last_jwt = $1 WHERE email_id=$2", [token, data.email_id]);
+                                    
+                            }//if there is no login info then insert
+                            else{
+                                    console.log('inserting')
                                     const newUser = await pool.query(
-                                        "UPDATE fcm_jwt SET last_jwt = $1 WHERE email_id=$2", [token, data.email_id]);
-                                        
-                                }//if there is no login info then insert
-                                else{
-                                        console.log('inserting')
-                                        const newUser = await pool.query(
-                                        "INSERT INTO fcm_jwt(email_id,fcm_token,last_jwt) VALUES ($1, $2, $3)",
-                                        [data.email_id, fcmToken, token]);
-                                        
-                                }
+                                    "INSERT INTO fcm_jwt(email_id,fcm_token,last_jwt) VALUES ($1, $2, $3)",
+                                    [data.email_id, fcmToken, token]);
+                                    
+                            }
 
-                            //TOKEN CREATED WITHOUT ERROR  RETURN IT ALONG WITH LOGIN DATA
+                        //TOKEN CREATED WITHOUT ERROR  RETURN IT ALONG WITH LOGIN DATA
                             return  res.status(200).json({
                                     token: token,
                                     msg: "Successfully logged in!",
@@ -91,17 +93,12 @@ router.post('/login', async(req,res) => {
                             msg: "Invalid password! Please try again!"
                         });
                     }
-                // });
-                
-                    
-                 
+                // });   
             }
-        
         } catch (err) {
             console.log(err.message);
         }
 })
-
 
 
 // check if jwt works or not. getting error code 403-forbidden
