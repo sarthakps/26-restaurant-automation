@@ -191,20 +191,26 @@ const UpdateMenu = () => {
   };
 
     return (
-      <body style={{background:"#0A0908"}}>
+      <body style={{background:"#F2F4F3"}}>
 
-        <Header logout={"log out"} avatar={user_image} logoutpath={"/inventorymanager/login"}/>
+        <Header logout={"log out"} avatar={user_image} logoutpath={"/inventorymanager/login"}/> 
 
-        {/* LOTTIE */}
+        <div style={{height: "250px", backgroundColor: "#0A0908"}}>
+                <Lottie 
+                        options={defaultOptions}
+                          height={310}
+                          width={310}
+                          style={{float: "left", marginLeft: "5%", marginTop: "3%"}}
+                        />
+
+        <h1 style={{fontFamily: "font-family:Georgia, 'Times New Roman', Times, serif", letterSpacing: "0.10em", color: "#F2F4F8", fontSize: "50px", paddingTop: "10%", paddingLeft: "35%"}}>Update Inventory Page</h1>
+        </div>
 
         <div className="container text-center">
-            <br />
-            <h1 style={{fontFamily: "font-family:Georgia, 'Times New Roman', Times, serif", letterSpacing: "0.10em", color: "#F2F4F8", fontSize: "50px",  marginTop: "10%"}}> Update Menu Page</h1>
-            <br />
-
-
+          
+           
 <div className={classes.root}>
-      <Paper className={classes.paper} style={{background:"#0A0908", fontSize:"22px", boxShadow:"0px", marginTop: "200px"}}>
+      <Paper className={classes.paper} style={{background:"#F2F4F3", fontSize:"22px", boxShadow:"0px", marginTop: "200px"}}>
       <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
@@ -213,12 +219,11 @@ const UpdateMenu = () => {
           page={page}
           onChangePage={handleChangePage}
           onChangeRowsPerPage={handleChangeRowsPerPage}
-          style={{color:"#A9927D" ,  fontSize:"22px"}}
+          style={{color:"#5e503f" ,  fontSize:"22px"}}
         />
         <EnhancedTableToolbar
             filter={filter}
             onFilterChange={handleFilterChange}
-            colorp={"#F2F4F8"}
             style={{fontSize:"22px"}}
         />
         <h4 style={{color: "white"}}>{filter}</h4>
@@ -236,7 +241,7 @@ const UpdateMenu = () => {
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
               rowCount={resmenu.length}
-              style={{color:"#F2F4F8" ,  fontSize:"22px"}}
+              style={{color:"#DAA520" ,  fontSize:"22px"}}
             />
             <TableBody>
               {stableSort(resmenu, getComparator(order, orderBy, filter))
@@ -262,16 +267,16 @@ const UpdateMenu = () => {
                       <TableCell padding="checkbox">
                       </TableCell>
 
-                      <TableCell component="th" scope="row" padding="none" style={{color:"#F2F4F8"}}>
+                      <TableCell component="th" scope="row" padding="none" style={{color:"#5e503f"}}>
                         {row.dish_id}
                       </TableCell>
-                      <TableCell align="center" style={{color:"#F2F4F8"}}>{row.dish_name}</TableCell>
+                      <TableCell align="center" style={{color:"#5e503f"}}>{row.dish_name}</TableCell>
                    
-                        <TableCell align="center" style={{color:"#F2F4F8"}}>{row.description}</TableCell>
+                        <TableCell align="center" style={{color:"#5e503f"}}>{row.description}</TableCell>
                    
-                      <TableCell align="center" style={{color:"#F2F4F8"}}>{row.dish_price}</TableCell>
-                      <TableCell align="center" style={{color:"#F2F4F8"}}>{row.status}</TableCell>
-                      <TableCell align="center" style={{color:"#F2F4F8"}}>{row.jain_availability ? 'yes' : 'no'}</TableCell>
+                      <TableCell align="center" style={{color:"#5e503f"}}>{row.dish_price}</TableCell>
+                      <TableCell align="center" style={{color:"#5e503f"}}>{row.status}</TableCell>
+                      <TableCell align="center" style={{color:"#5e503f"}}>{row.jain_availability ? 'yes' : 'no'}</TableCell>
                       <TableCell><EditMenuModal row={row}/></TableCell>
                     </TableRow>
                     
@@ -302,8 +307,8 @@ const UpdateMenu = () => {
         <br/>
         <br />
     
-          <div className="container text-center">      
-        <Link to="/inventorymanager/invhome"><button type="button" class="btn btn-outline-dark btn-lg">Go to Home Page</button></Link>
+        <div className="container text-center">      
+        <Link to="/inventorymanager/invhome"><button type="button" id="inventory" class="btn btn-outline-dark btn-lg">Go to Home Page</button></Link>
         </div>
 
         <br />
