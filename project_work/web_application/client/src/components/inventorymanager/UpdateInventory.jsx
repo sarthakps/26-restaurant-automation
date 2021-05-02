@@ -193,17 +193,21 @@ const UpdateInventory = () => {
 
         <Header logout={"log out"} avatar={user_image} logoutpath={"/inventorymanager/login"}/>
 
-       {/* LOTTIFILES DIV TAG */}
+        <div style={{height: "250px", backgroundColor: "#0A0908"}}>
+        <Lottie 
+                options={defaultOptions}
+                  height={280}
+                  width={280}
+                  style={{float: "left", marginLeft: "5%", marginTop: "5%"}}
+                />
 
-       <h1>Inventory update page</h1>
+<h1 style={{fontFamily: "font-family:Georgia, 'Times New Roman', Times, serif", letterSpacing: "0.10em", color: "#F2F4F8", fontSize: "50px", paddingTop: "10%", paddingLeft: "35%"}}> Update Inventory Page</h1>
+        </div>
 
         
 
         <div className="container text-center">
-            <br />
-           
-            <br />
-
+    
 <div className={classes.root}>
       <Paper className={classes.paper} style={{background:"#F2F4F3", fontSize:"22px", boxShadow:"0px", marginTop: "200px"}}>
       <TablePagination
@@ -264,11 +268,11 @@ const UpdateInventory = () => {
                       <TableCell component="th" scope="row" padding="none" style={{color: "5e503f"}}>
                         {row.inventory_id}
                       </TableCell>
-                      <TableCell align="center" style={{color: "5e503f"}}>{row.item_name}</TableCell>
+                      <TableCell align="center" style={{color: "#5e503f"}}>{row.item_name}</TableCell>
                    
-                        <TableCell align="center" style={{color: "5e503f"}}>{row.available_qty}</TableCell>
+                        <TableCell align="center" style={{color: "#5e503f"}}>{row.available_qty}</TableCell>
                    
-                      <TableCell  align="center" style={{color: "5e503f"}}><EditInvModal row={row}/></TableCell>
+                      <TableCell  align="center" style={{color: "#5e503f"}}><EditInvModal row={row}/></TableCell>
                       <TableCell><Button>Delete</Button></TableCell>
                     </TableRow>
                     
@@ -296,7 +300,6 @@ const UpdateInventory = () => {
         <br />
         <br />
         <br />
-        {/* <EditMenuModal /> */}
         <br/>
         <br />
     
