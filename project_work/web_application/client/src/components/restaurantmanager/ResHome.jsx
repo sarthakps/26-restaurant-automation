@@ -1,239 +1,53 @@
-import React, {Fragment, useState} from "react"
+import React, {Fragment, useState, useRef} from "react"
 import {BrowserRouter as Router, Route, Switch, Link, Redirect, useRouteMatch } from "react-router-dom"
 import './reshome.css'
 import img1 from '../../images/reshome4.jpg'
+import backimg from './reshome_img2.jpg'
+import menu from './resmenu.jpg'
+import revenue from './revenue.jpeg'
+import revenue2 from './revenue2.jpeg'
+import rush from './rush.jpeg'
+import register1 from './register.jpg'
+import markatten from './markatten.jpg'
+import viewatten from './viewatten.jpg'
+import feedback from './feedback.jpg'
+import remove from './remove2.jpg'
+
+
+import Card from './Card'
+import Header from './Header'
+import Footer from './Footer'
+import "@fontsource/open-sans-condensed"
 
 const ResHome = () => {
+
+    const divRef = useRef();
+
     return (    
 
         <Fragment>
 
-            <body style={{backgroundColor:"#000c0c"}}>
-     <br />
+            <body style={{backgroundColor:"#f2f4f3"}}>
 
-        <div style={{width: "100%", height: "2px", marginTop:"0px", paddingTop:"0px"}}>
-        <img src={img1} style={{width: "100%", height: "700px", background:"no repeat center fixed", backgroundSize: "cover"}} />
+        {/* <div>
+        <img className="darkened-image" src={backimg} style={{height:"800px", width:"100%" }}/>
+        </div> */}
+
+<div style={{width: "100%", height: "2px", marginTop:"0px", paddingTop:"0px"}}>
+        <img className="darkened-image" src={backimg} style={{width: "100%", height: "670px", background:"no repeat center fixed", backgroundSize: "cover"}} />
         </div>
     
 
     <div class="w3-container w3-tangerine">
-        <p class="w3-jumbo" style={{textAlign: "center"}}><strong>Welcome Restaurant Manager</strong></p>
-      </div>
-
-    <div style={{float: "right", marginRight: "70px"}}><button type="button" class="btn btn-outline-dark btn-lg">LOGOUT</button></div>
-
-
-    <div class="row" style={{marginTop: "200px"}}>
-        <div class="col-sm-6" style={{marginLeft: "0%"}}>
-        {/* <div class="card"> */}
-            <div class="card-body">
-                <div class="frame1">
-                    <img src="https://laurent.qodeinteractive.com/wp-content/uploads/2020/01/Landing-home-img-1-scaled.jpg" />
-                                
-                </div>
-                <br />
-                <div class="title" >
-                    <Link to="/restaurantmanager/menu"><button type="button" class="btn btn-outline-dark btn-lg" >Menu</button></Link>
-                </div>     
-            </div>
-        {/* </div> */}
+        <h1 class="w3-jumbo" style={{textAlign: "center", marginTop: "300px", fontFamily: "Open Sans Condensed", fontSize: "100px !important", color: "white"}}>Restaurant Manager</h1>
     </div>
 
-    <div class="col-sm-6">
-        {/* <div class="card"> */}
-            <div class="card-body">
-                <div class="frame1">
-                    <img src="https://laurent.qodeinteractive.com/wp-content/uploads/2020/01/Landing-home-img-11-scaled.jpg"/>
-                </div>
-                <br />
-                <div class="title" style={{textAlign: "center"}}>
-                    <Link to="/restaurantmanager/revenue"><button type="button" class="btn btn-outline-dark btn-lg">Revenue Analysis</button></Link>
-                </div>
-                    
-            </div>
-
-        {/* </div> */}
+    <div style={{height: "360px", backgroundColor:"#0a0908"}}>
+        <h6 style={{color: "#f2f4f3", paddingTop: "303px", textAlign: "center"}}>Menu &nbsp; &nbsp; &nbsp; &nbsp; Revenue &nbsp; &nbsp; &nbsp; &nbsp; Register User &nbsp; &nbsp; &nbsp; &nbsp; View/Mark Attendance &nbsp; &nbsp; &nbsp; &nbsp; Analyze Feedback &nbsp; &nbsp; &nbsp; &nbsp; Rush Hour Prediction &nbsp; &nbsp; &nbsp; &nbsp; Remove a User </h6>
     </div>
-    <div class="col-sm-6">
-        {/* <div class="card"> */}
-            <div class="card-body">
-                <div class="frame1">
-                    <img src="https://laurent.qodeinteractive.com/wp-content/uploads/2020/01/Landing-home-img-3.jpg" />
-                </div>
-                <br />
-                <div class="title" style={{textAlign: "center"}}>
-                    <Link to="/restaurantmanager/register-user"><button type="button" class="btn btn-outline-dark btn-lg">Register User</button></Link>
-                </div>
-                    
-            </div>
-
-        {/* </div> */}
-    </div>
-</div>
+       
 
 
-
-<div class="row" style={{marginTop: "100px", align: "cenetr"}}>
-        <div class="col-sm-6" style={{marginLeft: "0%"}}>
-        {/* <div class="card"> */}
-        <div class="card-body">
-                    <div class="frame1">
-                        <img
-                            src="https://laurent.qodeinteractive.com/wp-content/uploads/2020/01/Landing-home-img-4.jpg" />
-                    </div>
-                    <br />
-                    <div class="title" style={{textAlign: "center"}}>
-                    <Link to="/restaurantmanager/rush-hour-prediction"><button type="button" class="btn btn-outline-dark btn-lg">Rush Hour Analysis</button></Link>
-                    </div>
-    
-                </div>
-        {/* </div> */}
-    </div>
-
-    <div class="col-sm-6">
-        {/* <div class="card"> */}
-            
-        <div class="card-body">
-                    <div class="frame1">
-                        <img
-                            src="https://laurent.qodeinteractive.com/wp-content/uploads/2020/01/Laurent-home-new-img-1.jpg" />
-                    </div>
-                    <br />
-                    <div class="title" style={{textAlign: "center"}}>
-                    <Link to="/restaurantmanager/attendance"><button type="button" class="btn btn-outline-dark btn-lg">Attendance</button></Link>
-                    </div>
-        
-                </div>
-
-        {/* </div> */}
-    </div>
-    <div class="col-sm-6">
-        {/* <div class="card"> */}
-        <div class="card-body">
-                    <div class="frame1">
-                        <img
-                            src="https://laurent.qodeinteractive.com/wp-content/uploads/2020/01/Landing-home-img-10-scaled.jpg" />
-                    </div>
-                    <br />
-                    <div class="title" style={{textAlign: "center"}}>
-                    <Link to="/restaurantmanager/feedback-analysis"><button type="button" class="btn btn-outline-dark btn-lg">Feedback Analysis</button></Link>
-                    </div>
-              
-                </div>
-
-        {/* </div> */}
-    </div>
-</div>
-
-<div class="title" style={{textAlign: "center"}}>
-    <Link to="/restaurantmanager/mark-attendance"><button type="button" class="btn btn-outline-dark btn-lg">Mark Attendance</button></Link>
-</div>
-
-<div class="title" style={{textAlign: "center"}}>
-    <Link to="/restaurantmanager/remove-user"><button type="button" class="btn btn-outline-dark btn-lg">Remove a User</button></Link>
-</div>
-
-
-    {/* <div class="container text-center">
-        <div class="row">
-            <div class="col-sm-6">
-
-                <div class="card-body">
-                    <div class="frame1">
-                        <img
-                            src="https://laurent.qodeinteractive.com/wp-content/uploads/2020/01/Landing-home-img-1-scaled.jpg" />
-                            
-                    </div>
-                    <br />
-                    <div class="title" style={{textAlign: "center"}}>
-                    <Link to="/restaurantmanager/menu"><button type="button" class="btn btn-outline-dark btn-lg" >Menu</button></Link>
-                    </div>
-
-                    
-                  
-                </div>
-            </div>
-
-
-            <div class="col-sm-6">
-
-                <div class="card-body">
-                    <div class="frame1">
-                        <img
-                            src="https://laurent.qodeinteractive.com/wp-content/uploads/2020/01/Landing-home-img-11-scaled.jpg"/>
-                    </div>
-                    <br />
-                    <div class="title" style={{textAlign: "center"}}>
-                    <Link to="/restaurantmanager/revenue"><button type="button" class="btn btn-outline-dark btn-lg">Revenue Analysis</button></Link>
-                    </div>
-                   
-                </div>
-
-            </div>
-            <div class="col-sm-6">
-
-                <div class="card-body">
-                    <div class="frame1">
-                        <img
-                            src="https://laurent.qodeinteractive.com/wp-content/uploads/2020/01/Landing-home-img-3.jpg" />
-                    </div>
-                    <br />
-                    <div class="title" style={{textAlign: "center"}}>
-                    <Link to="/restaurantmanager/register-user"><button type="button" class="btn btn-outline-dark btn-lg">Register User</button></Link>
-                    </div>
-                   
-                </div>
-            </div>
-            <div class="col-sm-6">
-
-                <div class="card-body">
-                    <div class="frame1">
-                        <img
-                            src="https://laurent.qodeinteractive.com/wp-content/uploads/2020/01/Landing-home-img-4.jpg" />
-                    </div>
-                    <br />
-                    <div class="title" style={{textAlign: "center"}}>
-                    <Link to="/restaurantmanager/rush-hour-prediction"><button type="button" class="btn btn-outline-dark btn-lg">Rush Hour Analysis</button></Link>
-                    </div>
-    
-                </div>
-            </div>
-            <div class="col-sm-6">
-
-                <div class="card-body">
-                    <div class="frame1">
-                        <img
-                            src="https://laurent.qodeinteractive.com/wp-content/uploads/2020/01/Laurent-home-new-img-1.jpg" />
-                    </div>
-                    <br />
-                    <div class="title" style={{textAlign: "center"}}>
-                    <Link to="/restaurantmanager/attendance"><button type="button" class="btn btn-outline-dark btn-lg">Attendance</button></Link>
-                    </div>
-        
-                </div>
-            </div>
-            <div class="col-sm-6">
-
-                <div class="card-body">
-                    <div class="frame1">
-                        <img
-                            src="https://laurent.qodeinteractive.com/wp-content/uploads/2020/01/Landing-home-img-10-scaled.jpg" />
-                    </div>
-                    <br />
-                    <div class="title" style={{textAlign: "center"}}>
-                    <Link to="/restaurantmanager/feedback-analysis"><button type="button" class="btn btn-outline-dark btn-lg">Feedback Analysis</button></Link>
-                    </div>
-              
-                </div>
-            </div>
-        </div>
-
-    </div> */}
-    </body>
-    </Fragment>
-
-
-    )
-}
-
-export default ResHome
+    <Header logout={"log out"} avatar={""}  logoutpath={"/restaurantmanager/login"} height={"50px"} height={"65px"} color={"black"} color2={"white"}/>
+    <br />
+    <br />   
