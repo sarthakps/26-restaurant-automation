@@ -83,22 +83,18 @@ router.post('/login', async(req,res) => {
                                     user_name: login.rows[0].user_name,
                                     contact_no: login.rows[0].contact_no,
                                 });
-                        }
-                        
-                    }); 
-                    // invalid password
-                    // else {
-                    //     return res.status(400).json({
-                    //         error:1,
-                    //         msg: "Invalid password! Please try again!"
-                    //     });
-                    
-                });
-                
-                    
-                 
+                            }
+                            
+                        }); 
+                    }// invalid password
+                    else {
+                        return res.status(400).json({
+                            error:1,
+                            msg: "Invalid password! Please try again!"
+                        });
+                    }
+                // });   
             }
-        
         } catch (err) {
             console.log(err.message);
         }
@@ -135,6 +131,123 @@ router.post('/viewmenu',verifyToken, async(req, res) => {
             }    
             //console.log("total_results: " + viewmenu.rowCount, "dishes: " + viewmenu.rows);
         }
+    });   
+    
+})
+
+
+// ALL USERS
+router.post('/allusers',verifyToken, async(req, res) => {
+    
+    //INITIALIZE JWT VERIFICATION
+    jwt.verify(req.token, 'secretkey',async (err,authData)=>{
+        if(err){
+
+            //INVALID TOKEN/TIMEOUT so delete the entry from databse 
+            // const deleted_info = await pool.query("DELETE FROM fcm_jwt WHERE EMAIL_ID=$1 ",[req.body.email_id])
+            res.status(400).json({msg: "Session expired. Login again"})
+            
+        }else{
+            //WHEN USER HAS VALID JWT TOKEN
+            const data = req.body;
+            const viewUsers =  await pool.query("SELECT user_id, user_name, user_image, usertype_id FROM users WHERE restaurant_id=$1", [data.restaurant_id]);
+            
+            if(!viewUsers.rows[0] && !viewUsers.rows.length){
+                return res.status(400).json({
+                    error:1,
+                    msg: "No menu item available for this restaurant"
+                });
+              
+            }
+            else{
+                return res.json({total_results: viewUsers.rowCount, users: viewUsers.rows});
+            }    
+            //console.log("total_results: " + viewmenu.rowCount, "dishes: " + viewmenu.rows);
+        }
+    });   
+    
+})
+
+// get the list of all uses for marking attendance
+router.post('/viewusers',verifyToken, async(req, res) => {
+    
+    //INITIALIZE JWT VERIFICATION
+    jwt.verify(req.token, 'secretkey',async (err,authData)=>{
+        if(err){
+
+            //INVALID TOKEN/TIMEOUT so delete the entry from databse 
+            // const deleted_info = await pool.query("DELETE FROM fcm_jwt WHERE EMAIL_ID=$1 ",[req.body.email_id])
+            res.status(400).json({msg: "Session expired. Login again"})
+            
+        }else{
+            //WHEN USER HAS VALID JWT TOKEN
+            const data = req.body;
+            const todate = new Date();
+            const todate_iso = ISODateString(todate)
+            //console.log(todate_iso);
+
+            const markedusers = await pool.query("SELECT user_id, time_stamp from attendance")
+            //console.log("marke users", markedusers)
+            const result = matchDate(markedusers.rows); // user ids that have been marked for today's attendance
+           console.log(result.size);
+           //console.log(typeof result);
+           const viewusers =  await pool.query("SELECT user_image, user_id, user_name, usertype_id FROM users WHERE restaurant_id=$1", [data.restaurant_id]);
+
+            if(result.size == 0){
+                
+                if(!viewusers.rows[0] && !viewusers.rows.length){
+                    return res.status(400).json({
+                        error:1,
+                        msg: "No user available for this restaurant"
+                    });
+                  
+                }
+                else{
+                    return res.json({users: viewusers.rows});
+                }
+            }
+           
+            
+            else if(result.size != 0){
+                
+                const viewusers2 = viewusers.rows; // all of the users
+                //console.log(viewusers2);
+    
+                final_ans = [];
+    
+                viewusers2.forEach((element, index, array) => {
+                    var cnt=0;
+                    result.forEach((value) => {
+                        //console.log("element.user_id and value",element.user_id, value);
+                        if(element.user_id != value){
+                            cnt++;
+                        }
+                    })
+                    if(cnt == result.size){
+                        final_ans.push({
+                            "user_image": element.user_image,
+                            "user_id": element.user_id,
+                            "user_name": element.user_name,
+                            "usertype_id": element.usertype_id
+                        })
+                    }
+                })
+                
+               //console.log(final_ans)
+    
+                if(!final_ans && !final_ans){
+                    return res.status(400).json({
+                        error:1,
+                        msg: "No user available for this restaurant"
+                    });
+                  
+                }
+                else{
+                    return res.json({users: final_ans});
+                }  
+            }
+            
+         }
     });   
     
 })
@@ -267,7 +380,7 @@ router.post('/register-user',async(req,res) => {
             msg: "Registered successfully!"
         });
     } catch (err) {
-        console.log(err.message)
+        console.log("ERRRRR", err.message)
     }
 })
 
@@ -284,7 +397,10 @@ router.post('/mark_attendance',async(req,res) => {
     
                 try {
                     const data = req.body;
-                    if(!data.restaurant_id || !data.user_id || !data.attendance_status){
+                    //console.log(data.restaurant_id)
+                    //console.log(data.user_id)
+                    //console.log(data.attendance_status)
+                    if(!data.restaurant_id || !data.user_id){
                         
                         res.status(400).json({
                             error:1,
@@ -293,15 +409,17 @@ router.post('/mark_attendance',async(req,res) => {
 
                     } else { 
                     
-                        const time_now= await pool.query("SELECT NOW()");
+                        var date = new Date();
+                        var currentISODate = ISODateTimeString(date);
                         
                         const username = await pool.query("SELECT user_name from users WHERE user_id=$1", [data.user_id])
                         const username2 = username.rows[0].user_name;
+                        console.log(currentISODate)
                         const newUser = await pool.query(
                         "INSERT INTO attendance(restaurant_id,user_id, user_name, time_stamp,attendance_status) VALUES ($1, $2, $3, $4, $5)",
-                            [data.restaurant_id,data.user_id, username2, time_now.rows[0]['now'],data.attendance_status]);
+                            [data.restaurant_id,data.user_id, username2, currentISODate ,true]);
                             
-                        res.json({msg:"Attendance marked" });
+                        res.status(200).json({msg:"Attendance marked" });
                     }
                 } catch (err) {
                     console.log(err.message)
@@ -356,6 +474,46 @@ router.post('/view_attendance', async (req,res)=>{
 })
 
 
+// works
+// router.post('/view_attendance',async (req,res)=>{
+//     // jwt.verify(req.token, 'secretkey',async (err,authData)=>{
+//     //     if(err){
+
+//     //         //INVALID TOKEN/TIMEOUT
+//     //         res.status(400).json({msg: "Session expired. Login again"})
+            
+//     //     }else{
+    
+//                 try{
+//                     if(!req.body.user_name)
+//                     {
+//                         res.status(400).json({
+//                             error:1,
+//                             msg: "Empty field"   
+//                         }); 
+//                     }
+//                     else{
+//                         const results = await pool.query(`SELECT user_id,user_name,time_stamp,attendance_status FROM ATTENDANCE where user_name like '%${req.body.user_name}%'`)
+//                         //console.log(results)
+//                         if(!results.rows[0] && !results.rows.length)
+//                         {
+//                             res.status(400).json({
+//                                 error:1,
+//                                 msg: "No data found for a given user"   
+//                             }); 
+//                         }
+//                         else{
+//                             res.status(200).json(results.rows);
+//                         }
+//                     }        
+                    
+//                 }
+//                 catch(err){
+//                     console.log(err.message);
+//                 }
+//             // }
+// });
+
 // FEEDBACK
 router.post('/feedback',async (req,res)=>{
 
@@ -388,6 +546,48 @@ router.post('/feedback',async (req,res)=>{
             // }       
 });
 
+// delete stff member : requires restaurant_id and user_id
+router.post('/delete_staff', async(req, res) => {
+    try{
+        const data = req.body;
+        // Check for empty field
+        if(!data.user_id || !data.restaurant_id)
+        {
+            return res.status(400).json({
+                error: 1,
+                msg: "One or more required field is empty!"
+            });
+        }
+        else
+        {
+            //Get email_id from user_id
+            const EmailOfUser = await pool.query("SELECT email_id FROM users WHERE restaurant_id=$1 and user_id=$2", [data.restaurant_id,data.user_id]);
+            if(!EmailOfUser.rows[0] && !EmailOfUser.rows.length && !EmailOfUser.rows[0].email_id)
+            {
+                return res.status(400).json({
+                    error:1,
+                    msg: "A user with given user id does not exists for this restaurant"
+                });
+            }
+            else{
+                // console.log(EmailOfUser.rows[0].email_id);
+                // Remove entry from FCM_JWT
+                const isLoggedIn = await pool.query("DELETE FROM fcm_jwt WHERE email_id=$1", [EmailOfUser.rows[0].email_id]);
+                // Remove entry from Attendance table
+                const result1 = await pool.query("DELETE FROM attendance WHERE restaurant_id=$1 and user_id=$2", [data.restaurant_id,data.user_id]);
+                // Remove entry from Users table
+                const result2 = await pool.query("DELETE FROM users WHERE restaurant_id=$1 and user_id=$2", [data.restaurant_id,data.user_id]);
+                return res.status(200).json({
+                    msg: "Deleted successfully!"
+                });
+            }
+        }
+
+    }catch(err)
+    {
+        console.log(err.message);
+    }
+});
 
 
 async function iter(myArr){
@@ -414,11 +614,44 @@ async function iter(myArr){
     return response;
 }
 
+
+function matchDate(myArr){
+
+    // var response = [];
+    // var response = new Map();
+    var response = new Set();
+    var date = new Date();
+    var currentISODate = ISODateString(date);
+    myArr.forEach((element, index, array) => {
+        var date2 = element.time_stamp.split(" ");
+
+        if(date2[0] == currentISODate){
+            // response.push({
+            //     "user_id" : element.user_id
+            // })
+            // response['user_id'] = element.user_id;
+            response.add(element.user_id)
+        }
+    });
+
+    return response;
+}
+
+
 function ISODateString(d){
     function pad(n){return n<10 ? '0'+n : n}
     return d.getUTCFullYear()+'-'
          + pad(d.getUTCMonth()+1)+'-'
          + pad(d.getUTCDate())}
+
+function ISODateTimeString(d){
+    function pad(n){return n<10 ? '0'+n : n}
+    return d.getUTCFullYear()+'-'
+         + pad(d.getUTCMonth()+1)+'-'
+         + pad(d.getUTCDate()) +' '
+          + pad(d.getUTCHours())+':'
+          + pad(d.getUTCMinutes())+':'
+          + pad(d.getUTCSeconds())}
    
 
 async function verifyToken(req,res,next){

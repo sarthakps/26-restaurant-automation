@@ -10,6 +10,15 @@ import RegisterUser from './components/restaurantmanager/RegisterUser'
 import RushHourPred from './components/restaurantmanager/RushHourPred'
 import Attendance from './components/restaurantmanager/Attendance'
 import FeedbackAnalysis from './components/restaurantmanager/FeedbackAnalysis'
+import MarkAttendance from './components/restaurantmanager/MarkAttendance'
+import RemoveUser from './components/restaurantmanager/RemoveUser'
+import InvLogin from './components/inventorymanager/InvLogin'
+import UpdateMenu from './components/inventorymanager/UpdateMenu'
+import InvHome from './components/inventorymanager/InvHome'
+import UpdateInventory from './components/inventorymanager/UpdateInventory'
+import KitLogin from './components/kitchenpersonnel/KitLogin'
+import PendingOrders from './components/kitchenpersonnel/PendingOrders'
+// import ShowModal from './components/inventorymanager/ShowModal'
 
 function App() {
   return (
@@ -25,6 +34,15 @@ function App() {
           <Route exact path="/restaurantmanager/rush-hour-prediction" component={RushHourPred} />
           <Route exact path="/restaurantmanager/attendance" component={Attendance} />
           <Route exact path="/restaurantmanager/feedback-analysis" component={FeedbackAnalysis} />
+          <Route exact path="/restaurantmanager/mark-attendance" component={MarkAttendance} />
+          <Route exact path="/restaurantmanager/remove-user" component={RemoveUser} />
+          <Route exact path="/inventorymanager/login" component={InvLogin} />
+          <Route exact path="/inventorymanager/update-menu" component={UpdateMenu} />
+          <Route exact path="/inventorymanager/invhome" component={InvHome} />
+          <Route exact path="/inventorymanager/update-inventory" component={UpdateInventory} />
+          <Route exact path="/kitchenpersonnel/login" component={KitLogin} />
+          <Route exact path="/kitchenpersonnel/pending-orders" component={PendingOrders} />
+          {/* <Route exact path="/inventorymanager/showmodal" component={ShowModal} /> */}
         </Switch>
       </Router>
     </Fragment>

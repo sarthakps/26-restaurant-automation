@@ -10,7 +10,7 @@
 }
 
 .btn-outline-dark {
-  border-radius: 0px;
+  border-radius: 5px;
   border-color: #c9ab81;
   padding-top: 15px;
   padding-bottom: 15px;
@@ -32,7 +32,7 @@
 
 .btn-outline-dark:hover {
   background-color: transperent !important;
-  border: 1px solid #c9ab81;
+  border: 1px solid #c9ab81 !important;
 }
 
 .MuiPaper-root {

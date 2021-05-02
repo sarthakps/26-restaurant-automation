@@ -33,6 +33,10 @@ router.post('/login', async(req,res) => {
                     console.log(result1)
                     // handle bcrypt compare error
                     if (result1==false) { 
+                        return res.status(400).json({
+                            error:1,
+                            msg: "Invalid password! Please try again!"
+                        });
                         throw (err); 
                     }else{
                         
@@ -91,9 +95,6 @@ router.post('/login', async(req,res) => {
                     //         msg: "Invalid password! Please try again!"
                     //     });
                     // }
-
-                    
-                
                 });
                          
             }
@@ -167,6 +168,70 @@ router.put('/inventory', verifyToken, async(req, res) => {
         }
     });   
 })
+
+router.post('/view_inventory',verifyToken, async(req, res) => {
+    
+    //INITIALIZE JWT VERIFICATION
+    jwt.verify(req.token, 'secretkey',async (err,authData)=>{
+        if(err){
+
+            //INVALID TOKEN/TIMEOUT so delete the entry from databse 
+            // const deleted_info = await pool.query("DELETE FROM fcm_jwt WHERE EMAIL_ID=$1 ",[req.body.email_id])
+            res.status(400).json({msg: "Session expired. Login again"})
+            
+        }else{
+            //WHEN USER HAS VALID JWT TOKEN
+            const data = req.body;
+            const viewinv =  await pool.query("SELECT inventory_id, item_name, available_qty FROM inventory WHERE restaurant_id=$1", [data.restaurant_id]);
+            
+            if(!viewinv.rows[0] && !viewinv.rows.length){
+                return res.status(400).json({
+                    error:1,
+                    msg: "No menu item available for this restaurant"
+                });
+              
+            }
+            else{
+                return res.json({total_results: viewinv.rowCount, dishes: viewinv.rows});
+            }    
+            //console.log("total_results: " + viewmenu.rowCount, "dishes: " + viewmenu.rows);
+        }
+    });   
+    
+})
+
+router.put('/inventory', verifyToken, async(req, res) => {
+    jwt.verify(req.token, 'secretkey',async (err,authData)=>{
+        if(err){
+    
+            //INVALID TOKEN/TIMEOUT so delete the entry from databse 
+            // const deleted_info = await pool.query("DELETE FROM fcm_jwt WHERE EMAIL_ID=$1 ",[req.body.email_id])
+            res.status(400).json({msg: "Session expired. Login again"})
+            
+        }else{
+            //WHEN USER HAS VALID JWT TOKEN
+            try {
+                const data = req.body;
+                    if(!data.item_name || !data.available_qty || !data.restaurant_id || !data.inventory_id){
+                        return res.status(400).json({
+                            error: 1,
+                            msg: "One or more required field is empty!"
+                        }); 
+                    }
+                //console.log(data)
+                const upd = await pool.query("UPDATE inventory SET item_name=$1, available_qty=$2 WHERE restaurant_id=$3 and inventory_id=$4", [data.item_name, data.available_qty, data.restaurant_id,data.inventory_id]);
+                console.log(upd);
+                res.status(200).json({msg: "Updated inventory successfully!"});
+        
+            } catch (err) {
+                console.error(err);
+                res.json({msg : "Error"});
+            }
+            
+        }
+    });   
+})
+
 
 async function verifyToken(req,res,next){
 
