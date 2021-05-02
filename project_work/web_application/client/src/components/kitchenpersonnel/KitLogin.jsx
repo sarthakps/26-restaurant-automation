@@ -1,6 +1,81 @@
 import React,{Fragment, useState } from "react";
-import {BrowserRouter as Router, Route, Switch, Link, Redirect, useRouteMatch } from "react-router-dom";
+import {Link } from "react-router-dom";
 import Swal from "sweetalert2";
+import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import TextField from '@material-ui/core/TextField';
+import Paper from '@material-ui/core/Paper';
+import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import Typography from '@material-ui/core/Typography';
+import Carousel from 'react-material-ui-carousel';
+import { green } from '@material-ui/core/colors';
+import { createMuiTheme, makeStyles, ThemeProvider } from '@material-ui/core/styles';
+import LockOpenIcon from '@material-ui/icons/LockOpen';
+import { deepOrange, deepPurple , red } from '@material-ui/core/colors';
+import HomeIcon from '@material-ui/icons/Home';
+import i1 from './i1.jpg';
+import i2 from './i2.jpg';
+import i3 from './i3.jpg';
+
+
+const theme = createMuiTheme({
+    palette: {
+      secondary: green,
+    },
+  });
+  
+const useStyles = makeStyles((theme) => ({
+  submit123: {
+    margin: theme.spacing(3, 0, 2),
+  },
+  formControl123: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
+  purple123: {
+    color: theme.palette.getContrastText(deepPurple[500]),
+    backgroundColor: deepPurple[500],
+  },
+  paper123: {
+    margin: theme.spacing(8, 4),
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  avatar123: {
+    margin: theme.spacing(1),
+    backgroundColor: theme.palette.secondary.main,
+  },
+  root123: {
+    height: '100vh',
+  },
+  image123: {
+    backgroundRepeat: 'no-repeat',
+    backgroundColor:
+    theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    width: "100%",
+    height: "95vh",
+  },
+  form123: {
+    width: '100%', 
+    marginTop: theme.spacing(2),
+  },
+  orange123: {
+    color: theme.palette.getContrastText(deepOrange[500]),
+    backgroundColor: deepOrange[500],
+  },
+    Red123: {
+      color: theme.palette.getContrastText(red[500]),
+      backgroundColor: red[500],
+    },
+  
+}));
+
 
 const ResLogin = (props) => {
     const [email_id, setUid] = useState("")
@@ -8,6 +83,7 @@ const ResLogin = (props) => {
 
     const onSubmitForm = async e => {
         e.preventDefault();
+        //console.log("jay shree krishna");
         try {
             const body = {email_id, password};
 
@@ -43,61 +119,103 @@ const ResLogin = (props) => {
             console.log(err.message);
         }
     }
-
+    const classes = useStyles();
     return (
   
 <Fragment>
 
      <div id="resloginpage">
-        
-              <div class="title">
-                  <br />
-              <h1 class="container text-center"><strong>Kitchen Personnel</strong></h1>
-        
-              <div class="second">
-              </div>
-              </div>
-              <br />
+
+     <Grid container component="main" className={classes.root123}>
+      <CssBaseline />
+        <Grid item xs={false} sm={4} md={7}  >
+          <Carousel >
+                <div  >
+                <img src={i1}  className={classes.image123}/>
+                </div> 
+                <div >
+                <img src={i2} className={classes.image123}/>
+                </div> 
+                <div >
+                <img src={i3} className={classes.image123}/>
+                </div> 
+          </Carousel>
+        </Grid>
+        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square style={{height:"100%"}}>
+        <h1 style={{textAlign:"center"}}><strong>Kitchen Personnel</strong></h1>
+          <div className={classes.paper123}>
+            <Avatar className={classes.Red123}><LockOutlinedIcon /></Avatar>
+            <Typography component="h2" variant="h5">LOGIN</Typography>
+              <form  action="POST" onSubmit={onSubmitForm} className={classes.form123}>
+                <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="email"
+                    type="email"
+                    label="Email Address"
+                    name="email"
+                    autoComplete="email"
+                    autoFocus
+                    required value = {email_id}
+                    onChange={e => setUid(e.target.value)}
+                  />
+                    
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    name="password"
+                    label="Password"
+                    type="password"
+                    id="password"
+                    autoComplete="current-password"
+                    required value = {password} 
+                    onChange={e => setPassword(e.target.value)}
+                  />
+                  <Box textAlign='center'>
+                  <Button
+                    type="submit"
+                    //fullWidth
+                    variant="contained"
+                    color="primary"
+                    endIcon={<LockOpenIcon />}
+                    className={classes.submit123}
+                    style={{width:"45%"}}
+                  >
+                    LOGIN
+                  </Button>
+                  </Box>
+                <br/>
+                <br/>
+                <br/>
                 
-                <br/> 
-                
-                <div className="container text-center">
-                  <h2 class="login-hone">Login : </h2>
-                  <small class="login-hone">Enter The appropriate credentials</small>
-                </div>
-             <div className="container">
-             <form action="POST" onSubmit={onSubmitForm}>
-                    <div >
-                      <label for="uid">Email ID:</label>
-                      <input type="text" className="form-control" id="uid" placeholder="Enter username" name="uid" required value = {email_id} onChange={e => setUid(e.target.value)} />
-                    </div>
-                    <div>
-                    <label for="pwd">Password:</label>
-                    <input type="password" className="form-control" id="pwd" placeholder="Enter password" name="pswd" required value = {password} onChange={e => setPassword(e.target.value)}/>
-                  </div>
-                  <br />
-                  <button className="btn btn-primary">LOGIN</button>
-                 
-                </form>
-            </div>
-        
-          <br /> 
-          <br />
-          <br />       
+              </form>
 
-
-  
-    
-             <div className="container text-center">
-                    <Link to={"/"}><button className="btn btn-warning"><span>Go to Main page</span></button></Link>
-            </div>
-
-            </div>
-            
-            
-            </Fragment>
-    )
+            <Box textAlign='center'>
+                <Link to={"/"}>
+                  <ThemeProvider theme={theme}>
+                  <Button
+                      type="submit"
+                      variant="contained"
+                      fullWidth
+                      color="secondary"
+                      startIcon={<HomeIcon />}
+                      className={classes.submit123}               
+                    >
+                      GO TO MAIN PAGE
+                    </Button>
+                  </ThemeProvider>
+                </Link>
+            </Box>
+          </div>
+        </Grid>
+      </Grid>        
+    </div>
+  </Fragment>
+  )
 
 }
-
 export default ResLogin;

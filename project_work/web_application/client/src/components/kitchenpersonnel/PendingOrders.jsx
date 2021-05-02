@@ -19,7 +19,7 @@ import Switch from '@material-ui/core/Switch';
 
 import Header from '../restaurantmanager/Header'
 import Lottie from 'react-lottie';
-import animationData from '../../images/updateinv.json'
+import animationData from '../../images/pendord.json'
 import Card from '../restaurantmanager/Card'
 import '../stylebutton.css'
 
@@ -190,14 +190,14 @@ const Menu = () => {
     return (
       <body style={{background:"#F2F4F3"}}>
 
-      <Header logout={"log out"} avatar={user_image} logoutpath={"/kitchenpersonnel/login"}/>
+      <Header logout={"log out"} avatar={user_image} logoutpath={"/kitchenpersonnel/login"} height={"65px"} color={"white"} color2={"#0A0908"}/> 
 
       <div style={{height: "250px", backgroundColor: "#0A0908"}}>
         <Lottie 
                 options={defaultOptions}
-                  height={280}
-                  width={280}
-                  style={{float: "left", marginLeft: "5%", marginTop: "5%"}}
+                  height={350}
+                  width={350}
+                  style={{float: "left", marginLeft: "5%"}}
                 />
 
 <h1 style={{fontFamily: "font-family:Georgia, 'Times New Roman', Times, serif", letterSpacing: "0.10em", color: "#F2F4F8", fontSize: "50px", paddingTop: "10%", paddingLeft: "35%"}}>Pending Orders</h1>
