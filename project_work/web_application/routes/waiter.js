@@ -40,8 +40,8 @@ router.post('/login', async(req,res) => {
             bcrypt.compare(data.password, login.rows[0].password, async function(err, result2) {
                 
                 // handle bcrypt compare error
-                if (err) { 
-                    throw (err); 
+                if (result2==false) { 
+                    return res.status(400).json({'msg':'Incorrect password!'})
                 }
                 
                 //GET JWT TOKEN 
@@ -66,16 +66,17 @@ router.post('/login', async(req,res) => {
                         else{
                                 console.log('inserting')
                                 const newUser = await pool.query(
-                                "INSERT INTO fcm_jwt(email_id,fcm_token,last_jwt) VALUES ($1, $2, $3)",
-                                [data.email_id, fcmToken, token]);
+                                "INSERT INTO fcm_jwt(email_id,fcm_token,last_jwt,restaurant_id,usertype_id) VALUES ($1, $2, $3,$4,1)",
+                                [data.email_id, fcmToken, token,data.restaurant_id]);
                                 
                         }
 
                         //TOKEN CREATED WITHOUT ERROR  RETURN IT ALONG WITH LOGIN DATA
                         return  res.status(200).json({
-                                // token: token,
+                                token: token,
                                 msg: "Successfully logged in!",
                                 user_id: login.rows[0].user_id,
+                                restaurant_id: data.restaurant_id,
                                 user_name: login.rows[0].user_name,
                         });
                     }
@@ -83,6 +84,7 @@ router.post('/login', async(req,res) => {
                 }); 
                 
             });
+            
             
                     
                  
