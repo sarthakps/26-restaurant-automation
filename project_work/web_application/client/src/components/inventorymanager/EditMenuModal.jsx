@@ -84,12 +84,13 @@ function EditInvModal({row}) {
               <input type="text" className="form-control" value={description} onChange={e => setDescription(e.target.value)} />
           </Modal.Body>
           <Modal.Footer style={{backgroundColor: "black"}}>
-          <Button variant="primary" onClick={e => updateInventory(e)}>
+          {/* <Button variant="primary" onClick={e => updateInventory(e)}>
               Save Changes
-            </Button>
-            <Button variant="secondary" onClick={handleClose}>
+            </Button> */}
+            <button type="button" class="btn btn-outline-dark btn-lg" style={{textAlign:"center"}} onClick={e => updateInventory(e)}>Save changes</button>
+            {/* <Button variant="secondary" onClick={handleClose}>
               Close
-            </Button>
+            </Button> */}
           </Modal.Footer>
         </Modal>
       </>

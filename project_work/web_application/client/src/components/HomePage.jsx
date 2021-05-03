@@ -26,10 +26,16 @@ const HomePage = () => {
       const divRefmid = useRef();
       const divRef = useRef();
 
+      const cardwidth = "50%"
+      const borderradius = "15px"
+      const h2 = "Automation"
+      const h3 = "100"
+      const p = "Upto 100 Employees"
+
     return (
         <Fragment>
             <div className="mainpage">
-                <Header/>
+                <Header login={"login"} subscription={"subscription"} height={"62px"} color={"white"} color2={"black"}/>
 
                 {/* <Button
                     Button color="inherit" 
@@ -38,7 +44,6 @@ const HomePage = () => {
                     divRef.current.scrollIntoView({ behavior: "smooth" });
                     }}
                 >BOTTOM</Button> */}
-
                 
                 <div style={{height: "650px", backgroundColor: "#060300"}}>
 
@@ -86,12 +91,12 @@ const HomePage = () => {
 
         <div>
         <div className="row" style={{marginTop: "170px", width: "100%"}}>
-            <Card />
-            <Card />
+            <Card cardwidth={"38%"} borderradius={borderradius} h2={h2} h3={h3} p={p} marginRight={"50px"} marginLeft={"8%"} />
+            <Card cardwidth={"38%"} borderradius={borderradius} h2={""} marginRight={"50px"} marginLeft={"8%"}/>
         </div>
         <div className="row" style={{marginTop: "50px", marginBottom: "80px", width: "100%"}}>
-            <Card />
-            <Card />
+            <Card cardwidth={"38%"} borderradius={borderradius} marginRight={"50px"} marginLeft={"8%"}/>
+            <Card cardwidth={"38%"} borderradius={borderradius} marginRight={"50px"} marginLeft={"8%"}/>
         </div>
         <div style={{ marginLeft:"60%", width: "50%"}}>
             

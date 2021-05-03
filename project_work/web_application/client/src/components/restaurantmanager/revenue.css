@@ -1,5 +1,4 @@
-.w3-tangerine {
-  /* font-family: "Tangerine", serif; */
+/* .w3-tangerine {
   font-family: caviar_dreamsbold, sans-serif;
   color: #c9ab81;
 }
@@ -18,17 +17,9 @@
   padding-right: 50px;
   letter-spacing: 0.26em;
   color: white;
-  /* font-weight: 600; */
-  /* font-family: Andale Mono, monospace; */
   font-family: open sans condensed, sans-serif;
 }
 
-/* .btn-outline-dark span {
-  cursor: pointer;
-  display: inline-block;
-  position: relative;
-  transition: 0.5s;
-} */
 
 .btn-outline-dark:hover {
   background-color: transperent !important;
@@ -40,7 +31,6 @@
 }
 
 .goback {
-  /* border-radius: 0px; */
   border-width: 1.5px;
   background-color: transparent;
   border-color: #a9927d;
@@ -83,4 +73,4 @@
 .goback:hover span:after {
   opacity: 1;
   right: 0;
-}
+} */

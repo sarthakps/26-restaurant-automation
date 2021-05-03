@@ -18,6 +18,9 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 
 // import './revenue.css'
+import Lottie from 'react-lottie';
+import animationData from '../../images/updatemenu.json'
+import Header from './Header'
 
 import EnhancedTableToolbar from './EnhancedTableToolBar'
 import EnhancedTableHead from './EnhancedTableHead'
@@ -59,143 +62,6 @@ import EnhancedTableHead from './EnhancedTableHead'
     { id: 'jain_availability', numeric: false, disablePadding: false, label: 'Jain Availability' }
   ];
   
-  // function EnhancedTableHead(props) {
-  //   const { classes, order, orderBy, rowCount, onRequestSort } = props;
-  //   const createSortHandler = (property) => (event) => {
-  //     onRequestSort(event, property);
-  //   };
-  
-  //   return (
-  //     <TableHead>
-  //       <TableRow>
-  //         <TableCell padding="checkbox">
-  //         </TableCell>
-  //         {headCells.map((headCell) => (
-  //           <TableCell
-  //             key={headCell.id}
-  //             align={headCell.numeric ? 'center' : 'right'}
-  //             padding={headCell.disablePadding ? 'none' : 'default'}
-  //             sortDirection={orderBy === headCell.id ? order : false}
-  //           >
-  //             <TableSortLabel
-  //               active={orderBy === headCell.id}
-  //               direction={orderBy === headCell.id ? order : 'asc'}
-  //               onClick={createSortHandler(headCell.id)}
-  //             >
-  //               {headCell.label}
-  //               {orderBy === headCell.id ? (
-  //                 <span className={classes.visuallyHidden}>
-  //                   {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-  //                 </span>
-  //               ) : null}
-  //             </TableSortLabel>
-  //           </TableCell>
-  //         ))}
-  //       </TableRow>
-  //     </TableHead>
-  //   );
-  // }
-  
-  // EnhancedTableHead.propTypes = {
-  //   classes: PropTypes.object.isRequired,
-  //   // numSelected: PropTypes.number.isRequired,
-  //   onRequestSort: PropTypes.func.isRequired,
-  //   // onSelectAllClick: PropTypes.func.isRequired,
-  //   order: PropTypes.oneOf(['asc', 'desc']).isRequired,
-  //   orderBy: PropTypes.string.isRequired,
-  //   rowCount: PropTypes.number.isRequired,
-  // };
-  
-
-  // const theme2 = createMuiTheme({
-  //   palette: {
-  //     primary: {
-  //       light: lightGreen[300],
-  //       main: lightGreen[500],
-  //       dark: lightGreen[700]
-  //     },
-  //     secondary: {
-  //       light: blueGrey[300],
-  //       main: blueGrey[500],
-  //       dark: blueGrey[700]
-  //     }
-  //   }
-  // });
-
-
-  // const useToolbarStyles = makeStyles((theme, theme2) => ({
-  //   root: {
-  //     paddingLeft: theme.spacing(2),
-  //     paddingRight: theme.spacing(1),
-  //   },
-  //   highlight:
-  //     theme.palette.type === 'light'
-  //       ? {
-  //           color: theme.palette.secondary.main,
-  //           backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-  //         }
-  //       : {
-  //           color: theme.palette.text.primary,
-  //           backgroundColor: theme.palette.secondary.dark,
-  //         },
-  //   title: {
-  //     flex: '1 1 100%',
-  //   },
-  //   searchContainer: {
-  //       display: "flex",
-  //       backgroundColor: fade(theme.palette.secondary.light, 0.05),
-  //       paddingLeft: "20px",
-  //       paddingRight: "20px",
-  //       marginTop: "5px",
-  //       marginBottom: "5px",
-  //     },
-  //     searchIcon: {
-  //       alignSelf: "flex-end",
-  //       marginBottom: "15px",
-  //     },
-  //     searchInput: {
-  //       width: "200px",
-  //       margin: "15px",
-  //     },
-  // }));
-  
-  
-
-//   const EnhancedTableToolbar = (props) => {
-//     const {onFilterChange, filter } = props;
-//     const classes = useToolbarStyles();
-    
-
-// // const handleSearchChange = (e) => {
-// //         setFilter(e.target.value);
-// //     };
-//     // const { numSelected } = props;
-  
-//     return (
-//         <Fragment>
-//         <Toolbar>
-//             <div className={classes.searchContainer}>
-//                 <SearchIcon className={classes.searchIcon}/>
-//                 <TextField className={classes.searchInput}
-//                     onChange={onFilterChange}
-//                     label="search menu"
-//                     varient="standard"
-//                 />
-//             </div>
-//         </Toolbar>
-//       <Toolbar>
-        
-//           <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-//             Menu
-//           </Typography>     
-//       </Toolbar>
-//       </Fragment>
-//     );
-//   };
-  
-//   EnhancedTableToolbar.propTypes = {
-//     // numSelected: PropTypes.number.isRequired,
-//   };
   
   const useStyles = makeStyles((theme) => ({
     root: {
@@ -293,35 +159,6 @@ const Menu = () => {
       setFilter(e.target.value.toLowerCase());
   };
 
-//   const handleSelectAllClick = (event) => {
-//     if (event.target.checked) {
-//       const newSelecteds = resmenu.map((n) => n.feedback_id);
-//       setSelected(newSelecteds);
-//       return;
-//     }
-//     setSelected([]);
-//   };
-
-  // const handleClick = (event, feedback_id) => {
-  //   const selectedIndex = selected.indexOf(feedback_id);
-  //   let newSelected = [];
-
-  //   if (selectedIndex === -1) {
-  //     newSelected = newSelected.concat(selected, feedback_id);
-  //   } else if (selectedIndex === 0) {
-  //     newSelected = newSelected.concat(selected.slice(1));
-  //   } else if (selectedIndex === selected.length - 1) {
-  //     newSelected = newSelected.concat(selected.slice(0, -1));
-  //   } else if (selectedIndex > 0) {
-  //     newSelected = newSelected.concat(
-  //       selected.slice(0, selectedIndex),
-  //       selected.slice(selectedIndex + 1),
-  //     );
-  //   }
-
-  //   setSelected(newSelected);
-  // };
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -339,16 +176,41 @@ const Menu = () => {
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, resmenu.length - page * rowsPerPage);
 
+  const user_image = localStorage.getItem("user_image")
+
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: animationData,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice"
+    }
+  };
 
     return (
-      <body style={{background:"#000c0c"}}>
+      <body style={{background:"#F2F4F3"}}>
+
+
+<Header logout={"log out"} avatar={user_image} logoutpath={"/inventorymanager/login"} height={"65px"} color={"white"} color2={"#0A0908"}/> 
+
+<div style={{height: "250px", backgroundColor: "#0A0908", paddingTop: "1px"}}>
+        <Lottie 
+                options={defaultOptions}
+                  height={310}
+                  width={310}
+                  style={{float: "left", marginLeft: "5%", marginTop: "3%"}}
+                />
+
+<h1 style={{fontFamily: "font-family:Georgia, 'Times New Roman', Times, serif", letterSpacing: "0.10em", color: "#F2F4F8", fontSize: "50px", paddingTop: "10%", paddingLeft: "40%"}}>View Menu</h1>
+</div>
+
         <div className="container text-center">
-            <br />
-            <h1 style={{color:"white", fontFamily: "caviar_dreamsbold,sans-serif", letterSpacing: "0.16em", color: "#c9ab81 !important", fontSize: "60px"}}>Menu Page</h1>
-            <br />
 
 <div className={classes.root}>
-      <Paper className={classes.paper} style={{background:"#000c0c", fontSize:"22px"}}>
+  <br />
+  <br />
+  <br />
+      <Paper className={classes.paper} style={{background:"white", fontSize:"22px"}}>
       <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
@@ -357,7 +219,7 @@ const Menu = () => {
           page={page}
           onChangePage={handleChangePage}
           onChangeRowsPerPage={handleChangeRowsPerPage}
-          style={{color:"white" ,  fontSize:"22px"}}
+          style={{color:"#5e503f" ,  fontSize:"22px"}}
         />
         <EnhancedTableToolbar
             filter={filter}
@@ -379,7 +241,7 @@ const Menu = () => {
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
               rowCount={resmenu.length}
-              style={{color:"white" ,  fontSize:"22px"}}
+              style={{color:"#DAA520" ,  fontSize:"22px"}}
             />
             <TableBody>
               {stableSort(resmenu, getComparator(order, orderBy, filter))
@@ -414,13 +276,13 @@ const Menu = () => {
                       <TableCell component="th" scope="row" padding="none">
                         {row.dish_id}
                       </TableCell>
-                      <TableCell align="right">{row.dish_name}</TableCell>
+                      <TableCell align="right" style={{color:"#5e503f"}}>{row.dish_name}</TableCell>
                    
-                        <TableCell align="right">{row.description}</TableCell>
+                        <TableCell align="right" style={{color:"#5e503f"}}>{row.description}</TableCell>
                    
-                      <TableCell align="right">{row.dish_price}</TableCell>
-                      <TableCell align="right">{row.status}</TableCell>
-                      <TableCell align="right">{row.jain_availability ? 'yes' : 'no'}</TableCell>
+                      <TableCell align="right" style={{color:"#5e503f"}}>{row.dish_price}</TableCell>
+                      <TableCell align="right" style={{color:"#5e503f"}}>{row.status}</TableCell>
+                      <TableCell align="right" style={{color:"#5e503f"}}>{row.jain_availability ? 'yes' : 'no'}</TableCell>
                     </TableRow>
                     
                     </Fragment>
@@ -448,7 +310,7 @@ const Menu = () => {
         <br />
     
           <div className="container text-center">      
-        <Link to="/restaurantmanager/reshome"><button type="button" class="btn btn-outline-dark">Go to Home Page</button></Link>
+        <Link to="/restaurantmanager/reshome"><button type="button" id="inventory" class="btn btn-outline-dark btn-lg">Go to Home Page</button></Link>
         </div>
 
         <br />

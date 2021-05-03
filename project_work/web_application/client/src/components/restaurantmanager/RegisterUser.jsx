@@ -5,8 +5,74 @@ import { Button,IconButton ,Avatar} from '@material-ui/core';
 import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
 import axios from 'axios';
 import Swal from "sweetalert2";
-// import 'bootstrap';
-// import 'bootstrap-select-dropdown';
+import TextField from '@material-ui/core/TextField';
+import Box from '@material-ui/core/Box';
+import { green, lightGreen, purple,blue } from '@material-ui/core/colors';
+import { createMuiTheme, withStyles, makeStyles, ThemeProvider } from '@material-ui/core/styles';
+import { deepOrange, deepPurple , red } from '@material-ui/core/colors';
+import HomeIcon from '@material-ui/icons/Home';
+import SendIcon from '@material-ui/icons/Send';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+
+
+const theme = createMuiTheme({
+    palette: {
+      secondary: green,
+    },
+  });
+
+const useStyles = makeStyles((theme) => ({
+    submit123: {
+      margin: theme.spacing(3, 0, 2),
+    },
+    formControl123: {
+        margin: theme.spacing(1),
+        minWidth: 120,
+      },
+    
+    purple123: {
+      color: theme.palette.getContrastText(deepPurple[500]),
+      backgroundColor: deepPurple[500],
+    },
+    paper123: {
+      margin: theme.spacing(8, 4),
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+    },
+    avatar123: {
+      margin: theme.spacing(1),
+      backgroundColor: theme.palette.secondary.main,
+    },
+    root123: {
+      height: '100vh',
+    },
+    image123: {
+      backgroundRepeat: 'no-repeat',
+      backgroundColor:
+      theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      width: "100%",
+      height: "95vh",
+    },
+    form123: {
+      width: '100%', 
+      marginTop: theme.spacing(2),
+    },
+    orange123: {
+      color: theme.palette.getContrastText(deepOrange[500]),
+      backgroundColor: deepOrange[500],
+    },
+      Red123: {
+        color: theme.palette.getContrastText(red[500]),
+        backgroundColor: red[500],
+      },
+    
+  }));
 
 const RegisterUser = () => {
 
@@ -72,13 +138,19 @@ const RegisterUser = () => {
         }*/
     }
 
-   
+    const classes = useStyles();
     return (
-        <div className="container text-center">
+        <div className="container text-center" 
+            style={{position: "relative",
+            zIndex: "1",
+            maxWidth: "40%",
+            margin: "20px auto 20px ",
+            padding: "15px",
+            textAlign: "center",
+            boxShadow: "0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24)"}} >
             <br />
             <h1>Register User Page</h1>
             <br />
-
             <div className="container">
 
         <div className = "Profile_Photo" style = {{display : "flex", flexDirection : 'column-reverse', flex :"1", float: "right", marginBottom : "40px", alignItems :"center"}}>
@@ -92,7 +164,11 @@ const RegisterUser = () => {
 
                     </Button>
                 </div>
+                
            <label for = "Avatar">
+            <br />
+            <br />
+            <br />
             <Avatar 
                 alt = "USER"
                 src={user_image} 
@@ -103,76 +179,136 @@ const RegisterUser = () => {
                 />
             </label>
             </div>
-
-            
-            <br />
             <form action="/action_page.php"  class="needs-validation" novalidate onSubmit={onSubmitProfile}>
-            
-                <div class="form-group">
-                <label for="ucpi" style = {{float: "left", marginTop:"130px" }}>User role : </label>
-                    <select class="form-select" aria-label="Default select example" onChange={(e) => {
+
+            <FormControl className={classes.formControl123} style = {{float: "left", marginTop:"130px" }}>
+                <InputLabel htmlFor="ucpi">User role</InputLabel>
+                <Select native defaultValue="" id="grouped-native-select" aria-label="Default select example"
+                
+                onChange={(e) => {
                         const selectedField = e.target.value;
                         setUsertypeid(selectedField)
                     }}>
-                        <option selected>Select User role</option>
-                        <option value="1">Waiter</option>
-                        <option value="2">Inventory Manager</option>
-                        <option value="3">Kitchen Personnel</option>
-                    </select>
-                    
-                </div>
+                <option aria-label="None" value="" />
+                <optgroup label="Select User role">
+                    <option value={1}>Waiter</option>
+                    <option value={2}>Inventory Manager</option>
+                    <option value={2}>Kitchen Personnel</option>
+                </optgroup>
+                </Select>
+            </FormControl>
 
-                <br />
-                <div class="form-group">
-                    <label for="ucpi" style = {{float: "left" }}>Name : </label>
-                    <input type="text" class="form-control" id="ucpi" placeholder="Enter user name" name="ucpi" required value = {user_name} onChange={e => setUsername(e.target.value)} />
-                    <div class="valid-feedback">Valid.</div>
-                    <div class="invalid-feedback">Please fill out this field.</div>
-                </div>
-                <br />
-                <div class="form-group">
-                    <label for="pwd" style = {{float: "left" }}>Password:</label>
-                    <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="pswd" required value = {password} onChange={e => setPassword(e.target.value)}/>
-                    <div class="valid-feedback">Valid.</div>
-                    <div class="invalid-feedback">Please fill out this field.</div>
-                </div>
-                <br />
-                <div class="form-group">
-                    <label for="umail" style = {{float: "left" }}>Email : </label>
-                    <input type="text" class="form-control" id="umail" placeholder="Enter email ID" name="umail" required value = {email_id} onChange={e => setEmailid(e.target.value)}/>
-                    <div class="valid-feedback">Valid.</div>
-                    <div class="invalid-feedback">Please fill out this field.</div>
-                </div>
-                <br />
-                <div class="form-group ">
-                    <label for="upno" style = {{float: "left" }}>Contact number : </label>
-                    <input type="text" class="form-control" id="upno" placeholder="Enter contact no." name="upno" required value = {contact_no} onChange={e => setContactno(e.target.value)}/>
-                    <div class="valid-feedback">Valid.</div>
-                    <div class="invalid-feedback">Please fill out this field.</div>
-                </div>
-                <br />
-                <div class="form-group">
-                    <label for="upno2" style = {{float: "left" }}>Contact number : (optional)</label>
-                    <input type="text" class="form-control" id="upno2" placeholder="Enter optional contact no." name="upno2" required value = {contact_no2} onChange={e => setContactno2(e.target.value)}/>
-                    <div class="valid-feedback">Valid.</div>
-                    <div class="invalid-feedback">Please fill out this field.</div>
-                </div>
-                <br />
-                <br/>
+                <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                id="ucpi"
+                type="ucpi"
+                label="Enter user name"
+                name="ucpi"
+                autoComplete="email"
+                autoFocus
+                required value = {user_name}
+                 onChange={e => setUsername(e.target.value)}
+                />
+              
+                <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                name="pswd"
+                label="Enter Password"
+                type="password"
+                id="pwd"
+                autoComplete="current-password"
+                required value = {password} 
+                onChange={e => setPassword(e.target.value)}
+                />
+
+                <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                id="umail"
+                type="email"
+                label="Enter email ID"
+                name="umail"
+                autoComplete="email"
+                autoFocus
+                required value = {email_id}
+                onChange={e => setEmailid(e.target.value)}
+                />
+
+                <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                id="upno"
+                type="upno"
+                label="Enter contact no."
+                name="upno"
+                autoFocus
+                required value = {contact_no}
+                onChange={e => setContactno(e.target.value)}
+                />
+
+                <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                id="upno2"
+                type="upno2"
+                label="Enter optional contact no."
+                name="upno2"
+                autoFocus
+                required value = {contact_no2}
+                onChange={e => setContactno2(e.target.value)}
+                />
+
                 
-                <div >
-                <button className="btn btn-success">Submit</button>
-                </div>
+            <Box textAlign='center'>
+            <br />
+            <br />
+                <Button
+                type="submit"
+                //fullWidth
+                variant="contained"
+                color="primary"
+                endIcon={<SendIcon />}
+                className={classes.submit123}
+                style={{width:"30%"}}
+                >
+                Submit
+                </Button>
+            </Box>
 
             </form>
             </div>
 
-            <br />
-            <br />
-            <br />
-            <Link to="/restaurantmanager/reshome"><button className="btn btn-primary">Go to Home Page</button></Link>
-            <br />
-            <br />
+            <Box textAlign='center'>
+              <Link to={"/restaurantmanager/reshome"}>
+                <ThemeProvider theme={theme}>
+                <Button
+                    type="submit"
+                    variant="contained"
+                    fullWidth
+                    color="secondary"
+                    startIcon={<HomeIcon />}
+                    className={classes.submit123}
+                    style={{width:"40%"}}
+                  >
+                    GO TO HOME PAGE
+                  </Button>
+                </ThemeProvider>
+              </Link>
+                  
+          </Box>
+            
         </div>
     )
 }

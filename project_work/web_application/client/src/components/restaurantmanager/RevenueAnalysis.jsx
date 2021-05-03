@@ -33,6 +33,10 @@ import DateRangePicker from '@wojtekmaj/react-daterange-picker';
 import { RangeDatePicker } from 'react-google-flight-datepicker';
 import 'react-google-flight-datepicker/dist/main.css';
 
+import Lottie from 'react-lottie';
+import animationData from '../../images/updatemenu.json'
+import Header from './Header'
+
 import EnhancedTableToolbar from './EnhancedTableToolBar'
 import EnhancedTableHead from './EnhancedTableHead'
 
@@ -72,181 +76,6 @@ import EnhancedTableHead from './EnhancedTableHead'
     { id: 'time_stamp', numeric: true, disablePadding: false, label: 'Date' }
   ];
   
-  // function EnhancedTableHead(props) {
-  //   const { classes, order, orderBy, rowCount, onRequestSort } = props;
-  //   const createSortHandler = (property) => (event) => {
-  //     onRequestSort(event, property);
-  //   };
-  
-  //   return (
-  //     <TableHead>
-  //       <TableRow style={{color:"white"}}>
-  //         <TableCell padding="checkbox" style={{color:"white", fontSize:"20px"}}>
-  //           {/* <Checkbox
-  //           //   indeterminate={numSelected > 0 && numSelected < rowCount}
-  //           //   checked={rowCount > 0 && numSelected === rowCount}
-  //           //   onChange={onSelectAllClick}
-  //             inputProps={{ 'aria-label': 'select all feedbacks' }}
-  //           /> */}
-  //         </TableCell>
-  //         {headCells.map((headCell) => (
-  //           <TableCell
-  //             key={headCell.id}
-  //             align={headCell.numeric ? 'center' : 'right'}
-  //             padding={headCell.disablePadding ? 'none' : 'default'}
-  //             sortDirection={orderBy === headCell.id ? order : false}
-  //             style={{color:"white", fontSize:"18px", paddingTop: "80px"}}
-  //           >
-  //             <TableSortLabel
-  //               active={orderBy === headCell.id}
-  //               direction={orderBy === headCell.id ? order : 'asc'}
-  //               onClick={createSortHandler(headCell.id)}
-  //               style={{color:"white"}}
-  //             >
-  //               {headCell.label}
-  //               {orderBy === headCell.id ? (
-  //                 <span className={classes.visuallyHidden}>
-  //                   {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-  //                 </span>
-  //               ) : null}
-  //             </TableSortLabel>
-  //           </TableCell>
-  //         ))}
-  //       </TableRow>
-  //     </TableHead>
-  //   );
-  // }
-  
-  // EnhancedTableHead.propTypes = {
-  //   classes: PropTypes.object.isRequired,
-  //   // numSelected: PropTypes.number.isRequired,
-  //   onRequestSort: PropTypes.func.isRequired,
-  //   // onSelectAllClick: PropTypes.func.isRequired,
-  //   order: PropTypes.oneOf(['asc', 'desc']).isRequired,
-  //   orderBy: PropTypes.string.isRequired,
-  //   rowCount: PropTypes.number.isRequired,
-  // };
-  
-
-  // const theme2 = createMuiTheme({
-  //   palette: {
-  //     primary: {
-  //       light: lightGreen[300],
-  //       main: lightGreen[500],
-  //       dark: lightGreen[700]
-  //     },
-  //     secondary: {
-  //       light: blueGrey[300],
-  //       main: blueGrey[500],
-  //       dark: blueGrey[700]
-  //     }
-  //   }
-  // });
-
-
-  // const useToolbarStyles = makeStyles((theme, theme2) => ({
-  //   root: {
-  //     paddingLeft: theme.spacing(2),
-  //     paddingRight: theme.spacing(1),
-  //     border: 'solid 3px #0ff',
-  //   },
-  //   highlight:
-  //     theme.palette.type === 'light'
-  //       ? {
-  //           color: theme.palette.secondary.main,
-  //           backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-  //         }
-  //       : {
-  //           color: theme.palette.text.primary,
-  //           backgroundColor: theme.palette.secondary.dark,
-  //         },
-  //   title: {
-  //     flex: '1 1 100%',
-  //   },
-  //   searchContainer: {
-  //       display: "flex",
-  //       backgroundColor: fade(theme.palette.secondary.light, 0.05),
-  //       paddingLeft: "20px",
-  //       paddingRight: "20px",
-  //       marginTop: "5px",
-  //       marginBottom: "5px",
-  //     },
-  //     searchIcon: {
-  //       alignSelf: "flex-end",
-  //       marginBottom: "15px",
-  //     },
-  //     searchInput: {
-  //       width: "200px",
-  //       margin: "15px",
-  //       color: "white"
-  //     },
-  // }));
-  
- 
-
-//   const EnhancedTableToolbar = (props) => {
-//     const {onFilterChange, filter, date1, date2, setDate1, setDate2, onDateChange } = props;
-//     const classes = useToolbarStyles();
-//     //const [value, onChange] = useState([new Date(), new Date()]);
-    
-    
-
-// // const handleSearchChange = (e) => {
-// //         setFilter(e.target.value);
-// //     };
-//     // const { numSelected } = props;
-  
-//     return (
-//         <Fragment>
-//         <Toolbar style={{color:"white"}}>
-//             {/* <div className={classes.searchContainer} style={{color:"white"}}>
-//                 <SearchIcon className={classes.searchIcon} style={{color:"white"}}/>
-//                 <TextField className={classes.searchInput}
-//                     onChange={onFilterChange}
-//                     label="search revenue"
-//                     varient="standard"
-//                     InputProps={{
-//                       classes: {
-//                           input: classes.multilineColor
-//                       }
-//                   }}
-//                 />
-//             </div> */}
-//             <p style={{paddingRight:"20px"}}>choose a range : - </p>
-//             {/* <DateRangePicker
-//               onChange={onChange}
-//               value={value}
-//               style={{color: "white"}}
-//             /> */}
-//             <RangeDatePicker
-//               startDate={new Date()}
-//               endDate={new Date()}
-//               onChange={(startDate, endDate) => onDateChange(startDate, endDate)}
-//               // onChange={onDateChange}
-//               minDate={new Date(1900, 0, 1)}
-//               maxDate={new Date(2100, 0, 1)}
-//               dateFormat="D"
-//               monthFormat="MMM YYYY"
-//               startDatePlaceholder="Start Date"
-//               endDatePlaceholder="End Date"
-//               disabled={false}
-//               className="my-own-class-name"
-//               startWeekDay="monday"
-//             />
-//         </Toolbar>
-//       <Toolbar>
-        
-//           <Typography className={classes.title} variant="h6" id="tableTitle" component="div" style={{color:"white", fontSize:"30px", marginTop:"50px"}}>
-//             Revenue Analysis
-//           </Typography>     
-//       </Toolbar>
-//       </Fragment>
-//     );
-//   };
-  
-//   EnhancedTableToolbar.propTypes = {
-//     // numSelected: PropTypes.number.isRequired,
-//   };
   
   const useStyles = makeStyles((theme) => ({
     multilineColor:{
@@ -356,29 +185,6 @@ const RevenueAnalysis = () => {
     setOrderBy(property);
   };
 
-  // const handleFilterChange = (e) => {
-  //     setFilter(e.target.value.toLowerCase());
-  // };
-
-  // const handleClick = (event, feedback_id) => {
-  //   const selectedIndex = selected.indexOf(feedback_id);
-  //   let newSelected = [];
-
-  //   if (selectedIndex === -1) {
-  //     newSelected = newSelected.concat(selected, feedback_id);
-  //   } else if (selectedIndex === 0) {
-  //     newSelected = newSelected.concat(selected.slice(1));
-  //   } else if (selectedIndex === selected.length - 1) {
-  //     newSelected = newSelected.concat(selected.slice(0, -1));
-  //   } else if (selectedIndex > 0) {
-  //     newSelected = newSelected.concat(
-  //       selected.slice(0, selectedIndex),
-  //       selected.slice(selectedIndex + 1),
-  //     );
-  //   }
-
-  //   setSelected(newSelected);
-  // };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -397,19 +203,40 @@ const RevenueAnalysis = () => {
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, revenue.length - page * rowsPerPage);
 
+  const user_image = localStorage.getItem("user_image")
+
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: animationData,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice"
+    }
+  };
 
     return (
-      <body  style={{background:"#000c0c"}}>
-        <div className="container text-center" >
-            <br />
-            <div class="w3-container w3-tangerine">
-              <p class="w3-jumbo">Revenue Analysis</p>
-            </div>
-            
-            <br />
+      <body  style={{background:"#F2F4F3"}}>
 
+<Header logout={"log out"} avatar={user_image} logoutpath={"/inventorymanager/login"} height={"65px"} color={"white"} color2={"#0A0908"}/> 
+
+<div style={{height: "250px", backgroundColor: "#0A0908", paddingTop: "1px"}}>
+        <Lottie 
+                options={defaultOptions}
+                  height={310}
+                  width={310}
+                  style={{float: "left", marginLeft: "5%", marginTop: "3%"}}
+                />
+
+<h1 style={{fontFamily: "font-family:Georgia, 'Times New Roman', Times, serif", letterSpacing: "0.10em", color: "#F2F4F8", fontSize: "50px", paddingTop: "10%", paddingLeft: "40%"}}>Revenue Analysis</h1>
+</div>
+
+        <div className="container text-center" >
+           
+<br/>
+<br/>
+<br/>
 <div className={classes.root} >
-      <Paper className={classes.paper}  style={{background:"#000c0c", fontSize:"22px", borderColor:"yellow"}}>
+      <Paper className={classes.paper}  style={{background:"white", fontSize:"22px", borderColor:"yellow"}}>
       <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
@@ -418,7 +245,7 @@ const RevenueAnalysis = () => {
           page={page}
           onChangePage={handleChangePage}
           onChangeRowsPerPage={handleChangeRowsPerPage}
-          style={{color:"white" ,  fontSize:"22px"}}
+          style={{color:"#5e503f" ,  fontSize:"22px"}}
           
           // classes={{ul: classes.ul}}
         />
@@ -433,7 +260,7 @@ const RevenueAnalysis = () => {
             aria-labelledby="tableTitle"
             size={dense ? 'small' : 'medium'}
             aria-label="enhanced table"
-            style={{color:"white", fontSize:"22px"}}
+            style={{color:"#DAA520", fontSize:"22px"}}
           >
             <EnhancedTableHead
               classes={classes}
@@ -468,20 +295,20 @@ const RevenueAnalysis = () => {
                       <TableCell padding="checkbox" style={{color:"white", fontSize:"22px"}}>
                       </TableCell>
                      
-                      <TableCell component="th" scope="row" padding="none align={headCell.numeric ? 'center' : 'right'}" style={{color:"white", fontSize:"20px"}}>
+                      <TableCell component="th" scope="row" padding="none align={headCell.numeric ? 'center' : 'right'}" style={{color:"#5e503f", fontSize:"20px"}}>
                         {row.bill_id}
                       </TableCell>
-                      <TableCell align="right" style={{color:"white", fontSize:"20px"}}>{row.table_no}</TableCell>
-                      <TableCell align="right" style={{color:"white", fontSize:"20px"}}>{row.no_of_occupants}</TableCell>
-                      <TableCell align="right" style={{color:"white", fontSize:"20px"}}>{row.final_bill}</TableCell>
-                      <TableCell align="right" style={{color:"white", fontSize:"20px"}}>{row.time_stamp}</TableCell>
+                      <TableCell align="right" style={{color:"#5e503f", fontSize:"20px"}}>{row.table_no}</TableCell>
+                      <TableCell align="right" style={{color:"#5e503f", fontSize:"20px"}}>{row.no_of_occupants}</TableCell>
+                      <TableCell align="right" style={{color:"#5e503f", fontSize:"20px"}}>{row.final_bill}</TableCell>
+                      <TableCell align="right" style={{color:"#5e503f", fontSize:"20px"}}>{row.time_stamp}</TableCell>
                     </TableRow>
                     
                     </Fragment>
                   );
                 })}
               {emptyRows > 0 && (
-                <TableRow style={{ height: (dense ? 33 : 53) * emptyRows , color: "white"}}>
+                <TableRow style={{ height: (dense ? 33 : 53) * emptyRows , color: "#5e503f"}}>
                   <TableCell colSpan={6} />
                 </TableRow>
               )}
@@ -504,7 +331,7 @@ const RevenueAnalysis = () => {
         <br/>
     
         <div className="container text-center">      
-        <Link to="/restaurantmanager/reshome"><button type="button" class="btn btn-outline-dark btn-lg">Go to Home Page</button></Link>
+        <Link to="/restaurantmanager/reshome"><button type="button" id="inventory" class="btn btn-outline-dark btn-lg">Go to Home Page</button></Link>
         </div>
         {/* <button className="goback"><span>Go to Main page</span></button> */}
 

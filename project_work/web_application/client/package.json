@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@fontsource/open-sans-condensed": "^4.2.2",
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
     "@material-ui/utils": "^4.11.2",
@@ -19,7 +20,10 @@
     "react-bootstrap-buttons": "^1.0.0",
     "react-bootstrap-validation": "^0.1.11",
     "react-dom": "^17.0.2",
+    "react-gif-player": "^0.4.2",
     "react-google-flight-datepicker": "^0.1.17",
+    "react-lottie": "^1.2.3",
+    "react-material-ui-carousel": "^2.2.4",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^4.0.3",
     "react-scroll-button": "^1.1.2",

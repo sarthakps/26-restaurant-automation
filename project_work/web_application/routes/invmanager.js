@@ -1,7 +1,9 @@
-const express = require("express");
+
+// @flow
+const express = require("express")
 
 const bodyParser = require('body-parser');
-const router = express.Router();
+const router= express.Router();
 const fs = require('fs');
 
 const cors = require('cors')

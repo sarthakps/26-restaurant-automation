@@ -42,7 +42,7 @@ const useToolbarStyles = makeStyles((theme, theme2) => ({
   }));
 
 const EnhancedTableToolbar = (props) => {
-    const {onFilterChange, filter } = props;
+    const {onFilterChange, filter, colorp } = props;
     const classes = useToolbarStyles();
     
 
@@ -60,6 +60,7 @@ const EnhancedTableToolbar = (props) => {
                     onChange={onFilterChange}
                     label="search"
                     varient="standard"
+                    style={{color:"#DAA520"}}
                 />
             </div>
         </Toolbar>

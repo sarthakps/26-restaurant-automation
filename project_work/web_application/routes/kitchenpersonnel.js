@@ -87,6 +87,7 @@ router.post('/login', async(req,res) => {
                                         usertype_id: login.rows[0].usertype_id,
                                         user_name: login.rows[0].user_name,
                                         contact_no: login.rows[0].contact_no,
+                                        user_image: login.rows[0].user_image
                                     });
                                 }
                             
@@ -121,7 +122,8 @@ router.post('/ordered_dishes', verifyToken, async(req, res) => {
             //WHEN USER HAS VALID JWT TOKEN
             try {
                 const data = req.body;
-                const final = await pool.query("SELECT order_id, table_no, dish_id, dish_qty, no_of_occupants, time_stamp FROM ordered_dishes WHERE restaurant_id=$1", [data.restaurant_id]);
+                const final = await pool.query("SELECT order_id, table_no, dish_id, dish_qty, no_of_occupants, time_stamp, delivered FROM ordered_dishes WHERE restaurant_id=$1 and delivered=false", [data.restaurant_id]);
+                //console.log( "FINAL.ROWS", final.rows)
 
                 if(!final.rows[0] && !final.rows.length){
                     res.status(400).json({
@@ -132,38 +134,58 @@ router.post('/ordered_dishes', verifyToken, async(req, res) => {
 
                     const array = final.rows;
                     const final2 = await iter(array);
-                    //console.log("final2", final2)
+       
+                    const dishName = await pool.query("SELECT dish_id, dish_name from menu");
+                    //console.log("DISHNAME", dishName.rows)
+                    const dishName2 = dishName.rows;
 
-                    // const final_ans = await getDishName(final2)
-                    // var final_ans = []
-                    // final2.forEach(async(element, index, array) => {
+                    //console.log("FINAL2.LENGTH", final2.length)
+                    if(final2.length == 1){
+                        dishName2.forEach((element, index, array) => {
+                            if(element.dish_id == final_dishid){
+                                final_ans.push({
+                                    "order_id" : final2.order_id,
+                                    "table_no": final2.table_no,
+                                    "dish_name": element.dish_name,
+                                    "dish_qty": final2.dish_qty,
+                                    "no_of_occupants": final2.no_of_occupants,
+                                    "time_stamp": final2.time_stamp
+                                })
+                            }
+                        })  
+                    }
 
-                    //     const dishName = await pool.query("SELECT dish_name from menu WHERE dish_id=$1", [element.dish_id]);
-                
-                    //     if(dishName.rows[0]){
-                    //         final_ans.push({
-                    //             "order_id" : element.order_id,
-                    //             "table_no": element.table_no,
-                    //             "dish_name": dishName.rows[0].dish_name,
-                    //             "dish_qty": element.dish_qty,
-                    //             "no_of_occupants": element.no_of_occupants,
-                    //             "time_stamp": element.time_stamp
-                    //         })
-                    //     }
-                    //     // Store current user 
-                    //         // store.set('tempo', final_ans)
-                    //         //storage.setState(final_ans)
+                    else{
+                        var final_ans = []
+                        final2.forEach((element, index, array) => {
+                            var final_dishid = element.dish_id;
+                            var order_id = element.order_id;
+                            var table_no = element.table_no;
+                            var dish_qty = element.dish_qty;
+                            var no_of_occupants = element.no_of_occupants;
+                            var time_stamp = element.time_stamp;
+                            var delivered = element.delivered;
 
-                            
-                    // });
+                            dishName2.forEach((element, index, array) => {
+                                if(element.dish_id == final_dishid){
+                                    final_ans.push({
+                                        "order_id" : order_id,
+                                        "table_no": table_no,
+                                        "dish_name": element.dish_name,
+                                        "dish_qty": dish_qty,
+                                        "no_of_occupants": no_of_occupants,
+                                        "time_stamp": time_stamp,
+                                        "delivered": delivered
+                                    })
+                                }
+                            })     
+                                
+                        });
 
-                    // Get current user 
-                    // console.log("STORAGE", storage);
-
-                    //const tempo = localStorage.getItem("answer");
-                    //console.log("ans", final2)
-
-                    res.json({"ans": final2});
+                    }
+                    
+                    console.log(final_ans)
+                    res.json({"ans": final_ans});
                 }
 
             } catch (err) {
@@ -173,6 +195,33 @@ router.post('/ordered_dishes', verifyToken, async(req, res) => {
 })
             
 })
+
+
+router.put('/delivered', verifyToken, async(req, res) => {
+    jwt.verify(req.token, 'secretkey',async (err,authData)=>{
+        if(err){
+    
+            //INVALID TOKEN/TIMEOUT so delete the entry from databse 
+            // const deleted_info = await pool.query("DELETE FROM fcm_jwt WHERE EMAIL_ID=$1 ",[req.body.email_id])
+            res.status(400).json({msg: "Session expired. Login again"})
+            
+        }else{
+            //WHEN USER HAS VALID JWT TOKEN
+            try {
+                const data = req.body;
+                const final = await pool.query("UPDATE ordered_dishes SET delivered=true WHERE order_id=$1", [data.order_id]);
+
+                res.status(200).json({msg: "Updated status successfully!"});
+
+            } catch (err) {
+                console.error(err);
+                res.json({msg : "Error"});
+            }
+     }      
+})
+            
+})
+
 
 
 function ISODateString(d){
