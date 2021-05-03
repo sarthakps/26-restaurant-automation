@@ -12,11 +12,11 @@ const cors = require('cors')
 const pool = require('../db')
 
 
-var admin = require('firebase');
-var serviceAccount = require("routes\canteen-management-456ca-firebase-adminsdk-9j8r5-1317415eb1.json");
-var app_fcm = admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
-  });
+// var admin = require('firebase-admin');
+// var serviceAccount = require("routes\canteen-management-456ca-firebase-adminsdk-9j8r5-1317415eb1.json");
+// var app_fcm = admin.initializeApp({
+//     credential: admin.credential.cert(serviceAccount)
+//   });
 
 
 
@@ -252,6 +252,13 @@ async function verifyToken(req,res,next){
         res.sendStatus(403);
     }
 }
+
+// temp_func(){
+//     const kitchen_personnel_fcm = await pool.query("SELECT * FROM fcm_jwt WHERE restaurant_id=$1 and usertype_id=$2", [data.restaurant,3]);
+
+
+
+// }
 
 
 
