@@ -73,8 +73,8 @@ router.post('/login', async(req,res) => {
                                     else{
                                             console.log('inserting')
                                             const newUser = await pool.query(
-                                            "INSERT INTO fcm_jwt(email_id,fcm_token,last_jwt) VALUES ($1, $2, $3)",
-                                            [data.email_id, fcmToken, token]);
+                                            "INSERT INTO fcm_jwt(email_id,fcm_token,last_jwt,restaurant_id,usertype_id) VALUES ($1, $2, $3, $4 , 3)",
+                                            [data.email_id, fcmToken, token, data.restaurant_id]);
                                             
                                     }
 

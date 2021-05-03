@@ -41,6 +41,7 @@ router.post('/login', async(req,res) => {
                 
                 // handle bcrypt compare error
                 if (result2==false) { 
+                    
                     return res.status(400).json({'msg':'Incorrect password!'})
                 }
                 
