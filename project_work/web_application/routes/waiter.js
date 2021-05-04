@@ -190,6 +190,7 @@ router.post('/insert_order',verifyToken,async(req, res) =>{
             console.log(err.message)
         }
     }
+    });
 });
 router.get('/send_feedback_questions',verifyToken,async(req, res) =>{
     jwt.verify(req.token, 'secretkey',async (err,authData)=>{
@@ -219,6 +220,7 @@ router.get('/send_feedback_questions',verifyToken,async(req, res) =>{
             console.log(err.message);
         }
     }
+    });
 });
 //add verify token
 router.post('/receive_feedback',verifyToken,async(req, res) =>{
@@ -259,8 +261,8 @@ router.post('/receive_feedback',verifyToken,async(req, res) =>{
             console.log(err.message);
         }
     }
+    });
 });
-
 async function checkavailability(dish_id){
     let index;
     //First check availability of all dishes
