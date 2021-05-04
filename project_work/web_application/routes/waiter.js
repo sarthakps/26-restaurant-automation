@@ -141,7 +141,151 @@ router.post('/save_fcm_token',verifyToken, async(req,res) => {
     }   
 })
 
+router.post('/insert_order',verifyToken,async(req, res) =>{
+    jwt.verify(req.token, 'secretkey',async (err,authData)=>{
+    if(err){
+        console.log("ERORRRR: ", err)
+        //INVALID TOKEN/TIMEOUT so delete the entry from databse 
+        // const deleted_info = await pool.query("DELETE FROM fcm_jwt WHERE EMAIL_ID=$1 ",[req.body.email_id])
+        res.status(400).json({msg: "Session expired. Login again"})
+        
+    }else{
+        try{
+            const data = req.body;
+            if(!data.restaurant_id || !data.table_no || !data.dish_id || !data.dish_qty || !data.no_of_occupants || data.dish_id.length==0 || data.dish_qty.length==0 || data.dish_id.length!=data.dish_qty.length)
+            {
+                res.status(400).json({
+                    error:1,
+                    msg: "One or more required field is empty!"
+                });
+            }
+            else{
+                let date = new Date();
+                let currentISODate = ISODateTimeString(date);
+                // check for availibility of order dishes
+                let availability=await checkavailability(data.dish_id);
+                if(!availability)
+                {
+                    res.status(400).json({
+                        error:1,
+                        msg:"Dish not available!"
+                        });
+                }
+                else{
+                    //Add all the orderes to ORDERED_DISHES
+                    let index;         
+                    for(index=0;index<data.dish_id.length;index++)
+                    {
+                        const result = await pool.query('INSERT INTO ORDERED_DISHES(RESTAURANT_ID,TABLE_NO,DISH_ID,DISH_QTY,NO_OF_OCCUPANTS,TIME_STAMP,delivered) VALUES($1,$2,$3,$4,$5,$6,$7)',[data.restaurant_id,data.table_no,data.dish_id[index],data.dish_qty[index],data.no_of_occupants,currentISODate,false])
+                        // console.log(result);
+                    }
+                    
+                    return res.status(200).json({
+                        msg: "Added Successfully!"
+                    });
+                }
+            }
+        }
+        catch (err) {
+            console.log(err.message)
+        }
+    }
+});
+router.get('/send_feedback_questions',verifyToken,async(req, res) =>{
+    jwt.verify(req.token, 'secretkey',async (err,authData)=>{
+    if(err){
+        console.log(err)
+        //INVALID TOKEN/TIMEOUT so delete the entry from databse 
+        // const deleted_info = await pool.query("DELETE FROM fcm_jwt WHERE EMAIL_ID=$1 ",[req.body.email_id])
+        res.status(400).json({msg: "Session expired. Login again"})
+        
+    }else{
+        try{
+            const result = await pool.query('SELECT QUESTION FROM feedback_questions');
+            if(!result.rows[0] && !result.rows.length)
+            {
+                res.status(400).json({
+                    error:1,
+                    msg: "No questions are in database"   
+                }); 
+            }
+            else{
+                // console.log(result);
+                res.status(200).json({
+                    questions:result.rows
+                });
+            }
+        }catch(err){
+            console.log(err.message);
+        }
+    }
+});
+//add verify token
+router.post('/receive_feedback',verifyToken,async(req, res) =>{
+    jwt.verify(req.token, 'secretkey',async (err,authData)=>{
+    if(err){
+        console.log(err)
+        //INVALID TOKEN/TIMEOUT so delete the entry from databse 
+        // const deleted_info = await pool.query("DELETE FROM fcm_jwt WHERE EMAIL_ID=$1 ",[req.body.email_id])
+        res.status(400).json({msg: "Session expired. Login again"})
+        
+    }else{
+        try{
+            const data = req.body;
+            if(!data.restaurant_id || !data.bill_id || !data.question_id || !data.score || data.question_id.length==0 || data.score.length==0 || data.question_id.length!=data.score.length)
+            {
+                res.status(400).json({
+                    error:1,
+                    msg: "One or more required field is empty!"
+                });
+            }
+            else{
+                //It is assumed that score will always be between 1 to 5.
+                
+                    
+                let index;         
+                for(index=0;index<data.question_id.length;index++)
+                {
+                    const result = await pool.query('INSERT INTO feedback(RESTAURANT_ID,BILL_ID,QUESTION_ID,SCORE) VALUES($1,$2,$3,$4)',[data.restaurant_id,data.bill_id,data.question_id[index],data.score[index]])
+                    // console.log(result);
+                }
+                return res.status(200).json({
+                    msg: "Added Successfully!"
+                });
+                
+                
+            }
+        }catch(err){
+            console.log(err.message);
+        }
+    }
+});
 
+async function checkavailability(dish_id){
+    let index;
+    //First check availability of all dishes
+    
+    for(index=0;index<dish_id.length;index++)
+    {
+        const results = await pool.query('SELECT STATUS FROM MENU WHERE DISH_ID=$1',[dish_id[index]]);
+        // console.log(results);
+        // change status according to bool value in final
+        if(!results.rows[0] || !results.rows.length || !results.rows[0].status)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+function ISODateTimeString(d){
+    function pad(n){return n<10 ? '0'+n : n}
+    return d.getUTCFullYear()+'-'
+         + pad(d.getUTCMonth()+1)+'-'
+         + pad(d.getUTCDate()) +' '
+          + pad(d.getUTCHours())+':'
+          + pad(d.getUTCMinutes())+':'
+          + pad(d.getUTCSeconds())}
 
 
 async function verifyToken(req,res,next){
