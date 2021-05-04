@@ -588,7 +588,190 @@ router.post('/delete_staff', async(req, res) => {
         console.log(err.message);
     }
 });
+const {PythonShell} =require('python-shell');
+// Required at least 30 entries in database for forecasting
+// Input: restaurant_id and days_forecast(no. of days to forecast)
+// Output: start_date, end_date, resposnse
+// start_date: date corresponding to first entry of response
+// end_date: date corresponding to last entry of response
+// response: no of visitors of a restaurant on each day from statr_date to end_date
+// Here, function outputs past 30 days' visitors and expected visitors in next "days_predict"
+router.post('/rush_hour',verifyToken, async (req, res) => {
 
+    //INITIALIZE JWT VERIFICATION
+    jwt.verify(req.token, 'secretkey',async (err,authData)=>{
+        if(err){
+
+            //INVALID TOKEN/TIMEOUT so delete the entry from databse 
+            // const deleted_info = await pool.query("DELETE FROM fcm_jwt WHERE EMAIL_ID=$1 ",[req.body.email_id])
+            res.status(400).json({msg: "Session expired. Login again"})
+            
+        }else{
+            
+                    try {
+                        const data = req.body;
+                        if(!data.restaurant_id || !data.days_predict)
+                        {
+                            res.status(400).json({
+                                error:1,
+                                msg: "Provide a restaurant ID"   
+                            }); 
+                        }
+                        else
+                        {
+                            
+                            
+                            const SaveCsvTo = __dirname+'\\datafile.csv';
+                            // console.log(SaveCsvTo);
+                            const final = await pool.query(`copy (SELECT no_of_occupants,time_stamp FROM revenue WHERE restaurant_id=${data.restaurant_id}) to '${SaveCsvTo}' with csv`);
+                            const resForlastDate = await pool.query('SELECT DATE(time_stamp) FROM revenue WHERE restaurant_id=$1 order by DATE(time_stamp) DESC  limit 1',[data.restaurant_id]);
+                            const noOfEntries = await pool.query('select COUNT(DISTINCT time_stamp) FROM revenue WHERE restaurant_id=$1',[data.restaurant_id]);
+                            const checkdate = resForlastDate.rows[0].date;
+                            const startDate = new Date();
+                            startDate.setDate(checkdate.getDate() - 30);
+                            const endDate = new Date();
+                            endDate.setDate(checkdate.getDate() + 7);
+
+                            
+                            if(!final || !noOfEntries || noOfEntries.rows[0].count<30){
+                                res.status(400).json({
+                                    error:1,
+                                    msg: "error"
+                                });
+                            } else {
+                            
+                                console.log("File saved");
+                                let options = {
+                                    mode: 'text',
+                                    pythonOptions: ['-u'], // get print results in real-time
+                                    scriptPath: __dirname, //If you are having python_test.py script in same folder, then it's optional.
+                                    args: [__dirname+'\\datafile.csv',__dirname+'\\testmodel.pkl',data.days_predict] //An argument which can be accessed in the script using sys.argv[1]
+                                };
+                                var response = [];
+                                PythonShell.run('test.py', options, function (error, result){
+                                    if (error) 
+                                    {
+                                        // In case of failure in python script print error message and return 400 response
+                                        console.log(error.message);
+                                        res.status(400).json({
+                                            err:1,
+                                            msg:"Error occured"
+                                        });
+                                        // throw err;
+                                    }
+                                    else{
+                                        // result is an array consisting of messages collected 
+                                        //during execution of script.
+                                        // console.log(result);
+                                        result.forEach((element,index,arr)=>{
+                                            response.push(parseInt(element));
+                                        })
+                                        
+                                        // res.json({"reply":result.toString()});
+                                    }
+                                    if(!response || !response.length)
+                                    {
+                                        res.status(400).json({
+                                            error:1,
+                                            msg: "some error"
+                                        });
+                                        
+                                    }
+                                    else{
+                                        res.status(200).json({
+                                            "start_date":ISOISTDateTimeString(startDate),
+                                            "end_date":ISOISTDateTimeString(endDate),
+                                            "reply":response
+                                            });
+                                    }
+                                });
+                                
+                            }
+                        }
+
+                    } catch (err) {
+                        console.log(err.message)
+                    }
+            }      
+    });
+});
+// Train model
+// To train model. It will just return success message generated from train.py
+router.post('/rush_hour_train',verifyToken, async (req, res) => {
+
+    //INITIALIZE JWT VERIFICATION
+    jwt.verify(req.token, 'secretkey',async (err,authData)=>{
+        if(err){
+
+            //INVALID TOKEN/TIMEOUT so delete the entry from databse 
+            // const deleted_info = await pool.query("DELETE FROM fcm_jwt WHERE EMAIL_ID=$1 ",[req.body.email_id])
+            res.status(400).json({msg: "Session expired. Login again"})
+            
+        }else{
+                    try {
+                        const data = req.body;
+                        if(!data.restaurant_id)
+                        {
+                            res.status(400).json({
+                                error:1,
+                                msg: "Provide a restaurant ID"   
+                            }); 
+                        }
+                        else
+                        {
+                            
+                            const SaveCsvTo = __dirname+'\\datafile.csv';
+                            // console.log(SaveCsvTo);
+                            const final = await pool.query(`copy (SELECT no_of_occupants,time_stamp FROM revenue WHERE restaurant_id=${data.restaurant_id}) to '${SaveCsvTo}' with csv`);
+                            
+                            
+                            if(!final){
+                                res.status(400).json({
+                                    error:1,
+                                    msg: "error"
+                                });
+                            } else {
+                            
+                                console.log("File saved");
+                                let options = {
+                                    mode: 'text',
+                                    pythonOptions: ['-u'], // get print results in real-time
+                                    scriptPath: __dirname, //If you are having python_test.py script in same folder, then it's optional.
+                                    args: [__dirname+'\\datafile.csv',__dirname+'\\testmodel.pkl'] //An argument which can be accessed in the script using sys.argv[1]
+                                };
+                                var response = [];
+                                PythonShell.run('train.py', options, function (error, result){
+                                    if (error) 
+                                    {   
+                                        // In case of failure in python script print error message and return 400 response
+                                        console.log(error.message);
+                                        res.status(400).json({
+                                            err:1,
+                                            msg:"Error occured"
+                                        });
+                                        // throw err;
+                                    }
+                                    if(!result || !result.length)
+                                    {
+                                        res.status(400).json({
+                                            error:1,
+                                            msg: "some error"
+                                        });
+                                    }
+                                    else{
+                                        res.status(200).json({
+                                            "reply":result[0]//"Model Trained.."
+                                            });
+                                    }
+                                });
+                            }
+                        }
+                    } catch (err) {
+                        console.log(err.message)
+                    }
+            }      
+    });
+});
 
 async function iter(myArr){
 

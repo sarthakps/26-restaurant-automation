@@ -192,7 +192,7 @@ router.post('/insert_order',verifyToken,async(req, res) =>{
     }
     });
 });
-router.get('/send_feedback_questions',verifyToken,async(req, res) =>{
+router.post('/send_feedback_questions',verifyToken,async(req, res) =>{
     jwt.verify(req.token, 'secretkey',async (err,authData)=>{
     if(err){
         console.log(err)
