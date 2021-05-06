@@ -61,21 +61,27 @@ router.post('/login', async(req,res) => {
                                     //need to create fcm token dont know how
                                     const fcmToken="temporary_fcm_token"   
                                     const checkEntry =  await pool.query("SELECT email_id FROM fcm_jwt WHERE email_id=$1", [data.email_id]);
-                                    
-                                    // //if already logged in then update
+                                    const checkEmailEntry =  await pool.query("SELECT email_id FROM fcm_jwt WHERE email_id=$1", [data.email_id]);
+                                    //if already logged in then update
                                     if(checkEntry && typeof(checkEntry.rows[0])!=='undefined')
                                     {
                                         console.log('updating')
                                         const newUser = await pool.query(
                                             "UPDATE fcm_jwt SET last_jwt = $1 WHERE email_id=$2", [token, data.email_id]);
                                             
-                                    }//if there is no login info then insert
-                                    else{
+                                    }//if there is no email id info then insert
+                                    else if(typeof(checkEmailEntry.rows[0])=='undefined'){
                                             console.log('inserting')
                                             const newUser = await pool.query(
-                                            "INSERT INTO fcm_jwt(email_id,fcm_token,last_jwt,restaurant_id,usertype_id) VALUES ($1, $2, $3, $4 , 3)",
-                                            [data.email_id, fcmToken, token, data.restaurant_id]);
+                                            "INSERT INTO fcm_jwt(email_id,fcm_token,last_jwt,restaurant_id,usertype_id) VALUES ($1, $2, $3,$4,3)",
+                                            [data.email_id, fcmToken, token,data.restaurant_id]);
                                             
+                                    }//password is verified and there is log of email so resturant_id would be wrong
+                                    else{
+                                        console.log('invalid details')
+                                        return res.status(400).json({
+                                            error:"Invalid value of restaurant_id"
+                                        })
                                     }
 
                                     //TOKEN CREATED WITHOUT ERROR  RETURN IT ALONG WITH LOGIN DATA

@@ -13,7 +13,7 @@ const pool = require('../db')
 
 
 var admin = require('firebase-admin');
-var serviceAccount = require("routes\canteen-management-456ca-firebase-adminsdk-9j8r5-1317415eb1.json");
+var serviceAccount = require("routes\canteen-management-456ca-firebase-adminsdk-9j8r5-1317415eb1.json")
 var app_fcm = admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
   });
@@ -282,13 +282,17 @@ router.post('/fcmtest', async(req, res) => {
 })
 
 
-//add verify token
+//insert order into the ordered_dishes table and send notification to the kitchen personnel
+//input: order details
+//output: 
+    // msg:status of insertion
+    // data:{
+    //     order: data sent to the kitchen personnel
+    // }
 router.post('/insert_order', verifyToken, async(req, res) =>{
     jwt.verify(req.token, 'secretkey',async (err,authData)=>{
         if(err){
-            // console.log("ERORRRR: ", err)
-            //INVALID TOKEN/TIMEOUT so delete the entry from databse 
-            // const deleted_info = await pool.query("DELETE FROM fcm_jwt WHERE EMAIL_ID=$1 ",[req.body.email_id])
+            
             res.status(400).json({msg: "Session expired. Login again"})
             
         }else{
@@ -347,39 +351,26 @@ router.post('/insert_order', verifyToken, async(req, res) =>{
                         })
 
                         //send notification to all kitchen personnel with same restaurant_id
-                        for(index=0;index<kitchen_personnel_fcm.rowCount;index++)
-                        {
-                            try {
-                                var notification = {
-                                data: notif,
-                                token: kitchen_personnel_fcm['rows'][index]['fcm_token']
-                                };
-                                
-                                // to retieve data back use this syntax
-                                // var crap=JSON.parse(message.data.orders)
-                                // console.log(crap[0])
+                        var payload = {
+                            notification:{
+                                title: "New order"
+                            },
+                            data: notif
+                        };
+                        // console.log(tokens)
+                        
+                        // to retieve data back use this syntax
+                        // var crap=JSON.parse(payload.data.orders)
+                        // console.log(crap[0])
 
-                                admin.messaging().send(notification)
-                                    .then((response) => {
-                                        console.log('Successfully sent message:', response);
-                                    })
-                                    .catch((error) => {
-                                        console.log('Error sending message:', error);
-                                    });
+                        admin.messaging().sendToDevice(tokens,payload)
+                        .then((response) => {
+                            console.log('Successfully sent message:', response);
+                        })
+                        .catch((error) => {
+                            console.log('Error sending message:', error);
+                        });
                             
-                                //this is just to catch the error
-                                if(error){
-                                    //this will not be printed
-                                    console.log('Error message sent')
-                                }
-                            }
-                            catch(error){
-                                return res.status(400).json({
-                                        msg:"Error in sending notification."
-                                    })
-                            }
-
-                        }
                         return res.status(200).json({
                             msg: "Added Successfully!",
                             data: notif
