@@ -13,7 +13,7 @@ const pool = require('../db')
 
 
 var admin = require('firebase-admin');
-var serviceAccount = require("C:/Users/Pratvi/Downloads/restaurant-automation-8ad32-firebase-adminsdk-tixax-5d244a4be7.json")
+var serviceAccount = require("routes\canteen-management-456ca-firebase-adminsdk-9j8r5-1317415eb1.json");
 var app_fcm = admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
   });
