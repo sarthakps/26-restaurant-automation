@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useState} from "react"
+import React, {Fragment, useEffect, useState, useRef, PureComponent} from "react"
 import {BrowserRouter as Router, Route, Link, Redirect, useRouteMatch } from "react-router-dom"
 import Swal from "sweetalert2";
 import PropTypes from 'prop-types';
@@ -15,9 +15,11 @@ import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-// import Checkbox from '@material-ui/core/Checkbox';
+import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import Button from '@material-ui/core/Button';
+
+import Footer from './Footer'
 import IconButton from '@material-ui/core/IconButton';
-import Tooltip from '@material-ui/core/Tooltip';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 // import DeleteIcon from '@material-ui/icons/Delete';
@@ -29,6 +31,7 @@ import lightGreen from "@material-ui/core/colors/lightGreen";
 
 import EnhancedTableToolbar from './EnhancedTableToolBar'
 import EnhancedTableHead from './EnhancedTableHead'
+import Header from './Header'
 
   
   function descendingComparator(a, b, orderBy) {
@@ -58,151 +61,12 @@ import EnhancedTableHead from './EnhancedTableHead'
   }
   
   const headCells = [
-    { id: 'feedback_id', numeric: false, disablePadding: true, label: 'ID' },
-    { id: 'category1', numeric: true, disablePadding: false, label: 'Category1' },
-    { id: 'category2', numeric: true, disablePadding: false, label: 'Category2' },
-    { id: 'category3', numeric: true, disablePadding: false, label: 'Category3' },
-    { id: 'category4', numeric: true, disablePadding: false, label: 'Category4' },
+    { id: 'feedback_id', numeric: true, disablePadding: true, label: 'ID' },
+    { id: 'bill_id', numeric: false, disablePadding: false, label: 'Bill ID' },
+    { id: 'question', numeric: false, disablePadding: false, label: 'Question' },
+    { id: 'score', numeric: false, disablePadding: false, label: 'Score' }
   ];
-  
-//   function EnhancedTableHead(props) {
-//     const { classes, order, orderBy, rowCount, onRequestSort } = props;
-//     const createSortHandler = (property) => (event) => {
-//       onRequestSort(event, property);
-//     };
-  
-//     return (
-//       <TableHead>
-//         <TableRow>
-//           <TableCell padding="checkbox">
-//           </TableCell>
-//           {headCells.map((headCell) => (
-//             <TableCell
-//               key={headCell.id}
-//               align={headCell.numeric ? 'right' : 'left'}
-//               padding={headCell.disablePadding ? 'none' : 'default'}
-//               sortDirection={orderBy === headCell.id ? order : false}
-//             >
-//               <TableSortLabel
-//                 active={orderBy === headCell.id}
-//                 direction={orderBy === headCell.id ? order : 'asc'}
-//                 onClick={createSortHandler(headCell.id)}
-//               >
-//                 {headCell.label}
-//                 {orderBy === headCell.id ? (
-//                   <span className={classes.visuallyHidden}>
-//                     {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-//                   </span>
-//                 ) : null}
-//               </TableSortLabel>
-//             </TableCell>
-//           ))}
-//         </TableRow>
-//       </TableHead>
-//     );
-//   }
-  
-//   EnhancedTableHead.propTypes = {
-//     classes: PropTypes.object.isRequired,
-//     // numSelected: PropTypes.number.isRequired,
-//     onRequestSort: PropTypes.func.isRequired,
-//     // onSelectAllClick: PropTypes.func.isRequired,
-//     order: PropTypes.oneOf(['asc', 'desc']).isRequired,
-//     orderBy: PropTypes.string.isRequired,
-//     rowCount: PropTypes.number.isRequired,
-//   };
-  
 
-//   const theme2 = createMuiTheme({
-//     palette: {
-//       primary: {
-//         light: lightGreen[300],
-//         main: lightGreen[500],
-//         dark: lightGreen[700]
-//       },
-//       secondary: {
-//         light: blueGrey[300],
-//         main: blueGrey[500],
-//         dark: blueGrey[700]
-//       }
-//     }
-//   });
-
-
-//   const useToolbarStyles = makeStyles((theme, theme2) => ({
-//     root: {
-//       paddingLeft: theme.spacing(2),
-//       paddingRight: theme.spacing(1),
-//     },
-//     highlight:
-//       theme.palette.type === 'light'
-//         ? {
-//             color: theme.palette.secondary.main,
-//             backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-//           }
-//         : {
-//             color: theme.palette.text.primary,
-//             backgroundColor: theme.palette.secondary.dark,
-//           },
-//     title: {
-//       flex: '1 1 100%',
-//     },
-//     searchContainer: {
-//         display: "flex",
-//         backgroundColor: fade(theme.palette.secondary.light, 0.05),
-//         paddingLeft: "20px",
-//         paddingRight: "20px",
-//         marginTop: "5px",
-//         marginBottom: "5px",
-//       },
-//       searchIcon: {
-//         alignSelf: "flex-end",
-//         marginBottom: "15px",
-//       },
-//       searchInput: {
-//         width: "200px",
-//         margin: "15px",
-//       },
-//   }));
-  
-  
-
-//   const EnhancedTableToolbar = (props) => {
-//     const {onFilterChange, filter } = props;
-//     const classes = useToolbarStyles();
-    
-
-// // const handleSearchChange = (e) => {
-// //         setFilter(e.target.value);
-// //     };
-//     // const { numSelected } = props;
-  
-//     return (
-//         <Fragment>
-//         <Toolbar>
-//             <div className={classes.searchContainer}>
-//                 <SearchIcon className={classes.searchIcon}/>
-//                 <TextField className={classes.searchInput}
-//                     onChange={onFilterChange}
-//                     label="search feedbacks"
-//                     varient="standard"
-//                 />
-//             </div>
-//         </Toolbar>
-//       <Toolbar>
-        
-//           <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-//             Customer Feedbacks
-//           </Typography>
-      
-//       </Toolbar>
-//       </Fragment>
-//     );
-//   };
-  
-//   EnhancedTableToolbar.propTypes = {
-//     // numSelected: PropTypes.number.isRequired,
-//   };
   
   const useStyles = makeStyles((theme) => ({
     root: {
@@ -230,7 +94,9 @@ import EnhancedTableHead from './EnhancedTableHead'
 
 const FeedbackAnalysis = () => {
     const [feedback, setFeedback] = useState([]);
-     
+    const [avgfeedback, setAvgFeedback] = useState([]);
+     const divRef = useRef();
+     const info = useRef();
 
     const getFeedback = async() => {
         try {
@@ -247,9 +113,45 @@ const FeedbackAnalysis = () => {
                 return res.json();
             });
 
-            //console.log("OUTPUT : ", resFeedback.length);
+            console.log("OUTPUT : ", resFeedback.final_ans);
+            if(resFeedback.final_ans.length > 0){
+                setFeedback(resFeedback.final_ans)
+                //setAvgfeed(resFeedback.length)
+            }
+            else{
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'error',
+                    title: 'No feedbacks for your restaurant yet!',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }
+
+        } catch (err) {
+            console.error(err)
+        }
+    }
+
+
+    const getAvgFeedback = async() => {
+        try {
+            const restaurant_id = localStorage.getItem("resID");
+            const body = {restaurant_id};
+            //console.log("HELLOOOO");
+            const resFeedback = await fetch('/restaurantmanager/avg_feedback', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(body)
+            }).then(res => {
+                return res.json();
+            });
+
+            console.log("AVG FEEDBACK : ", resFeedback);
             if(resFeedback.length > 0){
-                setFeedback(resFeedback)
+                setAvgFeedback(resFeedback)
                 //setAvgfeed(resFeedback.length)
             }
             else{
@@ -268,10 +170,9 @@ const FeedbackAnalysis = () => {
     }
 
     useEffect(() => {
+        getAvgFeedback(); 
         getFeedback();
     }, [])
-
-
 
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
