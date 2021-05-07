@@ -21,6 +21,8 @@
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "firebase": "^8.4.3",
+    "firebase-admin": "^9.7.0",
     "handy-storage": "^2.1.6",
     "jsonwebtoken": "^8.5.1",
     "pg": "^8.5.1",

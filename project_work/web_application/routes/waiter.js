@@ -12,8 +12,8 @@ const cors = require('cors')
 const pool = require('../db')
 
 
-var admin = require('firebase');
-var serviceAccount = require("routes\canteen-management-456ca-firebase-adminsdk-9j8r5-1317415eb1.json");
+var admin = require('firebase-admin');
+var serviceAccount = require("routes\canteen-management-456ca-firebase-adminsdk-9j8r5-1317415eb1.json")
 var app_fcm = admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
   });
@@ -54,8 +54,8 @@ router.post('/login', async(req,res) => {
                     }else{
                         
                         const fcmToken="temporary_fcm_token"   
-                        const checkEntry =  await pool.query("SELECT email_id FROM fcm_jwt WHERE email_id=$1", [data.email_id]);
-                        
+                        const checkEntry =  await pool.query("SELECT email_id FROM fcm_jwt WHERE email_id=$1 and restaurant_id=$2", [data.email_id,data.restaurant_id]);
+                        const checkEmailEntry =  await pool.query("SELECT email_id FROM fcm_jwt WHERE email_id=$1", [data.email_id]);
                         //if already logged in then update
                         if(checkEntry && typeof(checkEntry.rows[0])!=='undefined')
                         {
@@ -63,13 +63,19 @@ router.post('/login', async(req,res) => {
                             const newUser = await pool.query(
                                 "UPDATE fcm_jwt SET last_jwt = $1 WHERE email_id=$2", [token, data.email_id]);
                                 
-                        }//if there is no login info then insert
-                        else{
+                        }//if there is no email id info then insert
+                        else if(typeof(checkEmailEntry.rows[0])=='undefined'){
                                 console.log('inserting')
                                 const newUser = await pool.query(
                                 "INSERT INTO fcm_jwt(email_id,fcm_token,last_jwt,restaurant_id,usertype_id) VALUES ($1, $2, $3,$4,1)",
                                 [data.email_id, fcmToken, token,data.restaurant_id]);
                                 
+                        }//password is verified and there is log of email so resturant_id would be wrong
+                        else{
+                            console.log('invalid details')
+                            return res.status(400).json({
+                                error:"Invalid value of restaurant_id"
+                            })
                         }
 
                         //TOKEN CREATED WITHOUT ERROR  RETURN IT ALONG WITH LOGIN DATA
@@ -93,6 +99,9 @@ router.post('/login', async(req,res) => {
         
     } catch (err) {
         console.log(err.message);
+        res.status(400).json({
+            error_msg:err.message
+        })
     }
 })
 
@@ -239,6 +248,177 @@ router.post('/generate_bill', verifyToken, async(req, res) => {
 })
 
 
+router.post('/fcmtest', async(req, res) => {
+
+    try {
+        console.log('body:', req.body);
+        const data = req.body;
+        var token = data['token'];
+
+        var message = {
+        data: {
+            score: '850',
+            time: '2:45'
+        },
+        token: token
+        };
+
+        console.log("Client Token: ", token);
+
+        // Send a message to the device corresponding to the provided
+        // registration token.
+        admin.messaging().send(message)
+        .then((response) => {
+            // Response is a message ID string.
+            console.log('Successfully sent message:', response);
+        })
+        .catch((error) => {
+            console.log('Error sending message:', error);
+        });
+    } catch (error) {
+        console.log('error: ', error);
+    }
+
+})
+
+
+//insert order into the ordered_dishes table and send notification to the kitchen personnel
+//input: order details
+//output: 
+    // msg:status of insertion
+    // data:{
+    //     order: data sent to the kitchen personnel
+    // }
+router.post('/insert_order', verifyToken, async(req, res) =>{
+    jwt.verify(req.token, 'secretkey',async (err,authData)=>{
+        if(err){
+            
+            res.status(400).json({msg: "Session expired. Login again"})
+            
+        }else{
+            try{
+                const data = req.body;
+                if(!data.restaurant_id || !data.table_no || !data.dish_id || !data.dish_qty || !data.no_of_occupants || data.dish_id.length==0 || data.dish_qty.length==0 || data.dish_id.length!=data.dish_qty.length)
+                {
+                    res.status(400).json({
+                        error:1,
+                        msg: "One or more required field is empty!"
+                    });
+                }
+                else{
+                    let date = new Date();
+                    let currentISODate = ISODateTimeString(date);
+                    // check for availibility of order dishes
+                    let availability=await checkavailability(data.dish_id);
+                    // console.log(availability)
+                    if(!availability)
+                    {
+                        res.status(400).json({
+                            error:1,
+                            msg:"Dish not available!"
+                            });
+                    }
+                    else{
+                        //Add all the orderes to ORDERED_DISHES                             
+                        var notif_arr=[];
+                        let index;    
+                        for(index=0;index<data.dish_id.length;index++)
+                        {
+                            const result = await pool.query('INSERT INTO ORDERED_DISHES(RESTAURANT_ID,TABLE_NO,DISH_ID,DISH_QTY,NO_OF_OCCUPANTS,TIME_STAMP,delivered) VALUES($1,$2,$3,$4,$5,$6,$7)',[data.restaurant_id,data.table_no,data.dish_id[index],data.dish_qty[index],data.no_of_occupants,currentISODate,false])
+                            
+                            //push orders into notification array
+                            notif_arr.push({
+                                "restaurant_id":data.restaurant_id,
+                                "table_no":data.table_no,
+                                "dish_id":data.dish_id[index],
+                                "dish_qty":data.dish_qty[index],
+                                "no_of_occupants":data.no_of_occupants,
+                                "time_stamp":currentISODate,
+                                "delivered":false
+                            })
+                        }
+                        
+                        //convert notification array to string to pass as attr
+                        var notif={}
+                        notif.orders=JSON.stringify(notif_arr)
+                        
+
+                        //get fcm_tokens of all kitchen personnel with same restaurant_id
+                        var kitchen_personnel_fcm = await pool.query("SELECT fcm_token FROM fcm_jwt WHERE restaurant_id=$1 and usertype_id=$2", [data.restaurant_id,3]);
+                        var tokens=[]
+                        kitchen_personnel_fcm['rows'].forEach((element, index, array) => {
+                            tokens.push(element['fcm_token'])
+                        })
+
+                        //send notification to all kitchen personnel with same restaurant_id
+                        var payload = {
+                            notification:{
+                                title: "New order"
+                            },
+                            data: notif
+                        };
+                        // console.log(tokens)
+                        
+                        // to retieve data back use this syntax
+                        // var crap=JSON.parse(payload.data.orders)
+                        // console.log(crap[0])
+
+                        admin.messaging().sendToDevice(tokens,payload)
+                        .then((response) => {
+                            console.log('Successfully sent message:', response);
+                        })
+                        .catch((error) => {
+                            console.log('Error sending message:', error);
+                        });
+                            
+                        return res.status(200).json({
+                            msg: "Added Successfully!",
+                            data: notif
+                        });
+                    }
+                }
+            }catch (err) {
+                console.log(err.message)
+                return res.status(400).json({
+                    error: err.message,
+                    msg: 'Invalid input!'
+                })
+            }
+        }
+    });
+});
+
+
+
+async function checkavailability(dish_id){
+    let index;
+    //First check availability of all dishes
+    
+    for(index=0;index<dish_id.length;index++)
+    {
+        const results = await pool.query('SELECT STATUS FROM MENU WHERE DISH_ID=$1',[dish_id[index]]);
+        // console.log(results);
+        // change status according to bool value in final
+        if(!results.rows[0] || !results.rows.length || !results.rows[0].status)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+function ISODateTimeString(d){
+    function pad(n){return n<10 ? '0'+n : n}
+    return d.getUTCFullYear()+'-'
+         + pad(d.getUTCMonth()+1)+'-'
+         + pad(d.getUTCDate()) +' '
+          + pad(d.getUTCHours())+':'
+          + pad(d.getUTCMinutes())+':'
+          + pad(d.getUTCSeconds())
+}
+
+
+
 async function verifyToken(req,res,next){
 
     const data =req.body
@@ -252,6 +432,8 @@ async function verifyToken(req,res,next){
         res.sendStatus(403);
     }
 }
+
+
 
 
 
