@@ -174,6 +174,8 @@ const FeedbackAnalysis = () => {
         getFeedback();
     }, [])
 
+
+
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('category1');
@@ -209,16 +211,73 @@ const FeedbackAnalysis = () => {
 
 //   const isSelected = (feedback_id) => selected.indexOf(feedback_id) !== -1;
 
+  const user_image = localStorage.getItem("user_image")
+
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, feedback.length - page * rowsPerPage);
 
 
-    return (
-        <div className="container text-center">
-            <br />
-            <h1>Feedback Analysis Page</h1>
-            <br />
+//console.log("avgfeedback", avgfeedback)
 
-<div className={classes.root}>
+
+    return (
+
+       <body style={{background:"#F2F4F3"}}>
+        <div className="container text-center">
+         <Header logout={"log out"} avatar={user_image} logoutpath={"/restaurantmanager/login"} homepath={"/restaurantmanager/reshome"} height={"65px"} color={"white"} color2={"#0A0908"}/> 
+            
+         <div className="row">
+
+              <div className="container text-center" style={{marginTop: "100px", marginBottom: "100px", width:"40%"}}>
+                    <h1 class="w3-jumbo" style={{textAlign: "center", marginTop: "0px", marginBottom: "50px", fontFamily: "Open Sans Condensed", fontSize: "100px !important", color: "#0a0908", filter: "brightness(100%)"}}>Feedback Analysis</h1>
+                    
+                    <h5 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)"}}>Analize the customer satisfaction by analyzing the feedback given by different user, organized in a form of graph, sorted by the different questions, to increase readability.</h5>
+                    
+              </div> 
+
+            <div style={{marginTop: "130px"}}>
+              <BarChart
+          width={500}
+          height={300}
+          data={avgfeedback}
+          margin={{
+            top: 5,
+            right: 30,
+            left: 20,
+            bottom: 5,
+          }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis/>
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="score" fill="#8884d8" />
+          {/* <Bar dataKey="uv" fill="#82ca9d" /> */}
+        </BarChart>
+        </div>
+                
+        </div>
+
+          <div className="container" style={{marginBottom: "200px"}}>
+              <h5>For detailed information of feedback...</h5>
+              <div className="container text-center" style={{textAlign : "center"}}>
+              <Button
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      className={classes.submit123}
+                      style={{width:"10%",height: "20px"}}
+                      onClick={() => {
+                        info.current.scrollIntoView({ behavior: "smooth" });
+                        }}
+                      style={{ marginTop: "20px"}}
+                    >More Info</Button>
+                </div>
+            </div>
+          
+
+
+<div className={classes.root} ref={info}>
       <Paper className={classes.paper}>
       <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
@@ -258,7 +317,7 @@ const FeedbackAnalysis = () => {
 
                   return (
 
-                    (row.category1.includes(filter) || row.category2.includes(filter) || row.category3.includes(filter) || row.category4.includes(filter)) && 
+                    (row.question.includes(filter)) && 
 
                     <TableRow
                       hover
@@ -277,10 +336,9 @@ const FeedbackAnalysis = () => {
                       <TableCell component="th" scope="row" padding="none">
                         {row.feedback_id}
                       </TableCell>
-                      <TableCell align="right">{row.category1}</TableCell>
-                      <TableCell align="right">{row.category2}</TableCell>
-                      <TableCell align="right">{row.category3}</TableCell>
-                      <TableCell align="right">{row.category4}</TableCell>
+                      <TableCell align="center">{row.bill_id}</TableCell>
+                      <TableCell align="center">{row.question}</TableCell>
+                      <TableCell align="center">{row.score}</TableCell>
                     </TableRow>
                   );
                 })}
@@ -304,12 +362,14 @@ const FeedbackAnalysis = () => {
         <br />
         <br />
         <br />
-    
-        <Link to="/restaurantmanager/reshome"><button type="button" class="btn btn-outline-dark">Go to Home Page</button></Link>
-
         <br />
         <br />
+       
         </div>
+         <div ref={divRef} >
+                    <Footer />
+          </div>
+        </body>
     )
 }
 

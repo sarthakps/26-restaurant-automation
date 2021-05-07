@@ -47,7 +47,7 @@ const ResHome = () => {
        
 
 
-    <Header logout={"log out"} avatar={""}  logoutpath={"/restaurantmanager/login"} height={"50px"} height={"65px"} color={"black"} color2={"white"}/>
+    <Header logout={"log out"} avatar={""}  logoutpath={"/restaurantmanager/login"} height={"65px"} color={"white"} color2={"#0A0908"}/>
     <br />
     <br />   
 

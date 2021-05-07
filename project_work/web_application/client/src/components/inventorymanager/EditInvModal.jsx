@@ -1,7 +1,8 @@
 import { Container } from "@material-ui/core";
 import React, { useState } from "react";
-import { Button, ButtonToolbar, Modal } from 'react-bootstrap';
+import {  ButtonToolbar, Modal } from 'react-bootstrap';
 import Swal from "sweetalert2";
+import Button from '@material-ui/core/Button';
 
 function EditInvModal({row}) {
     const [show, setShow] = useState(false);
@@ -59,28 +60,32 @@ function EditInvModal({row}) {
   
     return (
       <>
-        <Button variant="primary" onClick={handleShow} style={{color:"white"}}>
-          Update Item
-        </Button>
+        <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  style={{width: "130px"}}
+                  onClick={handleShow}
+                >Update</Button>
   
         <Modal id={`id$(row.inventory_id)`} show={show} onHide={handleClose} style={{opacity:1, backgroundColor: "black !important"}}>
-          <Modal.Header closeButton style={{backgroundColor: "black", color: "white"}}>
-            <Modal.Title style={{backgroundColor: "black", color: "white"}}>Update Inventory Item</Modal.Title>
+          <Modal.Header closeButton style={{backgroundColor: "white", color: "black"}}>
+            <Modal.Title style={{backgroundColor: "white", color: "black"}}>Update Inventory Item</Modal.Title>
           </Modal.Header>
-          <Modal.Body style={{backgroundColor: "black", color: "white"}}>
+          <Modal.Body style={{backgroundColor: "white", color: "black"}}>
               <h5 className="container text-center">ID : {row.inventory_id}</h5>
               <label for="ucpi" style = {{float: "left", color: "white" }}>Item Name : </label>
               <input type="text" className="form-control" value={item_name} onChange={e => setItem_name(e.target.value)} />
               <label for="ucpi" style = {{float: "left", color: "white" }}>Available Quantity : </label>
               <input type="text" className="form-control" value={available_qty} onChange={e => setAvailable_qty(e.target.value)} />
           </Modal.Body>
-          <Modal.Footer style={{backgroundColor: "black"}}>
-          <Button variant="primary" onClick={e => updateInventory(e)}>
-              Save Changes
-            </Button>
-            <Button variant="secondary" onClick={handleClose}>
-              Close
-            </Button>
+          <Modal.Footer style={{backgroundColor: "white"}}>
+          <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  onClick={e => updateInventory(e)}
+                >Save Changes</Button>
           </Modal.Footer>
         </Modal>
       </>

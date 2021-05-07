@@ -1,4 +1,4 @@
-import React, {Fragment, useState} from "react";
+import React, {Fragment, useState, useRef} from "react";
 import {BrowserRouter as Router, Route, Switch, Link, Redirect, useRouteMatch } from "react-router-dom";
 import BackupIcon from '@material-ui/icons/Backup';
 import { Button,IconButton ,Avatar} from '@material-ui/core';
@@ -17,6 +17,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 
+import Header from './Header'
+import Footer from './Footer'
+import revenueimg from './revenueimg.jpg'
 
 const theme = createMuiTheme({
     palette: {
@@ -85,6 +88,8 @@ const RegisterUser = () => {
     const [contact_no, setContactno] = useState("");
     const [contact_no2, setContactno2] = useState("");
     const [password, setPassword] = useState("");
+    
+    const divRef = useRef();
 
 
     const onSubmitProfile = async(e) => {
@@ -139,18 +144,39 @@ const RegisterUser = () => {
     }
 
     const classes = useStyles();
+
+    const user_image2 = localStorage.getItem("user_image")
+
     return (
-        <div className="container text-center" 
+      <body style={{background:"#F2F4F3"}}>
+
+
+      <Header logout={"log out"} avatar={user_image} logoutpath={"/restaurantmanager/login"} homepath={"/restaurantmanager/reshome"} height={"65px"} color={"white"} color2={"#0A0908"}/> 
+      
+      
+      <div className="row">
+
+              <div className="container text-center" style={{marginTop: "100px", marginBottom: "100px", width:"40%"}}>
+                          <h1 class="w3-jumbo" style={{textAlign: "center", marginTop: "0px", marginBottom: "50px", fontFamily: "Open Sans Condensed", fontSize: "100px !important", color: "#0a0908", filter: "brightness(100%)"}}>Register a User</h1>
+                          
+                          <h5 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)"}}>Lorem  typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</h5>
+                          
+              </div>  
+
+              
+
+              <div className="container text-center" 
             style={{position: "relative",
             zIndex: "1",
+            backgroundColor: "white",
             maxWidth: "40%",
             margin: "20px auto 20px ",
+            marginTop: "50px",
             padding: "15px",
             textAlign: "center",
             boxShadow: "0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24)"}} >
-            <br />
-            <h1>Register User Page</h1>
-            <br />
+              
+           
             <div className="container">
 
         <div className = "Profile_Photo" style = {{display : "flex", flexDirection : 'column-reverse', flex :"1", float: "right", marginBottom : "40px", alignItems :"center"}}>
@@ -289,27 +315,22 @@ const RegisterUser = () => {
 
             </form>
             </div>
+            <br/>
+            <br/>     
+        </div>      
+      </div>
 
-            <Box textAlign='center'>
-              <Link to={"/restaurantmanager/reshome"}>
-                <ThemeProvider theme={theme}>
-                <Button
-                    type="submit"
-                    variant="contained"
-                    fullWidth
-                    color="secondary"
-                    startIcon={<HomeIcon />}
-                    className={classes.submit123}
-                    style={{width:"40%"}}
-                  >
-                    GO TO HOME PAGE
-                  </Button>
-                </ThemeProvider>
-              </Link>
-                  
-          </Box>
-            
+      
+      <div style={{background:"#F2F4F3"}}>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+         <div ref={divRef} >
+         <Footer />
         </div>
+        </div>
+        </body>
     )
 }
 

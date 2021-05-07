@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useState} from "react"
+import React, {Fragment, useEffect, useState, useRef} from "react"
 import {BrowserRouter as Router, Route, Link, Redirect, useRouteMatch } from "react-router-dom"
 import Swal from "sweetalert2";
 import clsx from 'clsx';
@@ -18,10 +18,11 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 
 import Header from '../restaurantmanager/Header'
-import Lottie from 'react-lottie';
+import Footer from '../restaurantmanager/Footer'
 import animationData from '../../images/pendord.json'
 import Card from '../restaurantmanager/Card'
 import '../stylebutton.css'
+import Button from '@material-ui/core/Button';
 
 import EnhancedTableToolbar from '../restaurantmanager/EnhancedTableToolBar'
 import EnhancedTableHead from '../restaurantmanager/EnhancedTableHead'
@@ -59,8 +60,8 @@ import EnhancedTableHead from '../restaurantmanager/EnhancedTableHead'
     { id: 'dish_name', numeric: false, disablePadding: true, label: 'Dish Name' },
     { id: 'dish_qty', numeric: false, disablePadding: false, label: 'Dish Quantity' },
     { id: 'table_no', numeric: false, disablePadding: false, label: 'Table No.' },
-    { id: 'Time', numeric: false, disablePadding: false, label: 'Time of Order' },
-    { id: 'no_of_occupants', numeric: false, disablePadding: false, label: 'No. of Occupants' }
+    { id: 'time', numeric: false, disablePadding: false, label: 'Time of Order' },
+    { id: 'ready', numeric: false, disablePadding: false, label: 'Ready!' }
   ];
 
   
@@ -90,7 +91,7 @@ import EnhancedTableHead from '../restaurantmanager/EnhancedTableHead'
 
 const Menu = () => {
     const [resmenu, setResmenu] = useState([]);
-     
+     const divRef = useRef();
 
     const getMenu = async() => {
         try {
@@ -137,6 +138,50 @@ const Menu = () => {
     useEffect(() => {
         getMenu();
     }, [])
+
+
+    const deliveredFun = async(e) => {
+      try {
+
+          const res_id = localStorage.getItem("resID");
+          const email_id = localStorage.getItem("emailID");
+          var order_id = e.currentTarget.value;
+          console.log("order_id : ", order_id);
+          const body = {restaurant_id:res_id, email_id, order_id};  // send email_id by localStorage method
+          console.log("BoDY : ", body)
+
+          const deliverOrder = await fetch('/kitchenpersonnel/delivered', {
+              method: "PUT",
+              headers: {"Content-Type": "application/json"},
+              body: JSON.stringify(body)
+          }).then(res => {
+              return res.json()
+          })
+          //console.log(menuDishes.ans);
+          if(deliverOrder.msg == "Updated status successfully!"){
+              Swal.fire({
+                  position: 'top-end',
+                  icon: 'success',
+                  title: 'Pending orders!',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+              window.location.reload()
+          }
+          else{
+              Swal.fire({
+                  position: 'top-end',
+                  icon: 'error',
+                  title: 'An error occured',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+              
+            }
+      } catch (err) {
+          console.error(err)
+      }
+  }
 
 
 
@@ -192,16 +237,15 @@ const Menu = () => {
 
       <Header logout={"log out"} avatar={user_image} logoutpath={"/kitchenpersonnel/login"} height={"65px"} color={"white"} color2={"#0A0908"}/> 
 
-      <div style={{height: "250px", backgroundColor: "#0A0908"}}>
-        <Lottie 
-                options={defaultOptions}
-                  height={350}
-                  width={350}
-                  style={{float: "left", marginLeft: "5%"}}
-                />
+      <div className="row">
 
-<h1 style={{fontFamily: "font-family:Georgia, 'Times New Roman', Times, serif", letterSpacing: "0.10em", color: "#F2F4F8", fontSize: "50px", paddingTop: "10%", paddingLeft: "35%"}}>Pending Orders</h1>
-        </div>
+<div className="container text-center" style={{marginTop: "100px", marginBottom: "100px", width:"40%"}}>
+      <h1 class="w3-jumbo" style={{textAlign: "center", marginTop: "0px", marginBottom: "50px", fontFamily: "Open Sans Condensed", fontSize: "100px !important", color: "#0a0908", filter: "brightness(100%)"}}>Pending Orders</h1>
+      
+      <h5 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)"}}>Analize the customer satisfaction by analyzing the feedback given by different user, organized in a form of graph, sorted by the different questions, to increase readability.</h5>
+      
+</div> 
+</div>
 
         <div className="container text-center">
 
@@ -273,8 +317,14 @@ const Menu = () => {
                    
                         <TableCell align="center" style={{color:"#5e503f"}}>{row.table_no}</TableCell>
                         <TableCell align="center" style={{color:"#5e503f"}}>{row.time_stamp}</TableCell>
-                      <TableCell align="center" style={{color:"#5e503f"}}>{row.no_of_occupants}</TableCell>
-                      <TableCell align="center" ><button type="button" id="inventory" class="btn btn-outline-dark">Ready</button></TableCell>
+                      <TableCell align="center" > <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  style={{width: "130px"}}
+                  value = {row.order_id}
+                  onClick={(e) => deliveredFun(e)}
+                >Ready!</Button></TableCell>
                     </TableRow>
 
                     {/* <Card cardwidth={"800px"} borderradius={"5px"} h2={row.dish_qty} h3={row.time_stamp} p={row.no_of_occupants} />
@@ -296,7 +346,7 @@ const Menu = () => {
       <FormControlLabel
         control={<Switch checked={dense} onChange={handleChangeDense} />}
         label="Dense padding"
-        style={{color: "white"}}
+        style={{color: "#0a0908"}}
       />
     </div>
 
@@ -304,14 +354,14 @@ const Menu = () => {
         <br />
         <br />
         <br />
-    
-          <div className="container text-center">      
-        <Link to="/kitchenpersonnel/login"><button type="button" id="inventory" class="btn btn-outline-dark">Log Out</button></Link>
-        </div>
 
         <br />
         <br />
         </div>
+
+        <div ref={divRef} >
+                    <Footer />
+          </div>
         </body>
     )
 }

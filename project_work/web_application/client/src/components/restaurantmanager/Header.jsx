@@ -15,6 +15,8 @@ import Zoom from '@material-ui/core/Zoom';
 import {Button, Avatar} from '@material-ui/core';
 import {BrowserRouter as Router, Route, Link, Redirect, useRouteMatch } from "react-router-dom"
 
+import sample from '../sample5.jfif'
+
 
 function HideOnScroll(props) {
   const { children, window } = props;
@@ -54,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
   }));
  
 
-export default function HideAppBar({props, login, logout, avatar, subscription, logoutpath, height, color, color2}) {
+export default function HideAppBar({props, login, logout, avatar, subscription, logoutpath, homepath, height, color, color2}) {
     const classes = useStyles();
 
     const divRefmid = useRef();
@@ -75,12 +77,15 @@ export default function HideAppBar({props, login, logout, avatar, subscription, 
         <AppBar  style={{backgroundColor: color, height:height}}>
           <Toolbar>
           <Typography variant="h6" className={classes.title} style={{color: color2}}>
-            LOGO
+            <img src={sample} style={{height: "50px", width: "180px", float: "left"}}/>
           </Typography>
+
+          
+
+          {homepath ? <Link to={homepath}><Button color="inherit" style={{color: color2}}>Home</Button></Link> : ""}
+
           <Button color="inherit" style={{color: color2}} onClick={handleScroll}>About us</Button> 
 
-            {login ? <Button color="inherit" style={{color: color2, marginRight: "20px"}}>{login}</Button> : ""}
-            
             {logout? <Link to={logoutpath}><Button color="inherit" style={{color: color2, marginRight: "20px"}}>{logout}</Button></Link> : ""}
             
             {subscription ? <Button color="inherit" style={{color: color2, marginRight: "20px"}} onCLick={handleScroll}>{subscription}</Button>  : ""}

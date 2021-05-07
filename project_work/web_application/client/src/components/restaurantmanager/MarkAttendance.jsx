@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useState} from "react"
+import React, {Fragment, useEffect, useState, useRef} from "react"
 import {BrowserRouter as Router, Route, Link, Redirect, useRouteMatch } from "react-router-dom"
 import Swal from "sweetalert2";
 import PropTypes from 'prop-types';
@@ -23,6 +23,10 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import EnhancedTableHead from './EnhancedTableHead'
 import EnhancedTableToolbar from './EnhancedTableToolBar'
+
+import Header from './Header'
+import Footer from './Footer'
+import revenueimg from './revenueimg.jpg'
   
   function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -57,6 +61,7 @@ const headCells = [
     { id: 'user_id', numeric: true, disablePadding: true, label: 'ID' },
     { id: 'user_name', numeric: false, disablePadding: false, label: 'User Name' },
     { id: 'usertype_id', numeric: false, disablePadding: false, label: 'User Type' },
+    { id: 'mark_attendance', numeric: false, disablePadding: false, label: 'Mark Attendance' },
     // { id: 'attedance_status', numeric: false, disablePadding: false, label: 'Attendance Status' },
     // { id: 'mark_flag', numeric: false, disablePadding:false, label: 'Mark Attendance'}
   ];
@@ -87,6 +92,7 @@ const headCells = [
 
 const Attendance = () => {
     const [resatten, setResatten] = useState([]);
+    const divRef = useRef();
 
     const getUsers = async () => {
         try {
@@ -101,8 +107,9 @@ const Attendance = () => {
             }).then(res => {
                 return res.json()
             })
-            //console.log(atten.users)
+            console.log("atten.users", atten.users)
             setResatten(atten.users)
+            console.log("resatten : ", resatten)
 
         } catch (err) {
             console.error(err.message)
@@ -169,8 +176,6 @@ const Attendance = () => {
     }
 
   const handleClickFun = (e) => {
-    //setUserID("1");
-      //console.log("userID in handle click ",e.currentTarget.value)
       setUserID(e.currentTarget.value)
       console.log("userID :", userID)
       markAttendance(userID)
@@ -200,14 +205,33 @@ const Attendance = () => {
   };
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, resatten.length - page * rowsPerPage);
+  const user_image = localStorage.getItem("user_image")
 
 
     return (
-        <div className="container text-center">
-            <br />
-            <h1>Mark Employees' Attendance</h1>
-            <br />
 
+      <body style={{background:"#F2F4F3"}}>
+        
+         <Header logout={"log out"} avatar={user_image} logoutpath={"/restaurantmanager/login"} homepath={"/restaurantmanager/reshome"} height={"65px"} color={"white"} color2={"#0A0908"}/> 
+            
+         <div className="row">
+
+              <div className="container text-center" style={{marginTop: "100px", marginBottom: "100px", width:"40%"}}>
+                    <h1 class="w3-jumbo" style={{textAlign: "center", marginTop: "0px", marginBottom: "50px", fontFamily: "Open Sans Condensed", fontSize: "100px !important", color: "#0a0908", filter: "brightness(100%)"}}>Mark Attendance</h1>
+                    
+                    <h5 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)"}}>Analize the customer satisfaction by analyzing the feedback given by different user, organized in a form of graph, sorted by the different questions, to increase readability.</h5>
+                    
+              </div> 
+          </div>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+  <div className="container text-center">
 <div className={classes.root}>
       <Paper className={classes.paper}>
       <TablePagination
@@ -263,25 +287,36 @@ const Attendance = () => {
                       <TableCell padding="checkbox">
                       </TableCell>
 
-                      <TableCell component="th" scope="row" padding="none">
+                      <TableCell component="th" scope="row" padding="10px">
                         <Avatar 
                           alt = "USER"
                           src={row.user_image} 
                           style={{
-                              width: "80px",
-                              height: "80px",
+                              width: "70px",
+                              height: "70px",
                           }} 
                           />
                       </TableCell>
                       <TableCell component="th" scope="row" padding="none">
                         {row.user_id}
                       </TableCell>
-                      <TableCell align="right">{row.user_name}</TableCell>
+                      <TableCell align="center">{row.user_name}</TableCell>
                    
-                        <TableCell align="right">{row.usertype_id}</TableCell>
+                        <TableCell align="center">{row.usertype_id}</TableCell>
 
-                       <TableCell align="right"><Button value={row.user_id} onClick={(e) => handleClickFun(e)}>Mark Attendance</Button></TableCell>
+                       <TableCell align="center"><Button
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      className={classes.submit123}
+                     
+                      value={row.user_id} 
+                      onClick={(e) => handleClickFun(e)}
+                     
+                    >Mark Attendance</Button></TableCell>
                        
+                       
+
                     </TableRow>
                     
                     </Fragment>
@@ -304,13 +339,15 @@ const Attendance = () => {
     </div>         
         <br />
         <br />
-        <br />
-    
-        <Link to="/restaurantmanager/reshome"><button type="button" class="btn btn-outline-dark">Go to Home Page</button></Link>
+      
 
         <br />
         <br />
         </div>
+        <div ref={divRef} >
+                    <Footer />
+          </div>
+        </body>
     )
 }
 

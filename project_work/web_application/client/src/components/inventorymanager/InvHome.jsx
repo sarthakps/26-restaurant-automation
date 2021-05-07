@@ -39,7 +39,7 @@ const InvHome = () => {
        
 
 
-    <Header logout={"log out"} avatar={""}  logoutpath={"/inventorymanager/login"} height={"50px"} height={"65px"} color={"black"} color2={"white"}/>
+    <Header logout={"log out"} avatar={""}  logoutpath={"/inventorymanager/login"} height={"65px"} color={"white"} color2={"#0A0908"}/>
     <br />
     <br /> 
     <br /> 
