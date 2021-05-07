@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useState} from "react"
+import React, {Fragment, useEffect, useState, useRef} from "react"
 import {BrowserRouter as Router, Route, Link, Redirect, useRouteMatch } from "react-router-dom"
 import Swal from "sweetalert2";
 import clsx from 'clsx';
@@ -16,13 +16,15 @@ import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
-import { Button } from '@material-ui/core'
 
 import EditInvModal from './EditInvModal'
 import Lottie from 'react-lottie';
 import animationData from '../../images/updateinv.json'
 import Header from '../restaurantmanager/Header'
+import Footer from '../restaurantmanager/Footer'
+import Button from '@material-ui/core/Button';
 import '../stylebutton.css'
+import menuimg2 from '../restaurantmanager/res_menu6.jpg'
 
 import EnhancedTableToolbar from '../restaurantmanager/EnhancedTableToolBar'
 import EnhancedTableHead from '../restaurantmanager/EnhancedTableHead'
@@ -59,8 +61,8 @@ const headCells = [
   { id: 'inventory_id', numeric: true, disablePadding: true, label: 'ID' },
   { id: 'item_name', numeric: false, disablePadding: false, label: 'Name' },
   { id: 'available_qty', numeric: false, disablePadding: false, label: 'Available Quantity' },
-  { id: 'update', numeric: false, disablePadding: false, label: 'Update' },
-  { id: 'delete', numeric: true, disablePadding: false, label: 'Delete' }
+  { id: 'update', numeric: false, disablePadding: false, label: 'Update Item' },
+  { id: 'delete', numeric: true, disablePadding: false, label: 'Delete Item' }
 ];
   
   const useStyles = makeStyles((theme) => ({
@@ -83,15 +85,13 @@ const headCells = [
       padding: 0,
       position: 'absolute',
       top: 20,
-      width: 1,
-      // color: '#000000',
-      // fontColor: '#000000'
+      width: 1
     },
   }));
 
 const UpdateInventory = () => {
     const [resmenu, setResmenu] = useState([]);
-     
+    const divRef = useRef();
 
     const getMenu = async() => {
         try {
@@ -138,6 +138,51 @@ const UpdateInventory = () => {
     useEffect(() => {
         getMenu();
     }, [])
+
+
+
+    const deleteItem = async(e) => {
+      try {
+
+          const res_id = localStorage.getItem("resID");
+          const email_id = localStorage.getItem("emailID");
+          var inventory_id = e.currentTarget.value;
+          console.log("inventory_id : ", inventory_id);
+          const body = {restaurant_id:res_id, email_id, inventory_id};  // send email_id by localStorage method
+
+          const invItem = await fetch('/inventorymanager/inventory_item', {
+              method: "DELETE",
+              headers: {"Content-Type": "application/json"},
+              body: JSON.stringify(body)
+          }).then(res => {
+              return res.json()
+          })
+          console.log(invItem.msg);
+          if(invItem.msg == "Delete successful!"){
+              Swal.fire({
+                  position: 'top-end',
+                  icon: 'success',
+                  title: 'Deleted successfully!',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+              window.location.reload();
+          }
+          else{
+              Swal.fire({
+                  position: 'top-end',
+                  icon: 'error',
+                  title: 'An error occured',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+          }
+          
+
+      } catch (err) {
+          console.error(err)
+      }
+  }
 
 
 
@@ -191,25 +236,26 @@ const UpdateInventory = () => {
     return (
       <body style={{background:"#F2F4F3"}}>
 
-        <Header logout={"log out"} avatar={user_image} logoutpath={"/inventorymanager/login"}/>
 
-        <div style={{height: "250px", backgroundColor: "#0A0908"}}>
-        <Lottie 
-                options={defaultOptions}
-                  height={280}
-                  width={280}
-                  style={{float: "left", marginLeft: "5%", marginTop: "5%"}}
-                />
-
-<h1 style={{fontFamily: "font-family:Georgia, 'Times New Roman', Times, serif", letterSpacing: "0.10em", color: "#F2F4F8", fontSize: "50px", paddingTop: "10%", paddingLeft: "35%"}}> Update Inventory Page</h1>
-        </div>
+      <Header logout={"log out"} avatar={user_image} logoutpath={"/inventorymanager/login"} homepath={"/inventorymanager/invhome"} height={"65px"} color={"white"} color2={"#0A0908"}/> 
+      
+      
+      <div className="row">
+              <img src={menuimg2} style={{width: "58%", float: "left", height: "500px", background:"no repeat center fixed", backgroundSize: "cover", filter: "brightness(70%)"}} />
+                    <div className="container text-center" style={{marginTop: "100px", marginBottom: "100px", width:"40%"}}>
+                          <h1 class="w3-jumbo" style={{textAlign: "center", marginTop: "0px", marginBottom: "50px", fontFamily: "Open Sans Condensed", fontSize: "100px !important", color: "#0a0908", filter: "brightness(100%)"}}>Update Inventory</h1>
+                          
+                          <h5 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)"}}>Lorem It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</h5>
+                          
+                      </div>   
+      </div>
 
         
 
         <div className="container text-center">
     
 <div className={classes.root}>
-      <Paper className={classes.paper} style={{background:"#F2F4F3", fontSize:"22px", boxShadow:"0px", marginTop: "200px"}}>
+      <Paper className={classes.paper} style={{background:"white", fontSize:"22px", boxShadow:"0px", marginTop: "200px"}}>
       <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
@@ -273,7 +319,15 @@ const UpdateInventory = () => {
                         <TableCell align="center" style={{color: "#5e503f"}}>{row.available_qty}</TableCell>
                    
                       <TableCell  align="center" style={{color: "#5e503f"}}><EditInvModal row={row}/></TableCell>
-                      <TableCell><Button>Delete</Button></TableCell>
+                      <TableCell>
+                        <Button
+                          type="submit"
+                          variant="outlined" color="secondary"
+                          style={{width: "130px"}}
+                          value={row.inventory_id}
+                          onClick={(e) => deleteItem(e)}
+                        >Delete</Button>
+                      </TableCell>
                     </TableRow>
                     
                     </Fragment>
@@ -302,14 +356,13 @@ const UpdateInventory = () => {
         <br />
         <br/>
         <br />
-    
-          <div className="container text-center">      
-        <Link to="/inventorymanager/invhome"><button type="button" id="inventory" class="btn btn-outline-dark btn-lg">Go to Home Page</button></Link>
-        </div>
 
         <br />
         <br />
         </div>
+        <div ref={divRef} >
+                    <Footer />
+                </div>
         </body>
     )
 }

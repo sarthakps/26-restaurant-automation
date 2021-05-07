@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useState} from "react"
+import React, {Fragment, useEffect, useState, useRef} from "react"
 import {BrowserRouter as Router, Route, Link, Redirect, useRouteMatch } from "react-router-dom"
 import Swal from "sweetalert2";
 import PropTypes from 'prop-types';
@@ -17,11 +17,20 @@ import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 // import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
-import Tooltip from '@material-ui/core/Tooltip';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import EnhancedTableHead from './EnhancedTableHead'
 import EnhancedTableToolbar from './EnhancedTableToolBar'
+
+import Button from '@material-ui/core/Button';
+import Header from './Header'
+import Footer from './Footer'
+import { PureComponent } from 'react';
+import {  CartesianGrid, Legend, BarChart, Bar, Cell, XAxis, YAxis, Tooltip,PieChart, Pie, Sector } from 'recharts';
+
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
   
   function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -85,11 +94,52 @@ const headCells = [
 
 const Attendance = () => {
     const [resatten, setResatten] = useState([]);
+    const divRef = useRef();
+    const info = useRef();
+        const [date1, setDate1] = useState('');
+        const [date2, setDate2] = useState('');
+        var date1N = '';
+        var date2N = '';
+
+        const changeDateToISO = (marked_date) => {
+          var ans = marked_date.toString();   
+          var result = ans.split(" ");
+          var day = result[2];
+          var year = result[3];
+          var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+          var intMonth = parseInt(months.indexOf(result[1])) + 1;
+          var month = intMonth < 10 ? '0' + intMonth.toString() : intMonth.toString();
+          var result = year + '-' + month + '-' + day;
+
+          return result;
+        }
+      
+        const onClickHandle = () => {
+
+          if(date1==null || date2==null){
+              Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: 'Please enter a proper date range',
+                showConfirmButton: false,
+                timer: 1500
+            })
+          }
+
+          if(date1!=null && date2!=null){
+            date1N = changeDateToISO(date1);
+            date2N = changeDateToISO(date2);
+            getAttendance();
+          }
+        }
+
 
     const getAttendance = async () => {
         try {
             const restaurant_id = localStorage.getItem("resID");
-            const body = {restaurant_id};
+            const email_id = localStorage.getItem("emailID");
+            const body = {restaurant_id, date1N, date2N, email_id};
+            //console.log("BODY : ", body)
 
             const atten = await fetch("/restaurantmanager/view_attendance", {
                 method: "POST",
@@ -101,15 +151,28 @@ const Attendance = () => {
             //const jsonData = await atten.json();
             //console.log(jsonData)
             setResatten(atten)
+            console.log("ATTEN AAAAAAAAAAA : ", atten)
+
+            if(atten){
+              console.log("BELLOOOOO")
+              Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: 'Attendance Record',
+                showConfirmButton: false,
+                timer: 1500
+            });
+            info.current.scrollIntoView({ behavior: "smooth" });
+            }
 
         } catch (err) {
             console.error(err.message)
         }
     }
 
-    useEffect(() => {
-        getAttendance();
-    }, [])
+    // useEffect(() => {
+    //     getAttendance();
+    // }, [])
 
 
   const classes = useStyles();
@@ -131,7 +194,6 @@ const Attendance = () => {
       setFilter(e.target.value.toLowerCase());
   };
 
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -146,15 +208,88 @@ const Attendance = () => {
   };
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, resatten.length - page * rowsPerPage);
-
+  const user_image = localStorage.getItem("user_image")
 
     return (
-        <div className="container text-center">
-            <br />
-            <h1>Employees' Attendance</h1>
-            <br />
 
-<div className={classes.root}>
+      <body style={{background:"#F2F4F3"}}>
+        
+        <Header logout={"log out"} avatar={user_image} logoutpath={"/restaurantmanager/login"} homepath={"/restaurantmanager/reshome"} height={"65px"} color={"white"} color2={"#0A0908"}/> 
+            
+        <div className="row">
+
+<div className="container text-center" style={{marginTop: "100px", marginBottom: "100px", width:"40%"}}>
+      <h1 class="w3-jumbo" style={{textAlign: "center", marginTop: "0px", marginBottom: "50px", fontFamily: "Open Sans Condensed", fontSize: "100px !important", color: "#0a0908", filter: "brightness(100%)"}}>View Attendance Record</h1>
+      
+      <h5 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)"}}>Analize the customer satisfaction by analyzing the feedback given by different user, organized in a form of graph, sorted by the different questions, to increase readability.</h5>
+      
+</div> 
+
+<div className="row" style={{textAlign: "center", marginTop: "150px", width: "50%"}}>
+  <h4>From : &nbsp; &nbsp; </h4>
+        <div style={{marginTop: "15px"}}>
+          <DatePicker 
+          selected={date1} 
+          onChange={date => setDate1(date)} 
+          dateFormat='yyyy-MM-dd'
+          maxDate={new Date()}
+          isClearable
+          showYearDropdown
+          showMonthDropdown
+          scrollableMonthYearDropdown
+          /> 
+        </div>    
+        <h4> &nbsp; &nbsp; To :  &nbsp; &nbsp;</h4>
+        <div style={{marginTop: "15px", marginRight: "110px"}}>
+        <DatePicker 
+        selected={date2} 
+        onChange={date => setDate2(date)}  
+        dateFormat='yyyy-MM-dd'
+        maxDate={new Date()}
+        isClearable
+        showYearDropdown
+        showMonthDropdown
+        scrollableMonthYearDropdown
+        />
+        </div>
+
+      <div className="container text-center">
+        <Button
+    type="submit"
+    variant="contained"
+    color="primary"
+    className={classes.submit123}
+    
+    onClick={onClickHandle}
+    // onClick={() => {
+    //   info.current.scrollIntoView({ behavior: "smooth" });
+    //   }}
+    style={{ marginTop: "-130px", marginBottom: "50px"}}
+  >Apply</Button>
+  </div>
+
+        <div>
+            
+          </div>
+       
+</div>
+
+
+
+</div>
+
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+
+        <div className="container text-center">
+
+<div className={classes.root} ref={info}>
       <Paper className={classes.paper}>
       <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
@@ -170,6 +305,7 @@ const Attendance = () => {
             onFilterChange={handleFilterChange}
         />
         <h4>{filter}</h4>
+
         <TableContainer>
           <Table
             className={classes.table}
@@ -185,6 +321,8 @@ const Attendance = () => {
               onRequestSort={handleRequestSort}
               rowCount={resatten.length}
             />
+
+            
             <TableBody>
               {stableSort(resatten, getComparator(order, orderBy, filter))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
@@ -212,11 +350,11 @@ const Attendance = () => {
                       <TableCell component="th" scope="row" padding="none">
                         {row.user_id}
                       </TableCell>
-                      <TableCell align="right">{row.user_name}</TableCell>
+                      <TableCell align="center">{row.user_name}</TableCell>
                    
-                        <TableCell align="right">{row.time_stamp}</TableCell>
+                        <TableCell align="center">{row.time_stamp}</TableCell>
                    
-                      <TableCell align="right">{row.attendance_status ? 'present' : 'absent'}</TableCell>
+                      <TableCell align="center">{row.attendance_status ? 'present' : 'absent'}</TableCell>
                     </TableRow>
                     
                     </Fragment>
@@ -240,12 +378,13 @@ const Attendance = () => {
         <br />
         <br />
         <br />
-    
-        <Link to="/restaurantmanager/reshome"><button type="button" class="btn btn-outline-dark">Go to Home Page</button></Link>
-
         <br />
         <br />
         </div>
+        <div ref={divRef} >
+                    <Footer />
+          </div>
+        </body>
     )
 }
 

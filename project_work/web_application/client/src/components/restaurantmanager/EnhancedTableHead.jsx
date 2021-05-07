@@ -6,13 +6,6 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 
-// const headCells = [
-//     { id: 'user_id', numeric: true, disablePadding: true, label: 'ID' },
-//     { id: 'user_name', numeric: false, disablePadding: false, label: 'User Name' },
-//     { id: 'time_stamp', numeric: false, disablePadding: false, label: 'TimeStamp' },
-//     { id: 'attedance_status', numeric: false, disablePadding: false, label: 'Attendance Status' },
-//   ];
-
 function EnhancedTableHead(props) {
     const { classes, headCells, order, orderBy, rowCount, onRequestSort } = props;
     const createSortHandler = (property) => (event) => {
@@ -30,17 +23,17 @@ function EnhancedTableHead(props) {
               align={headCell.numeric ? 'left' : 'center'}
               padding={headCell.disablePadding ? 'none' : 'default'}
               sortDirection={orderBy === headCell.id ? order : false}
-              style={{color:"black"}}
+              style={{color:"#5e503f"}}
             >
               <TableSortLabel
                 active={orderBy === headCell.id}
                 direction={orderBy === headCell.id ? order : 'asc'}
                 onClick={createSortHandler(headCell.id)}
-                style={{color:"black", fontSize:"20px"}}
+                style={{color:"#5e503f", fontSize:"20px", fontColor: "5e503f"}}
               >
                 {headCell.label}
                 {orderBy === headCell.id ? (
-                  <span className={classes.visuallyHidden}>
+                  <span className={classes.visuallyHidden} style={{color:"#5e503f", fontSize:"20px", fontColor: "#5e503f"}}>
                     {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                   </span>
                 ) : null}

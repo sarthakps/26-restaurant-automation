@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useState} from "react"
+import React, {Fragment, useEffect, useState, useRef} from "react"
 import {BrowserRouter as Router, Route, Link, Redirect, useRouteMatch } from "react-router-dom"
 import Swal from "sweetalert2";
 import PropTypes from 'prop-types';
@@ -23,6 +23,9 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import EnhancedTableHead from './EnhancedTableHead'
 import EnhancedTableToolbar from './EnhancedTableToolBar'
+
+import Header from './Header'
+import Footer from './Footer'
   
   function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -57,6 +60,7 @@ const headCells = [
     { id: 'user_id', numeric: false, disablePadding: true, label: 'ID' },
     { id: 'user_name', numeric: false, disablePadding: false, label: 'User Name' },
     { id: 'usertype_id', numeric: false, disablePadding: false, label: 'User Type' },
+    { id: 'remove_user', numeric: false, disablePadding: false, label: 'Remove User' },
     // { id: 'attedance_status', numeric: false, disablePadding: false, label: 'Attendance Status' },
     // { id: 'mark_flag', numeric: false, disablePadding:false, label: 'Mark Attendance'}
   ];
@@ -87,6 +91,7 @@ const headCells = [
 
 const RemoveUser = () => {
     const [resatten, setResatten] = useState([]);
+    const divRef = useRef();
 
     const getUsers = async () => {
         try {
@@ -202,13 +207,26 @@ const RemoveUser = () => {
   };
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, resatten.length - page * rowsPerPage);
-
+  const user_image = localStorage.getItem("user_image")
 
     return (
+      <body style={{background:"#F2F4F3"}}>
+        
+      <Header logout={"log out"} avatar={user_image} logoutpath={"/restaurantmanager/login"} homepath={"/restaurantmanager/reshome"} height={"65px"} color={"white"} color2={"#0A0908"}/> 
+         
+      <div className="row">
+
+           <div className="container text-center" style={{marginTop: "100px", marginBottom: "100px", width:"40%"}}>
+                 <h1 class="w3-jumbo" style={{textAlign: "center", marginTop: "0px", marginBottom: "50px", fontFamily: "Open Sans Condensed", fontSize: "100px !important", color: "#0a0908", filter: "brightness(100%)"}}>Remove a User</h1>
+                 
+                 <h5 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)"}}>Analize the customer satisfaction by analyzing the feedback given by different user, organized in a form of graph, sorted by the different questions, to increase readability.</h5>
+                 
+           </div> 
+       </div>
+        
+        
         <div className="container text-center">
-            <br />
-            <h1>Remove User</h1>
-            <br />
+          
 
 <div className={classes.root}>
       <Paper className={classes.paper}>
@@ -265,7 +283,7 @@ const RemoveUser = () => {
                       <TableCell padding="checkbox">
                       </TableCell>
 
-                      <TableCell component="th" scope="row" padding="none">
+                      <TableCell component="th" scope="row" padding="10px">
                         <Avatar 
                           alt = "USER"
                           src={row.user_image} 
@@ -282,8 +300,15 @@ const RemoveUser = () => {
                    
                         <TableCell align="center">{row.usertype_id}</TableCell>
 
-                       <TableCell align="center"><Button value={row.user_id} onClick={(e) => handleClickFun(e)}>Remove User</Button></TableCell>
-                       
+                       <TableCell align="center"><Button
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      className={classes.submit123} 
+                      value={row.user_id} 
+                      onClick={(e) => handleClickFun(e)}
+                    >Remove</Button></TableCell>
+
                     </TableRow>
                     
                     </Fragment>
@@ -307,12 +332,15 @@ const RemoveUser = () => {
         <br />
         <br />
         <br />
-    
-        <Link to="/restaurantmanager/reshome"><button type="button" class="btn btn-outline-dark">Go to Home Page</button></Link>
-
+  
         <br />
         <br />
         </div>
+
+        <div ref={divRef} >
+                    <Footer />
+          </div>
+        </body>
     )
 }
 

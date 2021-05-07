@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useState} from "react"
+import React, {Fragment, useEffect, useState, useRef} from "react"
 import {BrowserRouter as Router, Route, Link, Redirect, useRouteMatch } from "react-router-dom"
 import Swal from "sweetalert2";
 import clsx from 'clsx';
@@ -21,7 +21,10 @@ import EditMenuModal from './EditMenuModal'
 import Lottie from 'react-lottie';
 import animationData from '../../images/updatemenu.json'
 import Header from '../restaurantmanager/Header'
+import Footer from '../restaurantmanager/Footer'
 import '../stylebutton.css'
+import Button from '@material-ui/core/Button';
+import menuimg2 from '../restaurantmanager/res_menu6.jpg'
 
 import EnhancedTableToolbar from '../restaurantmanager/EnhancedTableToolBar'
 import EnhancedTableHead from '../restaurantmanager/EnhancedTableHead'
@@ -57,11 +60,12 @@ import EnhancedTableHead from '../restaurantmanager/EnhancedTableHead'
   const headCells = [
     { id: 'dish_id', numeric: true, disablePadding: true, label: 'ID' },
     { id: 'dish_name', numeric: false, disablePadding: false, label: 'Name' },
-    { id: 'description', numeric: false, disablePadding: false, label: 'Description' },
+    // { id: 'description', numeric: false, disablePadding: false, label: 'Description' },
     { id: 'dish_price', numeric: false, disablePadding: false, label: 'Price' },
     { id: 'status', numeric: false, disablePadding: false, label: 'Status' },
-    { id: 'jain_availability', numeric: false, disablePadding: false, label: 'Jain Availability' },
-    { id: 'update', numeric: false, disablePadding: false, label: 'Update' }
+    // { id: 'jain_availability', numeric: false, disablePadding: false, label: 'Jain Availability' },
+    { id: 'update', numeric: false, disablePadding: false, label: 'Update Item' },
+    { id: 'delete', numeric: false, disablePadding: false, label: 'Delete Item' }
   ];
   
   const useStyles = makeStyles((theme) => ({
@@ -90,16 +94,14 @@ import EnhancedTableHead from '../restaurantmanager/EnhancedTableHead'
 
 const UpdateMenu = () => {
     const [resmenu, setResmenu] = useState([]);
-     
+      const divRef = useRef();
 
     const getMenu = async() => {
         try {
 
             const res_id = localStorage.getItem("resID");
             const email_id = localStorage.getItem("emailID");
-            
-
-            console.log("In Update Menu file EMAIL ID : ", email_id);
+            //console.log("In Update Menu file EMAIL ID : ", email_id);
             const body = {restaurant_id:res_id, email_id};  // send email_id by localStorage method
 
             const menuDishes = await fetch('/restaurantmanager/viewmenu', {
@@ -129,7 +131,7 @@ const UpdateMenu = () => {
                     timer: 1500
                 })
                 setResmenu(menuDishes.dishes);
-                console.log("RESMENU", resmenu)
+                //console.log("RESMENU", resmenu)
             }
             
 
@@ -143,13 +145,57 @@ const UpdateMenu = () => {
     }, [])
 
 
+    const deleteDish = async(e) => {
+      try {
+
+          const res_id = localStorage.getItem("resID");
+          const email_id = localStorage.getItem("emailID");
+          var dish_id = e.currentTarget.value;
+          console.log("DISH ID : ", dish_id);
+          const body = {restaurant_id:res_id, email_id, dish_id};  // send email_id by localStorage method
+
+          const menuDishes = await fetch('/inventorymanager/menu_item', {
+              method: "DELETE",
+              headers: {"Content-Type": "application/json"},
+              body: JSON.stringify(body)
+          }).then(res => {
+              return res.json()
+          })
+          console.log(menuDishes.msg);
+          if(menuDishes.msg == "Delete successful!"){
+              Swal.fire({
+                  position: 'top-end',
+                  icon: 'success',
+                  title: 'Deleted successfully!',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+              window.location.reload();
+          }
+          else{
+              Swal.fire({
+                  position: 'top-end',
+                  icon: 'error',
+                  title: 'An error occured',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+          }
+          
+
+      } catch (err) {
+          console.error(err)
+      }
+  }
+
+
 
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('');
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(25);
   const [filter, setFilter] = useState("")
 
   const handleRequestSort = (event, property) => {
@@ -193,26 +239,28 @@ const UpdateMenu = () => {
     return (
       <body style={{background:"#F2F4F3"}}>
 
-        <Header logout={"log out"} avatar={user_image} logoutpath={"/inventorymanager/login"}/> 
 
-        <div style={{height: "250px", backgroundColor: "#0A0908"}}>
-                <Lottie 
-                        options={defaultOptions}
-                          height={310}
-                          width={310}
-                          style={{float: "left", marginLeft: "5%", marginTop: "3%"}}
-                        />
+      <Header logout={"log out"} avatar={user_image} logoutpath={"/inventorymanager/login"} homepath={"/inventorymanager/invhome"} height={"65px"} color={"white"} color2={"#0A0908"}/> 
+      
+      
+      <div className="row">
+              <img src={menuimg2} style={{width: "58%", float: "left", height: "500px", background:"no repeat center fixed", backgroundSize: "cover", filter: "brightness(70%)"}} />
+                    <div className="container text-center" style={{marginTop: "100px", marginBottom: "100px", width:"40%"}}>
+                          <h1 class="w3-jumbo" style={{textAlign: "center", marginTop: "0px", marginBottom: "50px", fontFamily: "Open Sans Condensed", fontSize: "100px !important", color: "#0a0908", filter: "brightness(100%)"}}>Update Menu</h1>
+                          
+                          <h5 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)"}}>Lorem It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</h5>
+                          
+                      </div>   
+      </div>
 
-        <h1 style={{fontFamily: "font-family:Georgia, 'Times New Roman', Times, serif", letterSpacing: "0.10em", color: "#F2F4F8", fontSize: "50px", paddingTop: "10%", paddingLeft: "35%"}}>Update Inventory Page</h1>
-        </div>
 
-        <div className="container text-center">
-          
+
+        <div className="container text-center">     
            
 <div className={classes.root}>
-      <Paper className={classes.paper} style={{background:"#F2F4F3", fontSize:"22px", boxShadow:"0px", marginTop: "200px"}}>
+      <Paper className={classes.paper} style={{background:"white", fontSize:"22px", boxShadow:"0px", marginTop: "200px"}}>
       <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[25, 50, 75]}
           component="div"
           count={resmenu.length}
           rowsPerPage={rowsPerPage}
@@ -270,14 +318,23 @@ const UpdateMenu = () => {
                       <TableCell component="th" scope="row" padding="none" style={{color:"#5e503f"}}>
                         {row.dish_id}
                       </TableCell>
-                      <TableCell align="center" style={{color:"#5e503f"}}>{row.dish_name}</TableCell>
-                   
-                        <TableCell align="center" style={{color:"#5e503f"}}>{row.description}</TableCell>
-                   
-                      <TableCell align="center" style={{color:"#5e503f"}}>{row.dish_price}</TableCell>
-                      <TableCell align="center" style={{color:"#5e503f"}}>{row.status}</TableCell>
-                      <TableCell align="center" style={{color:"#5e503f"}}>{row.jain_availability ? 'yes' : 'no'}</TableCell>
+                      <TableCell align="center" style={{color:"#5e503f", fontSize: "16px"}}>{row.dish_name}</TableCell>
+{/*                    
+                        <TableCell align="center" style={{color:"#5e503f", fontSize: "16px"}}>{row.description}</TableCell>
+                    */}
+                      <TableCell align="center" style={{color:"#5e503f", fontSize: "16px"}}>${row.dish_price}</TableCell>
+                      <TableCell align="center" style={{color:"#5e503f", fontSinze: "16px"}}>{row.status}</TableCell>
+                      {/* <TableCell align="center" style={{color:"#5e503f", fontSize: "16px"}}>{row.jain_availability ? 'yes' : 'no'}</TableCell> */}
                       <TableCell><EditMenuModal row={row}/></TableCell>
+                      <TableCell>
+                        <Button
+                          type="submit"
+                          variant="outlined" color="secondary"
+                          style={{width: "130px"}}
+                          value={row.dish_id}
+                          onClick={(e) => deleteDish(e)}
+                        >Delete</Button>
+                      </TableCell>
                     </TableRow>
                     
                     </Fragment>
@@ -296,7 +353,7 @@ const UpdateMenu = () => {
       <FormControlLabel
         control={<Switch checked={dense} onChange={handleChangeDense} />}
         label="Dense padding"
-        style={{color: "white"}}
+        style={{color: "#0a0908"}}
       />
     </div>
 
@@ -306,14 +363,15 @@ const UpdateMenu = () => {
         <br />
         <br/>
         <br />
-    
-        <div className="container text-center">      
-        <Link to="/inventorymanager/invhome"><button type="button" id="inventory" class="btn btn-outline-dark btn-lg">Go to Home Page</button></Link>
+  
+        <br />
+        <br />
         </div>
 
-        <br />
-        <br />
-        </div>
+                <div ref={divRef} >
+                    <Footer />
+                </div>
+
         </body>
     )
 }

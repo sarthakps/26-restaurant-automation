@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useState} from "react"
+import React, {Fragment, useEffect, useState, useRef} from "react"
 import {BrowserRouter as Router, Route, Link, Redirect, useRouteMatch } from "react-router-dom"
 import Swal from "sweetalert2";
 import PropTypes from 'prop-types';
@@ -17,7 +17,6 @@ import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 // import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
-import Tooltip from '@material-ui/core/Tooltip';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 // import DeleteIcon from '@material-ui/icons/Delete';
@@ -28,13 +27,21 @@ import TextField from '@material-ui/core/TextField';
 import blueGrey from "@material-ui/core/colors/blueGrey";
 import lightGreen from "@material-ui/core/colors/lightGreen";
 import Button from '@material-ui/core/Button';
-// import './revenue.css'
-import DateRangePicker from '@wojtekmaj/react-daterange-picker';
-import { RangeDatePicker } from 'react-google-flight-datepicker';
-import 'react-google-flight-datepicker/dist/main.css';
+import Footer from './Footer'
+
+
+import { PureComponent } from 'react';
+import {  CartesianGrid, Legend, BarChart, Bar, Cell, XAxis, YAxis, Tooltip,PieChart, Pie, Sector } from 'recharts';
+
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
+import Header from './Header'
 
 import EnhancedTableToolbar from './EnhancedTableToolBar'
 import EnhancedTableHead from './EnhancedTableHead'
+
+import { Chart } from 'react-charts'
 
   function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -65,188 +72,10 @@ import EnhancedTableHead from './EnhancedTableHead'
 //   bill_id, table_no, no_of_occupants, final_bill, time_stamp
 
   const headCells = [
-    { id: 'bill_id', numeric: true, disablePadding: true, label: 'ID' },
-    { id: 'table_no', numeric: false, disablePadding: false, label: 'Table Number' },
-    { id: 'no_of_occupants', numeric: false, disablePadding: false, label: 'Number of occupants' },
-    { id: 'final_bill', numeric: false, disablePadding: false, label: 'Bill amount' },
-    { id: 'time_stamp', numeric: true, disablePadding: false, label: 'Date' }
+    { id: 'time_stamp', numeric: false, disablePadding: false, label: 'Date' },
+    { id: 'final_bill', numeric: false, disablePadding: false, label: 'Bill amount' }
   ];
   
-  // function EnhancedTableHead(props) {
-  //   const { classes, order, orderBy, rowCount, onRequestSort } = props;
-  //   const createSortHandler = (property) => (event) => {
-  //     onRequestSort(event, property);
-  //   };
-  
-  //   return (
-  //     <TableHead>
-  //       <TableRow style={{color:"white"}}>
-  //         <TableCell padding="checkbox" style={{color:"white", fontSize:"20px"}}>
-  //           {/* <Checkbox
-  //           //   indeterminate={numSelected > 0 && numSelected < rowCount}
-  //           //   checked={rowCount > 0 && numSelected === rowCount}
-  //           //   onChange={onSelectAllClick}
-  //             inputProps={{ 'aria-label': 'select all feedbacks' }}
-  //           /> */}
-  //         </TableCell>
-  //         {headCells.map((headCell) => (
-  //           <TableCell
-  //             key={headCell.id}
-  //             align={headCell.numeric ? 'center' : 'right'}
-  //             padding={headCell.disablePadding ? 'none' : 'default'}
-  //             sortDirection={orderBy === headCell.id ? order : false}
-  //             style={{color:"white", fontSize:"18px", paddingTop: "80px"}}
-  //           >
-  //             <TableSortLabel
-  //               active={orderBy === headCell.id}
-  //               direction={orderBy === headCell.id ? order : 'asc'}
-  //               onClick={createSortHandler(headCell.id)}
-  //               style={{color:"white"}}
-  //             >
-  //               {headCell.label}
-  //               {orderBy === headCell.id ? (
-  //                 <span className={classes.visuallyHidden}>
-  //                   {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-  //                 </span>
-  //               ) : null}
-  //             </TableSortLabel>
-  //           </TableCell>
-  //         ))}
-  //       </TableRow>
-  //     </TableHead>
-  //   );
-  // }
-  
-  // EnhancedTableHead.propTypes = {
-  //   classes: PropTypes.object.isRequired,
-  //   // numSelected: PropTypes.number.isRequired,
-  //   onRequestSort: PropTypes.func.isRequired,
-  //   // onSelectAllClick: PropTypes.func.isRequired,
-  //   order: PropTypes.oneOf(['asc', 'desc']).isRequired,
-  //   orderBy: PropTypes.string.isRequired,
-  //   rowCount: PropTypes.number.isRequired,
-  // };
-  
-
-  // const theme2 = createMuiTheme({
-  //   palette: {
-  //     primary: {
-  //       light: lightGreen[300],
-  //       main: lightGreen[500],
-  //       dark: lightGreen[700]
-  //     },
-  //     secondary: {
-  //       light: blueGrey[300],
-  //       main: blueGrey[500],
-  //       dark: blueGrey[700]
-  //     }
-  //   }
-  // });
-
-
-  // const useToolbarStyles = makeStyles((theme, theme2) => ({
-  //   root: {
-  //     paddingLeft: theme.spacing(2),
-  //     paddingRight: theme.spacing(1),
-  //     border: 'solid 3px #0ff',
-  //   },
-  //   highlight:
-  //     theme.palette.type === 'light'
-  //       ? {
-  //           color: theme.palette.secondary.main,
-  //           backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-  //         }
-  //       : {
-  //           color: theme.palette.text.primary,
-  //           backgroundColor: theme.palette.secondary.dark,
-  //         },
-  //   title: {
-  //     flex: '1 1 100%',
-  //   },
-  //   searchContainer: {
-  //       display: "flex",
-  //       backgroundColor: fade(theme.palette.secondary.light, 0.05),
-  //       paddingLeft: "20px",
-  //       paddingRight: "20px",
-  //       marginTop: "5px",
-  //       marginBottom: "5px",
-  //     },
-  //     searchIcon: {
-  //       alignSelf: "flex-end",
-  //       marginBottom: "15px",
-  //     },
-  //     searchInput: {
-  //       width: "200px",
-  //       margin: "15px",
-  //       color: "white"
-  //     },
-  // }));
-  
- 
-
-//   const EnhancedTableToolbar = (props) => {
-//     const {onFilterChange, filter, date1, date2, setDate1, setDate2, onDateChange } = props;
-//     const classes = useToolbarStyles();
-//     //const [value, onChange] = useState([new Date(), new Date()]);
-    
-    
-
-// // const handleSearchChange = (e) => {
-// //         setFilter(e.target.value);
-// //     };
-//     // const { numSelected } = props;
-  
-//     return (
-//         <Fragment>
-//         <Toolbar style={{color:"white"}}>
-//             {/* <div className={classes.searchContainer} style={{color:"white"}}>
-//                 <SearchIcon className={classes.searchIcon} style={{color:"white"}}/>
-//                 <TextField className={classes.searchInput}
-//                     onChange={onFilterChange}
-//                     label="search revenue"
-//                     varient="standard"
-//                     InputProps={{
-//                       classes: {
-//                           input: classes.multilineColor
-//                       }
-//                   }}
-//                 />
-//             </div> */}
-//             <p style={{paddingRight:"20px"}}>choose a range : - </p>
-//             {/* <DateRangePicker
-//               onChange={onChange}
-//               value={value}
-//               style={{color: "white"}}
-//             /> */}
-//             <RangeDatePicker
-//               startDate={new Date()}
-//               endDate={new Date()}
-//               onChange={(startDate, endDate) => onDateChange(startDate, endDate)}
-//               // onChange={onDateChange}
-//               minDate={new Date(1900, 0, 1)}
-//               maxDate={new Date(2100, 0, 1)}
-//               dateFormat="D"
-//               monthFormat="MMM YYYY"
-//               startDatePlaceholder="Start Date"
-//               endDatePlaceholder="End Date"
-//               disabled={false}
-//               className="my-own-class-name"
-//               startWeekDay="monday"
-//             />
-//         </Toolbar>
-//       <Toolbar>
-        
-//           <Typography className={classes.title} variant="h6" id="tableTitle" component="div" style={{color:"white", fontSize:"30px", marginTop:"50px"}}>
-//             Revenue Analysis
-//           </Typography>     
-//       </Toolbar>
-//       </Fragment>
-//     );
-//   };
-  
-//   EnhancedTableToolbar.propTypes = {
-//     // numSelected: PropTypes.number.isRequired,
-//   };
   
   const useStyles = makeStyles((theme) => ({
     multilineColor:{
@@ -282,12 +111,51 @@ import EnhancedTableHead from './EnhancedTableHead'
 
 const RevenueAnalysis = () => {
         const [revenue, setRevenue] = useState([]);
+        const [date1, setDate1] = useState('');
+        const [date2, setDate2] = useState('');
+        const divRef = useRef();
+        const info = useRef();
+        var date1N = '';
+        var date2N = '';
+
+        const changeDateToISO = (marked_date) => {
+          var ans = marked_date.toString();   
+          var result = ans.split(" ");
+          var day = result[2];
+          var year = result[3];
+          var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+          var intMonth = parseInt(months.indexOf(result[1])) + 1;
+          var month = intMonth < 10 ? '0' + intMonth.toString() : intMonth.toString();
+          var result = year + '-' + month + '-' + day;
+
+          return result;
+        }
+      
+        const onClickHandle = () => {
+
+          if(date1==null || date2==null){
+              Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: 'Please enter a proper date range',
+                showConfirmButton: false,
+                timer: 1500
+            })
+          }
+
+          if(date1!=null && date2!=null){
+            date1N = changeDateToISO(date1);
+            date2N = changeDateToISO(date2);
+            getRevenue();
+          }
+        }
+        
         
     
         const getRevenue = async() => {
             try {
                 const res_id = localStorage.getItem("resID");
-                const body = {restaurant_id:res_id}
+                const body = {restaurant_id:res_id, date1N, date2N}
     
                 const resRevenue = await fetch('/restaurantmanager/revenue', {
                     method: "POST",
@@ -312,7 +180,14 @@ const RevenueAnalysis = () => {
                else{
                 //console.log("resRevenue.ans", resRevenue.ans);
                 setRevenue(resRevenue.ans);
-                //console.log("state revenue : ", revenue);
+                console.log("revenue : ", resRevenue.ans);
+                    Swal.fire({
+                      position: 'top-end',
+                      icon: 'success',
+                      title: 'Revenue Record',
+                      showConfirmButton: false,
+                      timer: 1500
+                  })
                }  
     
             } catch (err) {
@@ -320,35 +195,19 @@ const RevenueAnalysis = () => {
             }
         }
     
-        useEffect(() => {
-            getRevenue();
-        }, [])
+        // useEffect(() => {
+        //     getRevenue();
+        // }, [date1N, date2N])
 
 
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('');
-  const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [filter, setFilter] = useState("");
-  const [date1, setDate1] = useState("");
-  const [date2, setDate2] = useState("");
 
-
-        const onHanldeDateChange = async (startDate, endDate) => { 
-          var one = new Date(startDate).toISOString();
-          var one1 = one.split("T");
-          var two = new Date(endDate).toISOString();
-          var two1 = two.split("T");
-          setDate1(one1[0]);
-          setDate2(two1[0]);
-          console.log(one1[0]);
-          console.log(two1[0]);
-          //console.log("DATE1 : ", date1);
-          //console.log("DATE2 : ", date2);
-        }
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -356,29 +215,6 @@ const RevenueAnalysis = () => {
     setOrderBy(property);
   };
 
-  // const handleFilterChange = (e) => {
-  //     setFilter(e.target.value.toLowerCase());
-  // };
-
-  // const handleClick = (event, feedback_id) => {
-  //   const selectedIndex = selected.indexOf(feedback_id);
-  //   let newSelected = [];
-
-  //   if (selectedIndex === -1) {
-  //     newSelected = newSelected.concat(selected, feedback_id);
-  //   } else if (selectedIndex === 0) {
-  //     newSelected = newSelected.concat(selected.slice(1));
-  //   } else if (selectedIndex === selected.length - 1) {
-  //     newSelected = newSelected.concat(selected.slice(0, -1));
-  //   } else if (selectedIndex > 0) {
-  //     newSelected = newSelected.concat(
-  //       selected.slice(0, selectedIndex),
-  //       selected.slice(selectedIndex + 1),
-  //     );
-  //   }
-
-  //   setSelected(newSelected);
-  // };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -397,19 +233,135 @@ const RevenueAnalysis = () => {
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, revenue.length - page * rowsPerPage);
 
+  const user_image = localStorage.getItem("user_image")
+
+
+  // const data = revenue;
+  // console.log("DATA : ", revenue)
+
 
     return (
-      <body  style={{background:"#000c0c"}}>
-        <div className="container text-center" >
-            <br />
-            <div class="w3-container w3-tangerine">
-              <p class="w3-jumbo">Revenue Analysis</p>
-            </div>
+<body style={{background:"#F2F4F3"}}>
+        {/* <div className="container text-center"> */}
+         <Header logout={"log out"} avatar={user_image} logoutpath={"/restaurantmanager/login"} homepath={"/restaurantmanager/reshome"} height={"65px"} color={"white"} color2={"#0A0908"}/> 
             
-            <br />
+         <div className="row">
 
-<div className={classes.root} >
-      <Paper className={classes.paper}  style={{background:"#000c0c", fontSize:"22px", borderColor:"yellow"}}>
+              <div className="container text-center" style={{marginTop: "100px", marginBottom: "100px", width:"40%"}}>
+                    <h1 class="w3-jumbo" style={{textAlign: "center", marginTop: "0px", marginBottom: "50px", fontFamily: "Open Sans Condensed", fontSize: "100px !important", color: "#0a0908", filter: "brightness(100%)"}}>Revenue Analysis</h1>
+                    
+                    <h5 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)"}}>Analize the customer satisfaction by analyzing the feedback given by different user, organized in a form of graph, sorted by the different questions, to increase readability.</h5>
+                    
+              </div> 
+
+              <div className="row" style={{textAlign: "center", marginTop: "50px", width: "50%"}}>
+                <h4>From : &nbsp; &nbsp; </h4>
+                      <div style={{marginTop: "15px"}}>
+                        <DatePicker 
+                        selected={date1} 
+                        onChange={date => setDate1(date)} 
+                        dateFormat='yyyy-MM-dd'
+                        maxDate={new Date()}
+                        isClearable
+                        showYearDropdown
+                        showMonthDropdown
+                        scrollableMonthYearDropdown
+                        /> 
+                      </div>    
+                      <h4> &nbsp; &nbsp; To :  &nbsp; &nbsp;</h4>
+                      <div style={{marginTop: "15px", marginRight: "110px"}}>
+                      <DatePicker 
+                      selected={date2} 
+                      onChange={date => setDate2(date)} 
+                      dateFormat='yyyy-MM-dd'
+                      maxDate={new Date()}
+                      isClearable
+                      showYearDropdown
+                      showMonthDropdown
+                      scrollableMonthYearDropdown
+                      />
+                      </div>
+
+                    <div className="container text-center">
+                      <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  className={classes.submit123}
+                  style={{width:"50px",height: "15px"}}
+                  onClick={onClickHandle}
+                  style={{ marginTop: "30px", marginBottom: "50px"}}
+                >Apply</Button>
+                </div>
+
+                      <div>
+
+                        {revenue ? 
+                            <div>
+                            <BarChart
+                              width={500}
+                              height={300}
+                              data={revenue}
+                              margin={{
+                                top: 5,
+                                right: 90,
+                                left: -5,
+                                bottom: 5,
+                              }}
+                            >
+                              <CartesianGrid strokeDasharray="3 3" />
+                              <XAxis dataKey="time_stamp" />
+                              <YAxis />
+                              <Tooltip />
+                              <Legend />
+                              <Bar dataKey="final_bill" fill="#8884d8" />
+                            </BarChart>      
+                        </div>
+
+                        : <h2>Please choose a date range to view the revenue</h2>
+
+                        }
+                          
+                        </div>
+                     
+             </div>
+
+             
+       
+          </div>
+<br/>
+<br/>
+<br/>
+
+<div className="container text-center" style={{marginBottom: "100px"}}>
+              <h5>For detailed information...</h5>
+              <div className="container text-center" style={{textAlign : "center"}}>
+              <Button
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      className={classes.submit123}
+                      style={{width:"10%",height: "20px"}}
+                      onClick={() => {
+                        info.current.scrollIntoView({ behavior: "smooth" });
+                        }}
+                      style={{ marginTop: "20px"}}
+                    >More Info</Button>
+                </div>
+            </div>
+
+
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+
+        <div className="container text-center" >
+
+<div className={classes.root} ref={info}>
+      <Paper className={classes.paper}  style={{background:"white", fontSize:"22px", borderColor:"yellow"}}>
       <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
@@ -418,22 +370,25 @@ const RevenueAnalysis = () => {
           page={page}
           onChangePage={handleChangePage}
           onChangeRowsPerPage={handleChangeRowsPerPage}
-          style={{color:"white" ,  fontSize:"22px"}}
+          style={{color:"#5e503f" ,  fontSize:"18px"}}
           
           // classes={{ul: classes.ul}}
         />
-        <EnhancedTableToolbar
-            onDateChange={(startDate, endDate) => onHanldeDateChange(startDate, endDate)}
-            style={{color:"white", fontSize:"22px"}}
+        {/* <EnhancedTableToolbar
+            // onDateChange={(startDate, endDate) => onHanldeDateChange(startDate, endDate)}
+            style={{color:"white", fontSize:"18px"}}
         />
-        <h4>{filter}</h4>
+        <h4>{filter}</h4> */}
+        <br/>
+        <br/>
+  
         <TableContainer>
           <Table
             className={classes.table}
             aria-labelledby="tableTitle"
             size={dense ? 'small' : 'medium'}
             aria-label="enhanced table"
-            style={{color:"white", fontSize:"22px"}}
+            style={{color:"#DAA520", fontSize:"18px"}}
           >
             <EnhancedTableHead
               classes={classes}
@@ -442,10 +397,13 @@ const RevenueAnalysis = () => {
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
               rowCount={revenue.length}
-              style={{color:"white", fontSize:"22px"}}
+              style={{color:"white", fontSize:"18px"}}
               
             />
-            <TableBody style={{color:"white", fontSize:"22px"}}>
+
+            
+
+            <TableBody style={{color:"white", fontSize:"18px"}}>
               {stableSort(revenue, getComparator(order, orderBy, filter))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => { 
@@ -463,25 +421,24 @@ const RevenueAnalysis = () => {
                       role="checkbox"
                       tabIndex={-1}
                       key={row.bill_id}
-                      style={{color:"white", fontSize:"22px"}}
+                      style={{color:"white", fontSize:"15px"}}
                     >
-                      <TableCell padding="checkbox" style={{color:"white", fontSize:"22px"}}>
+                      <TableCell padding="checkbox" style={{color:"white", fontSize:"15px"}}>
                       </TableCell>
                      
-                      <TableCell component="th" scope="row" padding="none align={headCell.numeric ? 'center' : 'right'}" style={{color:"white", fontSize:"20px"}}>
+                      {/* <TableCell component="th" scope="row" padding="none align={headCell.numeric ? 'center' : 'right'}" style={{color:"#5e503f", fontSize:"15px"}}>
                         {row.bill_id}
-                      </TableCell>
-                      <TableCell align="right" style={{color:"white", fontSize:"20px"}}>{row.table_no}</TableCell>
-                      <TableCell align="right" style={{color:"white", fontSize:"20px"}}>{row.no_of_occupants}</TableCell>
-                      <TableCell align="right" style={{color:"white", fontSize:"20px"}}>{row.final_bill}</TableCell>
-                      <TableCell align="right" style={{color:"white", fontSize:"20px"}}>{row.time_stamp}</TableCell>
+                      </TableCell> */}
+                      <TableCell align="center" style={{color:"#5e503f", fontSize:"15px"}}>{row.time_stamp}</TableCell>
+                      <TableCell align="center" style={{color:"#5e503f", fontSize:"15px"}}>{row.final_bill}</TableCell>
+                      
                     </TableRow>
                     
                     </Fragment>
                   );
                 })}
               {emptyRows > 0 && (
-                <TableRow style={{ height: (dense ? 33 : 53) * emptyRows , color: "white"}}>
+                <TableRow style={{ height: (dense ? 33 : 53) * emptyRows , color: "#5e503f"}}>
                   <TableCell colSpan={6} />
                 </TableRow>
               )}
@@ -502,15 +459,13 @@ const RevenueAnalysis = () => {
         <br />
         <br/>
         <br/>
-    
-        <div className="container text-center">      
-        <Link to="/restaurantmanager/reshome"><button type="button" class="btn btn-outline-dark btn-lg">Go to Home Page</button></Link>
-        </div>
-        {/* <button className="goback"><span>Go to Main page</span></button> */}
 
         <br />
         <br />
         </div>
+        <div ref={divRef} >
+                    <Footer />
+          </div>
         </body>
     )
 }

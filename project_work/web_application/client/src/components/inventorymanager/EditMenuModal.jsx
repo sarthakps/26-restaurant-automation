@@ -1,6 +1,8 @@
 import { Container } from "@material-ui/core";
+import {makeStyles} from "@material-ui/core/styles"
 import React, { useState } from "react";
-import { Button, ButtonToolbar, Modal } from 'react-bootstrap';
+import { ButtonToolbar, Modal } from 'react-bootstrap';
+import Button from '@material-ui/core/Button';
 import Swal from "sweetalert2";
 
 function EditInvModal({row}) {
@@ -9,7 +11,7 @@ function EditInvModal({row}) {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    console.log("ROW : ", row.dish_name)
+    //console.log("ROW : ", row.dish_name)
     const dish_id = row.dish_id;
 
     // const [inventory_id, setInventory_id] = useState(row.inventory_id)
@@ -62,34 +64,47 @@ function EditInvModal({row}) {
   
     return (
       <>
-        <Button variant="primary" onClick={handleShow} style={{fontColor:"black"}}>
+        {/* <Button variant="primary" onClick={handleShow} style={{fontColor:"black"}}>
           Update Item
-        </Button>
+        </Button> */}
+
+         <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  style={{width: "130px"}}
+                  onClick={handleShow}
+                >Update</Button>
+
   
         <Modal id={`id$(row.dish_id)`} show={show} onHide={handleClose} style={{opacity:1, backgroundColor: "black !important"}}>
-          <Modal.Header closeButton style={{backgroundColor: "black"}}>
-            <Modal.Title style={{backgroundColor: "black", color: "white"}}>Update Menu Item</Modal.Title>
+          <Modal.Header closeButton style={{backgroundColor: "white"}}>
+            <Modal.Title style={{backgroundColor: "white", color: "#0a0908"}}>Update Menu Item</Modal.Title>
           </Modal.Header>
-          <Modal.Body style={{backgroundColor: "black"}}>
-              <h5 className="container text-center" style={{color: "white"}}>ID : {row.dish_id}</h5>
-              <label for="ucpi" style = {{float: "left", color: "white" }}>Dish Name : </label>
+          <Modal.Body style={{backgroundColor: "white"}}>
+              <h5 className="container text-center" style={{color: "#0a0908"}}>ID : {row.dish_id}</h5>
+              <label for="ucpi" style = {{float: "left", color: "#0a0908" }}>Dish Name : </label>
               <input type="text" className="form-control" value={dish_name} onChange={e => setDish_name(e.target.value)} />
-              <label for="ucpi" style = {{float: "left", color: "white" }}>Dish Price : </label>
+              <br/>
+              <label for="ucpi" style = {{float: "left", color: "#0a0908" }}>Dish Price : </label>
               <input type="text" className="form-control" value={dish_price} onChange={e => setDish_price(e.target.value)} />
-              <label for="ucpi" style = {{float: "left", color: "white" }}>Status : </label>
+              <br/>
+              <label for="ucpi" style = {{float: "left", color: "#0a0908" }}>Status : </label>
               <input type="text" className="form-control" value={status} onChange={e => setStatus(e.target.value)} />
-              <label for="ucpi" style = {{float: "left", color: "white" }}>Jain Availability : </label>
+              <br/>
+              <label for="ucpi" style = {{float: "left", color: "#0a0908" }}>Jain Availability : </label>
               <input type="text" className="form-control" value={jain_availability} onChange={e => setJain_availability(e.target.value)} />
-              <label for="ucpi" style = {{float: "left", color: "white" }}>Description : </label>
+              <br/>
+              <label for="ucpi" style = {{float: "left", color: "#0a0908" }}>Description : </label>
               <input type="text" className="form-control" value={description} onChange={e => setDescription(e.target.value)} />
           </Modal.Body>
-          <Modal.Footer style={{backgroundColor: "black"}}>
-          <Button variant="primary" onClick={e => updateInventory(e)}>
-              Save Changes
-            </Button>
-            <Button variant="secondary" onClick={handleClose}>
-              Close
-            </Button>
+          <Modal.Footer style={{backgroundColor: "white"}}>
+             <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  onClick={e => updateInventory(e)}
+                >Save Changes</Button>
           </Modal.Footer>
         </Modal>
       </>

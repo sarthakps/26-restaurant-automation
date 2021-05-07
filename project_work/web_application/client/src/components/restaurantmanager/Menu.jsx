@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useState} from "react"
+import React, {Fragment, useEffect, useState, useRef} from "react"
 import {BrowserRouter as Router, Route, Link, Redirect, useRouteMatch } from "react-router-dom"
 import Swal from "sweetalert2";
 import clsx from 'clsx';
@@ -18,6 +18,13 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 
 // import './revenue.css'
+import Lottie from 'react-lottie';
+import animationData from '../../images/updatemenu.json'
+import Header from './Header'
+import Footer from './Footer'
+import menuimg2 from './res_menu6.jpg'
+import nonveg from './nonveg.png'
+import veg from './veg.png'
 
 import EnhancedTableToolbar from './EnhancedTableToolBar'
 import EnhancedTableHead from './EnhancedTableHead'
@@ -53,149 +60,12 @@ import EnhancedTableHead from './EnhancedTableHead'
   const headCells = [
     { id: 'dish_id', numeric: true, disablePadding: true, label: 'ID' },
     { id: 'dish_name', numeric: false, disablePadding: false, label: 'Name' },
-    { id: 'description', numeric: true, disablePadding: false, label: 'Description' },
+    { id: 'description', numeric: false, disablePadding: false, label: 'Description' },
     { id: 'dish_price', numeric: false, disablePadding: false, label: 'Price' },
     { id: 'status', numeric: false, disablePadding: false, label: 'Status' },
     { id: 'jain_availability', numeric: false, disablePadding: false, label: 'Jain Availability' }
   ];
   
-  // function EnhancedTableHead(props) {
-  //   const { classes, order, orderBy, rowCount, onRequestSort } = props;
-  //   const createSortHandler = (property) => (event) => {
-  //     onRequestSort(event, property);
-  //   };
-  
-  //   return (
-  //     <TableHead>
-  //       <TableRow>
-  //         <TableCell padding="checkbox">
-  //         </TableCell>
-  //         {headCells.map((headCell) => (
-  //           <TableCell
-  //             key={headCell.id}
-  //             align={headCell.numeric ? 'center' : 'right'}
-  //             padding={headCell.disablePadding ? 'none' : 'default'}
-  //             sortDirection={orderBy === headCell.id ? order : false}
-  //           >
-  //             <TableSortLabel
-  //               active={orderBy === headCell.id}
-  //               direction={orderBy === headCell.id ? order : 'asc'}
-  //               onClick={createSortHandler(headCell.id)}
-  //             >
-  //               {headCell.label}
-  //               {orderBy === headCell.id ? (
-  //                 <span className={classes.visuallyHidden}>
-  //                   {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-  //                 </span>
-  //               ) : null}
-  //             </TableSortLabel>
-  //           </TableCell>
-  //         ))}
-  //       </TableRow>
-  //     </TableHead>
-  //   );
-  // }
-  
-  // EnhancedTableHead.propTypes = {
-  //   classes: PropTypes.object.isRequired,
-  //   // numSelected: PropTypes.number.isRequired,
-  //   onRequestSort: PropTypes.func.isRequired,
-  //   // onSelectAllClick: PropTypes.func.isRequired,
-  //   order: PropTypes.oneOf(['asc', 'desc']).isRequired,
-  //   orderBy: PropTypes.string.isRequired,
-  //   rowCount: PropTypes.number.isRequired,
-  // };
-  
-
-  // const theme2 = createMuiTheme({
-  //   palette: {
-  //     primary: {
-  //       light: lightGreen[300],
-  //       main: lightGreen[500],
-  //       dark: lightGreen[700]
-  //     },
-  //     secondary: {
-  //       light: blueGrey[300],
-  //       main: blueGrey[500],
-  //       dark: blueGrey[700]
-  //     }
-  //   }
-  // });
-
-
-  // const useToolbarStyles = makeStyles((theme, theme2) => ({
-  //   root: {
-  //     paddingLeft: theme.spacing(2),
-  //     paddingRight: theme.spacing(1),
-  //   },
-  //   highlight:
-  //     theme.palette.type === 'light'
-  //       ? {
-  //           color: theme.palette.secondary.main,
-  //           backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-  //         }
-  //       : {
-  //           color: theme.palette.text.primary,
-  //           backgroundColor: theme.palette.secondary.dark,
-  //         },
-  //   title: {
-  //     flex: '1 1 100%',
-  //   },
-  //   searchContainer: {
-  //       display: "flex",
-  //       backgroundColor: fade(theme.palette.secondary.light, 0.05),
-  //       paddingLeft: "20px",
-  //       paddingRight: "20px",
-  //       marginTop: "5px",
-  //       marginBottom: "5px",
-  //     },
-  //     searchIcon: {
-  //       alignSelf: "flex-end",
-  //       marginBottom: "15px",
-  //     },
-  //     searchInput: {
-  //       width: "200px",
-  //       margin: "15px",
-  //     },
-  // }));
-  
-  
-
-//   const EnhancedTableToolbar = (props) => {
-//     const {onFilterChange, filter } = props;
-//     const classes = useToolbarStyles();
-    
-
-// // const handleSearchChange = (e) => {
-// //         setFilter(e.target.value);
-// //     };
-//     // const { numSelected } = props;
-  
-//     return (
-//         <Fragment>
-//         <Toolbar>
-//             <div className={classes.searchContainer}>
-//                 <SearchIcon className={classes.searchIcon}/>
-//                 <TextField className={classes.searchInput}
-//                     onChange={onFilterChange}
-//                     label="search menu"
-//                     varient="standard"
-//                 />
-//             </div>
-//         </Toolbar>
-//       <Toolbar>
-        
-//           <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-//             Menu
-//           </Typography>     
-//       </Toolbar>
-//       </Fragment>
-//     );
-//   };
-  
-//   EnhancedTableToolbar.propTypes = {
-//     // numSelected: PropTypes.number.isRequired,
-//   };
   
   const useStyles = makeStyles((theme) => ({
     root: {
@@ -223,7 +93,7 @@ import EnhancedTableHead from './EnhancedTableHead'
 
 const Menu = () => {
     const [resmenu, setResmenu] = useState([]);
-     
+     const divRef = useRef();
 
     const getMenu = async() => {
         try {
@@ -280,7 +150,7 @@ const Menu = () => {
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(20);
   const [filter, setFilter] = useState("")
 
   const handleRequestSort = (event, property) => {
@@ -292,35 +162,6 @@ const Menu = () => {
   const handleFilterChange = (e) => {
       setFilter(e.target.value.toLowerCase());
   };
-
-//   const handleSelectAllClick = (event) => {
-//     if (event.target.checked) {
-//       const newSelecteds = resmenu.map((n) => n.feedback_id);
-//       setSelected(newSelecteds);
-//       return;
-//     }
-//     setSelected([]);
-//   };
-
-  // const handleClick = (event, feedback_id) => {
-  //   const selectedIndex = selected.indexOf(feedback_id);
-  //   let newSelected = [];
-
-  //   if (selectedIndex === -1) {
-  //     newSelected = newSelected.concat(selected, feedback_id);
-  //   } else if (selectedIndex === 0) {
-  //     newSelected = newSelected.concat(selected.slice(1));
-  //   } else if (selectedIndex === selected.length - 1) {
-  //     newSelected = newSelected.concat(selected.slice(0, -1));
-  //   } else if (selectedIndex > 0) {
-  //     newSelected = newSelected.concat(
-  //       selected.slice(0, selectedIndex),
-  //       selected.slice(selectedIndex + 1),
-  //     );
-  //   }
-
-  //   setSelected(newSelected);
-  // };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -339,16 +180,61 @@ const Menu = () => {
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, resmenu.length - page * rowsPerPage);
 
+  const user_image = localStorage.getItem("user_image")
+
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: animationData,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice"
+    }
+  };
 
     return (
-      <body style={{background:"#000c0c"}}>
+      <body style={{background:"#F2F4F3"}}>
+
+
+<Header logout={"log out"} avatar={user_image} logoutpath={"/restaurantmanager/login"} homepath={"/restaurantmanager/reshome"} height={"65px"} color={"white"} color2={"#0A0908"}/> 
+
+
+<div className="row">
+        <img src={menuimg2} style={{width: "58%", float: "left", height: "500px", background:"no repeat center fixed", backgroundSize: "cover", filter: "brightness(70%)"}} />
+              <div className="container text-center" style={{marginTop: "100px", marginBottom: "100px", width:"40%"}}>
+                    <h1 class="w3-jumbo" style={{textAlign: "center", marginTop: "0px", marginBottom: "50px", fontFamily: "Open Sans Condensed", fontSize: "100px !important", color: "#0a0908", filter: "brightness(100%)"}}>MENU</h1>
+                    
+                    <h5 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)"}}>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</h5>
+                    
+                </div>   
+</div>
+    
+            <div className="row" style={{justifyContent: "center"}}>
+                    <i class="fas fa-ellipsis-h" style={{marginTop: "20px", filter: "brightness(90%)"}}></i>
+                    <i class="fas fa-ellipsis-h" style={{marginTop: "20px", filter: "brightness(90%)"}}></i>
+                    <i class="fas fa-ellipsis-h" style={{marginTop: "20px", filter: "brightness(90%)"}}></i>
+                    <i class="fas fa-ellipsis-h" style={{marginTop: "20px", filter: "brightness(90%)"}}></i>
+                    <i class="fas fa-ellipsis-h" style={{marginTop: "20px", filter: "brightness(90%)"}}></i>
+                    <i class="fas fa-ellipsis-h" style={{marginTop: "20px", marginRight: "10px", filter: "brightness(90%)"}}></i>
+                        <h2><i class="fas fa-utensils" style={{filter: "brightness(90%)", color: "#49111c"}}></i></h2>
+                    <i class="fas fa-ellipsis-h" style={{marginTop: "20px", marginLeft: "10px", filter: "brightness(90%)"}}></i>
+                    <i class="fas fa-ellipsis-h" style={{marginTop: "20px", filter: "brightness(90%)"}}></i>
+                    <i class="fas fa-ellipsis-h" style={{marginTop: "20px", filter: "brightness(90%)"}}></i>
+                    <i class="fas fa-ellipsis-h" style={{marginTop: "20px", filter: "brightness(90%)"}}></i>
+                    <i class="fas fa-ellipsis-h" style={{marginTop: "20px", filter: "brightness(90%)"}}></i>
+                    <i class="fas fa-ellipsis-h" style={{marginTop: "20px", filter: "brightness(90%)"}}></i>
+          </div>
+    
+<br/>
+<br/>
+<br/>
+
         <div className="container text-center">
-            <br />
-            <h1 style={{color:"white", fontFamily: "caviar_dreamsbold,sans-serif", letterSpacing: "0.16em", color: "#c9ab81 !important", fontSize: "60px"}}>Menu Page</h1>
-            <br />
 
 <div className={classes.root}>
-      <Paper className={classes.paper} style={{background:"#000c0c", fontSize:"22px"}}>
+  <br />
+  <br />
+  <br />
+      {/* <Paper className={classes.paper} style={{background:"white", fontSize:"22px"}}>
       <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
@@ -357,7 +243,7 @@ const Menu = () => {
           page={page}
           onChangePage={handleChangePage}
           onChangeRowsPerPage={handleChangeRowsPerPage}
-          style={{color:"white" ,  fontSize:"22px"}}
+          style={{color:"#5e503f" ,  fontSize:"22px"}}
         />
         <EnhancedTableToolbar
             filter={filter}
@@ -379,14 +265,13 @@ const Menu = () => {
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
               rowCount={resmenu.length}
-              style={{color:"white" ,  fontSize:"22px"}}
+              style={{color:"#DAA520" ,  fontSize:"22px"}}
             />
             <TableBody>
               {stableSort(resmenu, getComparator(order, orderBy, filter))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => { 
                     
-                  //const isItemSelected = isSelected(row.feedback_id);
                   const labelId = `enhanced-table-checkbox-${index}`;
                   
 
@@ -399,28 +284,23 @@ const Menu = () => {
                     <TableRow
                       hover
                       role="checkbox"
-                    //   aria-checked={isItemSelected}
                       tabIndex={-1}
                       key={row.dish_id}
-                    //   selected={isItemSelected}
                     >
                       <TableCell padding="checkbox">
-                        {/* <Checkbox
-                        //   checked={isItemSelected}
-                          inputProps={{ 'aria-labelledby': labelId }}
-                        /> */}
+                        
                       </TableCell>
 
                       <TableCell component="th" scope="row" padding="none">
                         {row.dish_id}
                       </TableCell>
-                      <TableCell align="right">{row.dish_name}</TableCell>
+                      <TableCell align="center" style={{color:"#5e503f"}}>{row.dish_name}</TableCell>
                    
-                        <TableCell align="right">{row.description}</TableCell>
+                        <TableCell align="center" style={{color:"#5e503f"}}>{row.description}</TableCell>
                    
-                      <TableCell align="right">{row.dish_price}</TableCell>
-                      <TableCell align="right">{row.status}</TableCell>
-                      <TableCell align="right">{row.jain_availability ? 'yes' : 'no'}</TableCell>
+                      <TableCell align="center" style={{color:"#5e503f"}}>{row.dish_price}</TableCell>
+                      <TableCell align="center" style={{color:"#5e503f"}}>{row.status}</TableCell>
+                      <TableCell align="center" style={{color:"#5e503f"}}>{row.jain_availability ? 'yes' : 'no'}</TableCell>
                     </TableRow>
                     
                     </Fragment>
@@ -435,11 +315,127 @@ const Menu = () => {
           </Table>
         </TableContainer>
         
-      </Paper>
-      <FormControlLabel
+      </Paper> */}
+      {/* <FormControlLabel
         control={<Switch checked={dense} onChange={handleChangeDense} />}
         label="Dense padding"
-      />
+      /> */}
+
+{/* <table class="table table-bordered table-white">
+                <thead class="thead-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Dish Price</th>
+                    <th>Status</th>  
+                    <th>Jain Availability</th>                  
+                </tr>
+                </thead>
+                <br />
+                <tbody> */}
+
+
+                
+
+<TablePagination
+          rowsPerPageOptions={[20, 30, 50]}
+          component="div"
+          count={resmenu.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onChangePage={handleChangePage}
+          onChangeRowsPerPage={handleChangeRowsPerPage}
+          style={{color:"#5e503f" ,  fontSize:"22px"}}
+        />
+
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+
+
+
+            <div className="row" style={{textAlign: "center"}}>
+            <div className="col" style={{width: "40% !important", marginLeft: "20px", marginRight: "50px"}}>
+
+                {resmenu.slice(page * (rowsPerPage), page * (rowsPerPage) + (rowsPerPage/2)).map(menu => (
+               
+                    <>
+                        <h5 style={{textAlign: "left", letterSpacing: "0.16em", fontFamily: "Open Sans Condensed", fontSize: "30px !important", color: "#5e503f", overflow: "hidden"}}>
+                            <strong>
+                                {menu.dish_name} {menu.veg ? <img src={veg} style={{width: "40px", height: "40px"}} /> : <img src={nonveg} style={{width: "40px", height: "40px"}} />} ..........................................................................
+                            </strong>
+                        </h5>
+                   
+                    <h5>${menu.dish_price}</h5>
+                   
+                    <h6 style={{textAlign: "left", fontFamily: 'Lato, sans-serif', color: "#5e503f"}}>
+                         {menu.description}
+                    </h6>
+                    
+                    <h6 style={{textAlign: "left", fontFamily: 'Oswald,sans-serif', color: "#5e503f"}}>
+                        Status : {menu.status}
+                    </h6>
+                    <h6 style={{textAlign: "left", fontFamily: 'Oswald,sans-serif', color: "#5e503f"}}>
+                        Jain Availability : {menu.jain_availability ? 'yes' : 'no'}
+                    </h6>
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    </>
+                ))
+            }
+            </div>
+
+
+                        <div className="col" style={{width: "40%"}}>
+
+                {resmenu.slice(page * (rowsPerPage) + (rowsPerPage/2), page*(rowsPerPage) + (rowsPerPage) ).map(menu => (
+               
+                    <>
+                        <h5 style={{textAlign: "left", letterSpacing: "0.16em", fontFamily: "Open Sans Condensed", fontSize: "30px !important", color: "#5e503f", overflow: "hidden"}}>
+                            <strong>
+                                {menu.dish_name} {menu.veg ? <img src={veg} style={{width: "40px", height: "40px"}} /> : <img src={nonveg} style={{width: "40px", height: "40px"}} />} ..........................................................................
+                            </strong>
+                        </h5>
+                   
+                    <h5 > ${menu.dish_price}</h5>
+                    <br />
+                    <h6 style={{textAlign: "left", fontFamily: 'Lato, sans-serif', color: "#5e503f"}}>
+                         {menu.description}
+                    </h6>
+                    
+                    <h6 style={{textAlign: "left", fontFamily: 'Oswald,sans-serif', color: "#5e503f"}}>
+                        Status : {menu.status}
+                    </h6>
+                    <h6 style={{ textAlign: "left",fontFamily: 'Oswald,sans-serif', color: "#5e503f"}}>
+                        Jain Availability : {menu.jain_availability ? 'yes' : 'no'}
+                    </h6>
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    </>
+                ))
+            }
+            </div>
+
+
+
+
+            </div>
+
+
+
+
+
+                {/* </tbody>
+            </table> */}
+
     </div>
 
             
@@ -447,13 +443,18 @@ const Menu = () => {
         <br />
         <br />
     
-          <div className="container text-center">      
-        <Link to="/restaurantmanager/reshome"><button type="button" class="btn btn-outline-dark">Go to Home Page</button></Link>
-        </div>
+          {/* <div className="container text-center">      
+        <Link to="/restaurantmanager/reshome"><button type="button" id="inventory" class="btn btn-outline-dark btn-lg">Go to Home Page</button></Link>
+        </div> */}
+
+        
 
         <br />
         <br />
         </div>
+        <div ref={divRef} >
+                    <Footer />
+                </div>
         </body>
     )
 }

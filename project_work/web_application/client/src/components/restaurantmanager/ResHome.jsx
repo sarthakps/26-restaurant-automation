@@ -4,7 +4,6 @@ import './reshome.css'
 import img1 from '../../images/reshome4.jpg'
 import backimg from './reshome_img2.jpg'
 import menu from './resmenu.jpg'
-import revenue from './revenue.jpeg'
 import revenue2 from './revenue2.jpeg'
 import rush from './rush.jpeg'
 import register1 from './register.jpg'
@@ -48,7 +47,7 @@ const ResHome = () => {
        
 
 
-    <Header logout={"log out"} avatar={""}  logoutpath={"/restaurantmanager/login"} height={"50px"} height={"65px"} color={"black"} color2={"white"}/>
+    <Header logout={"log out"} avatar={""}  logoutpath={"/restaurantmanager/login"} height={"65px"} color={"white"} color2={"#0A0908"}/>
     <br />
     <br />   
 

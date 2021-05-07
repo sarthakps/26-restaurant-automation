@@ -18,7 +18,7 @@ import InvHome from './components/inventorymanager/InvHome'
 import UpdateInventory from './components/inventorymanager/UpdateInventory'
 import KitLogin from './components/kitchenpersonnel/KitLogin'
 import PendingOrders from './components/kitchenpersonnel/PendingOrders'
-// import ShowModal from './components/inventorymanager/ShowModal'
+
 
 function App() {
   return (
@@ -42,7 +42,7 @@ function App() {
           <Route exact path="/inventorymanager/update-inventory" component={UpdateInventory} />
           <Route exact path="/kitchenpersonnel/login" component={KitLogin} />
           <Route exact path="/kitchenpersonnel/pending-orders" component={PendingOrders} />
-          {/* <Route exact path="/inventorymanager/showmodal" component={ShowModal} /> */}
+         
         </Switch>
       </Router>
     </Fragment>

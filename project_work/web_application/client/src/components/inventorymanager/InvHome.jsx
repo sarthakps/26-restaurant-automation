@@ -1,4 +1,4 @@
- import React, {Fragment, useState, useRef} from "react"
+import React, {Fragment, useState, useRef} from "react"
 import {BrowserRouter as Router, Route, Switch, Link, Redirect, useRouteMatch } from "react-router-dom"
 import '../restaurantmanager/reshome.css'
 import backimg from './invhome.jpg'
@@ -39,7 +39,7 @@ const InvHome = () => {
        
 
 
-    <Header logout={"log out"} avatar={""}  logoutpath={"/inventorymanager/login"} height={"50px"} height={"65px"} color={"black"} color2={"white"}/>
+    <Header logout={"log out"} avatar={""}  logoutpath={"/inventorymanager/login"} height={"65px"} color={"white"} color2={"#0A0908"}/>
     <br />
     <br /> 
     <br /> 

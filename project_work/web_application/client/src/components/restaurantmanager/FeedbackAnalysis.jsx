@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useState} from "react"
+import React, {Fragment, useEffect, useState, useRef, PureComponent} from "react"
 import {BrowserRouter as Router, Route, Link, Redirect, useRouteMatch } from "react-router-dom"
 import Swal from "sweetalert2";
 import PropTypes from 'prop-types';
@@ -15,9 +15,11 @@ import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-// import Checkbox from '@material-ui/core/Checkbox';
+import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import Button from '@material-ui/core/Button';
+
+import Footer from './Footer'
 import IconButton from '@material-ui/core/IconButton';
-import Tooltip from '@material-ui/core/Tooltip';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 // import DeleteIcon from '@material-ui/icons/Delete';
@@ -29,6 +31,7 @@ import lightGreen from "@material-ui/core/colors/lightGreen";
 
 import EnhancedTableToolbar from './EnhancedTableToolBar'
 import EnhancedTableHead from './EnhancedTableHead'
+import Header from './Header'
 
   
   function descendingComparator(a, b, orderBy) {
@@ -58,151 +61,12 @@ import EnhancedTableHead from './EnhancedTableHead'
   }
   
   const headCells = [
-    { id: 'feedback_id', numeric: false, disablePadding: true, label: 'ID' },
-    { id: 'category1', numeric: true, disablePadding: false, label: 'Category1' },
-    { id: 'category2', numeric: true, disablePadding: false, label: 'Category2' },
-    { id: 'category3', numeric: true, disablePadding: false, label: 'Category3' },
-    { id: 'category4', numeric: true, disablePadding: false, label: 'Category4' },
+    { id: 'feedback_id', numeric: true, disablePadding: true, label: 'ID' },
+    { id: 'bill_id', numeric: false, disablePadding: false, label: 'Bill ID' },
+    { id: 'question', numeric: false, disablePadding: false, label: 'Question' },
+    { id: 'score', numeric: false, disablePadding: false, label: 'Score' }
   ];
-  
-//   function EnhancedTableHead(props) {
-//     const { classes, order, orderBy, rowCount, onRequestSort } = props;
-//     const createSortHandler = (property) => (event) => {
-//       onRequestSort(event, property);
-//     };
-  
-//     return (
-//       <TableHead>
-//         <TableRow>
-//           <TableCell padding="checkbox">
-//           </TableCell>
-//           {headCells.map((headCell) => (
-//             <TableCell
-//               key={headCell.id}
-//               align={headCell.numeric ? 'right' : 'left'}
-//               padding={headCell.disablePadding ? 'none' : 'default'}
-//               sortDirection={orderBy === headCell.id ? order : false}
-//             >
-//               <TableSortLabel
-//                 active={orderBy === headCell.id}
-//                 direction={orderBy === headCell.id ? order : 'asc'}
-//                 onClick={createSortHandler(headCell.id)}
-//               >
-//                 {headCell.label}
-//                 {orderBy === headCell.id ? (
-//                   <span className={classes.visuallyHidden}>
-//                     {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-//                   </span>
-//                 ) : null}
-//               </TableSortLabel>
-//             </TableCell>
-//           ))}
-//         </TableRow>
-//       </TableHead>
-//     );
-//   }
-  
-//   EnhancedTableHead.propTypes = {
-//     classes: PropTypes.object.isRequired,
-//     // numSelected: PropTypes.number.isRequired,
-//     onRequestSort: PropTypes.func.isRequired,
-//     // onSelectAllClick: PropTypes.func.isRequired,
-//     order: PropTypes.oneOf(['asc', 'desc']).isRequired,
-//     orderBy: PropTypes.string.isRequired,
-//     rowCount: PropTypes.number.isRequired,
-//   };
-  
 
-//   const theme2 = createMuiTheme({
-//     palette: {
-//       primary: {
-//         light: lightGreen[300],
-//         main: lightGreen[500],
-//         dark: lightGreen[700]
-//       },
-//       secondary: {
-//         light: blueGrey[300],
-//         main: blueGrey[500],
-//         dark: blueGrey[700]
-//       }
-//     }
-//   });
-
-
-//   const useToolbarStyles = makeStyles((theme, theme2) => ({
-//     root: {
-//       paddingLeft: theme.spacing(2),
-//       paddingRight: theme.spacing(1),
-//     },
-//     highlight:
-//       theme.palette.type === 'light'
-//         ? {
-//             color: theme.palette.secondary.main,
-//             backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-//           }
-//         : {
-//             color: theme.palette.text.primary,
-//             backgroundColor: theme.palette.secondary.dark,
-//           },
-//     title: {
-//       flex: '1 1 100%',
-//     },
-//     searchContainer: {
-//         display: "flex",
-//         backgroundColor: fade(theme.palette.secondary.light, 0.05),
-//         paddingLeft: "20px",
-//         paddingRight: "20px",
-//         marginTop: "5px",
-//         marginBottom: "5px",
-//       },
-//       searchIcon: {
-//         alignSelf: "flex-end",
-//         marginBottom: "15px",
-//       },
-//       searchInput: {
-//         width: "200px",
-//         margin: "15px",
-//       },
-//   }));
-  
-  
-
-//   const EnhancedTableToolbar = (props) => {
-//     const {onFilterChange, filter } = props;
-//     const classes = useToolbarStyles();
-    
-
-// // const handleSearchChange = (e) => {
-// //         setFilter(e.target.value);
-// //     };
-//     // const { numSelected } = props;
-  
-//     return (
-//         <Fragment>
-//         <Toolbar>
-//             <div className={classes.searchContainer}>
-//                 <SearchIcon className={classes.searchIcon}/>
-//                 <TextField className={classes.searchInput}
-//                     onChange={onFilterChange}
-//                     label="search feedbacks"
-//                     varient="standard"
-//                 />
-//             </div>
-//         </Toolbar>
-//       <Toolbar>
-        
-//           <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-//             Customer Feedbacks
-//           </Typography>
-      
-//       </Toolbar>
-//       </Fragment>
-//     );
-//   };
-  
-//   EnhancedTableToolbar.propTypes = {
-//     // numSelected: PropTypes.number.isRequired,
-//   };
   
   const useStyles = makeStyles((theme) => ({
     root: {
@@ -230,7 +94,9 @@ import EnhancedTableHead from './EnhancedTableHead'
 
 const FeedbackAnalysis = () => {
     const [feedback, setFeedback] = useState([]);
-     
+    const [avgfeedback, setAvgFeedback] = useState([]);
+     const divRef = useRef();
+     const info = useRef();
 
     const getFeedback = async() => {
         try {
@@ -247,9 +113,45 @@ const FeedbackAnalysis = () => {
                 return res.json();
             });
 
-            //console.log("OUTPUT : ", resFeedback.length);
+            console.log("OUTPUT : ", resFeedback.final_ans);
+            if(resFeedback.final_ans.length > 0){
+                setFeedback(resFeedback.final_ans)
+                //setAvgfeed(resFeedback.length)
+            }
+            else{
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'error',
+                    title: 'No feedbacks for your restaurant yet!',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }
+
+        } catch (err) {
+            console.error(err)
+        }
+    }
+
+
+    const getAvgFeedback = async() => {
+        try {
+            const restaurant_id = localStorage.getItem("resID");
+            const body = {restaurant_id};
+            //console.log("HELLOOOO");
+            const resFeedback = await fetch('/restaurantmanager/avg_feedback', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(body)
+            }).then(res => {
+                return res.json();
+            });
+
+            console.log("AVG FEEDBACK : ", resFeedback);
             if(resFeedback.length > 0){
-                setFeedback(resFeedback)
+                setAvgFeedback(resFeedback)
                 //setAvgfeed(resFeedback.length)
             }
             else{
@@ -268,6 +170,7 @@ const FeedbackAnalysis = () => {
     }
 
     useEffect(() => {
+        getAvgFeedback(); 
         getFeedback();
     }, [])
 
@@ -308,16 +211,73 @@ const FeedbackAnalysis = () => {
 
 //   const isSelected = (feedback_id) => selected.indexOf(feedback_id) !== -1;
 
+  const user_image = localStorage.getItem("user_image")
+
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, feedback.length - page * rowsPerPage);
 
 
-    return (
-        <div className="container text-center">
-            <br />
-            <h1>Feedback Analysis Page</h1>
-            <br />
+//console.log("avgfeedback", avgfeedback)
 
-<div className={classes.root}>
+
+    return (
+
+       <body style={{background:"#F2F4F3"}}>
+        <div className="container text-center">
+         <Header logout={"log out"} avatar={user_image} logoutpath={"/restaurantmanager/login"} homepath={"/restaurantmanager/reshome"} height={"65px"} color={"white"} color2={"#0A0908"}/> 
+            
+         <div className="row">
+
+              <div className="container text-center" style={{marginTop: "100px", marginBottom: "100px", width:"40%"}}>
+                    <h1 class="w3-jumbo" style={{textAlign: "center", marginTop: "0px", marginBottom: "50px", fontFamily: "Open Sans Condensed", fontSize: "100px !important", color: "#0a0908", filter: "brightness(100%)"}}>Feedback Analysis</h1>
+                    
+                    <h5 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)"}}>Analize the customer satisfaction by analyzing the feedback given by different user, organized in a form of graph, sorted by the different questions, to increase readability.</h5>
+                    
+              </div> 
+
+            <div style={{marginTop: "130px"}}>
+              <BarChart
+          width={500}
+          height={300}
+          data={avgfeedback}
+          margin={{
+            top: 5,
+            right: 30,
+            left: 20,
+            bottom: 5,
+          }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis/>
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="score" fill="#8884d8" />
+          {/* <Bar dataKey="uv" fill="#82ca9d" /> */}
+        </BarChart>
+        </div>
+                
+        </div>
+
+          <div className="container" style={{marginBottom: "200px"}}>
+              <h5>For detailed information of feedback...</h5>
+              <div className="container text-center" style={{textAlign : "center"}}>
+              <Button
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      className={classes.submit123}
+                      style={{width:"10%",height: "20px"}}
+                      onClick={() => {
+                        info.current.scrollIntoView({ behavior: "smooth" });
+                        }}
+                      style={{ marginTop: "20px"}}
+                    >More Info</Button>
+                </div>
+            </div>
+          
+
+
+<div className={classes.root} ref={info}>
       <Paper className={classes.paper}>
       <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
@@ -357,7 +317,7 @@ const FeedbackAnalysis = () => {
 
                   return (
 
-                    (row.category1.includes(filter) || row.category2.includes(filter) || row.category3.includes(filter) || row.category4.includes(filter)) && 
+                    (row.question.includes(filter)) && 
 
                     <TableRow
                       hover
@@ -376,10 +336,9 @@ const FeedbackAnalysis = () => {
                       <TableCell component="th" scope="row" padding="none">
                         {row.feedback_id}
                       </TableCell>
-                      <TableCell align="right">{row.category1}</TableCell>
-                      <TableCell align="right">{row.category2}</TableCell>
-                      <TableCell align="right">{row.category3}</TableCell>
-                      <TableCell align="right">{row.category4}</TableCell>
+                      <TableCell align="center">{row.bill_id}</TableCell>
+                      <TableCell align="center">{row.question}</TableCell>
+                      <TableCell align="center">{row.score}</TableCell>
                     </TableRow>
                   );
                 })}
@@ -403,12 +362,14 @@ const FeedbackAnalysis = () => {
         <br />
         <br />
         <br />
-    
-        <Link to="/restaurantmanager/reshome"><button type="button" class="btn btn-outline-dark">Go to Home Page</button></Link>
-
         <br />
         <br />
+       
         </div>
+         <div ref={divRef} >
+                    <Footer />
+          </div>
+        </body>
     )
 }
 
