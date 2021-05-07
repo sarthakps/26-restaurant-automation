@@ -12,11 +12,13 @@ const cors = require('cors')
 const pool = require('../db')
 
 
+
 var admin = require('firebase-admin');
 var serviceAccount = require("routes\canteen-management-456ca-firebase-adminsdk-9j8r5-1317415eb1.json")
 var app_fcm = admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
   });
+
 
 
 
@@ -40,9 +42,14 @@ router.post('/login', async(req,res) => {
             bcrypt.compare(data.password, login.rows[0].password, async function(err, result2) {
                 
                 // handle bcrypt compare error
+// =======
+//                 if (err) { 
+//                     throw (err); 
+// =======
                 if (result2==false) { 
                     
                     return res.status(400).json({'msg':'Incorrect password!'})
+
                 }
                 
                 //GET JWT TOKEN 
@@ -87,13 +94,12 @@ router.post('/login', async(req,res) => {
                                 user_name: login.rows[0].user_name,
                         });
                     }
+                  
                     
+
                 }); 
                 
-            });
-            
-            
-                    
+            });     
                  
         }
         
@@ -105,6 +111,79 @@ router.post('/login', async(req,res) => {
     }
 })
 
+// ===== dev
+
+router.post('/send_feedback_questions',verifyToken,async(req, res) =>{
+    jwt.verify(req.token, 'secretkey',async (err,authData)=>{
+    if(err){
+        console.log(err)
+        //INVALID TOKEN/TIMEOUT so delete the entry from databse 
+        // const deleted_info = await pool.query("DELETE FROM fcm_jwt WHERE EMAIL_ID=$1 ",[req.body.email_id])
+        res.status(400).json({msg: "Session expired. Login again"})
+        
+    }else{
+        try{
+            const result = await pool.query('SELECT QUESTION FROM feedback_questions');
+            if(!result.rows[0] && !result.rows.length)
+            {
+                res.status(400).json({
+                    error:1,
+                    msg: "No questions are in database"   
+                }); 
+            }
+            else{
+                // console.log(result);
+                res.status(200).json({
+                    questions:result.rows
+                });
+            }
+        }catch(err){
+            console.log(err.message);
+        }
+    }
+    });
+});
+//add verify token
+router.post('/receive_feedback',verifyToken,async(req, res) =>{
+    jwt.verify(req.token, 'secretkey',async (err,authData)=>{
+    if(err){
+        console.log(err)
+        //INVALID TOKEN/TIMEOUT so delete the entry from databse 
+        // const deleted_info = await pool.query("DELETE FROM fcm_jwt WHERE EMAIL_ID=$1 ",[req.body.email_id])
+        res.status(400).json({msg: "Session expired. Login again"})
+        
+    }else{
+        try{
+            const data = req.body;
+            if(!data.restaurant_id || !data.bill_id || !data.question_id || !data.score || data.question_id.length==0 || data.score.length==0 || data.question_id.length!=data.score.length)
+            {
+                res.status(400).json({
+                    error:1,
+                    msg: "One or more required field is empty!" });
+              
+            }else{
+               //It is assumed that score will always be between 1 to 5.
+                
+                    
+                let index;         
+                for(index=0;index<data.question_id.length;index++)
+                {
+                    const result = await pool.query('INSERT INTO feedback(RESTAURANT_ID,BILL_ID,QUESTION_ID,SCORE) VALUES($1,$2,$3,$4)',[data.restaurant_id,data.bill_id,data.question_id[index],data.score[index]])
+                    // console.log(result);
+                }
+                return res.status(200).json({
+                    msg: "Added Successfully!"
+                });
+                
+                
+            }
+        }catch(err){
+            console.log(err.message);
+        }
+    }
+    });
+});
+// =======
 
 // save_fcm_token : fcm, jwt
 router.post('/save_fcm_token',verifyToken, async(req,res) => {
@@ -142,18 +221,20 @@ router.post('/viewmenu',verifyToken, async(req, res) => {
                 return res.status(400).json({
                     error:1,
                     msg: "No menu item available for this restaurant"
-                });
+                  });
               
             }
             else{
-                return res.json({total_results: viewmenu.rowCount, dishes: viewmenu.rows});
+                 return res.json({total_results: viewmenu.rowCount, dishes: viewmenu.rows});
             }    
         }
     });   
     
 })
 
+// ====== main
 
+//#########################################################################################################################################
 // data in request = email_id, restaurant_id, tabel_no
 // returned data in response : table_no, dish_id, dish_qty, price of that particular dish(according to quantity), no_of_occupants, time_stamp of order of every dish, Grand Total !
 
@@ -432,8 +513,6 @@ async function verifyToken(req,res,next){
         res.sendStatus(403);
     }
 }
-
-
 
 
 
