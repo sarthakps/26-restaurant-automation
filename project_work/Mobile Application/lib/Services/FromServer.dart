@@ -86,4 +86,18 @@ class FromServer {
     print(response.body);
   }
 
+  static Future<dynamic> generateBill(int tableNo) async {
+    Map payload = {
+      'token': await AuthStorage.getJWT(),
+      'email_id': await AuthStorage.getEmail(),
+      'restaurant_id' : await AuthStorage.getResId(),
+      'table_no' : tableNo,
+    };
+
+    String body = json.encode(payload);
+
+    return await http.post('https://restaurant-automation-sen.herokuapp.com/waiter/generate_bill',
+        headers: {"Content-Type": "application/json"}, body: body);
+  }
+
 }
