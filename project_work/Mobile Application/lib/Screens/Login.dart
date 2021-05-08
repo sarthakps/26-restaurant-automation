@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:restaurant_management/Screens/Homepage.dart';
+import 'package:restaurant_management/Services/AuthStorage.dart';
+import 'package:restaurant_management/Services/FromServer.dart';
 import 'package:restaurant_management/Values/Design.dart';
 
 class Login extends StatefulWidget {
@@ -10,7 +13,9 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final formKey = new GlobalKey<FormState>();
 
-  String _username, _password;
+  String _email, _password;
+  bool _passwordVisible = false;
+  bool _isLoginAttemptActive = false;
 
   @override
   Widget build(BuildContext context) {
@@ -18,51 +23,52 @@ class _LoginState extends State<Login> {
     final usernameField = TextFormField(
       autofocus: false,
       // validator: validateEmail,
-      onSaved: (value) => _username = value,
-      decoration: buildInputDecoration("Email", Icons.email),
+      validator: (value) => value.isEmpty ? "Please enter your email" : null,
+      onSaved: (value) => _email = value,
+      style: TextStyle(color: Design.textPrimary),
+      decoration: buildEmailInputDecoration("Email", Icons.email),
     );
 
     final passwordField = TextFormField(
       autofocus: false,
-      obscureText: true,
-      validator: (value) => value.isEmpty ? "Please enter password" : null,
+      obscureText: !_passwordVisible,
+      style: TextStyle(color: Design.textPrimary),
+      validator: (value) => value.isEmpty ? "Please enter your password" : null,
       onSaved: (value) => _password = value,
-      decoration: buildInputDecoration("Password", Icons.lock),
+      decoration: buildPasswordInputDecoration("Password", Icons.lock),
     );
 
-    var loading = Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    var loading = Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         CircularProgressIndicator(),
         Text(" Authenticating ... Please wait")
       ],
     );
 
-    var doLogin = () {
+    var doLogin = () async {
       final form = formKey.currentState;
+      setState(() {
+        _isLoginAttemptActive = true;
+      });
 
       if (form.validate()) {
         form.save();
 
-        //   final Future<Map<String, dynamic>> successfulMessage =
-        //   auth.login(_username, _password);
-        //
-        //   successfulMessage.then((response) {
-        //     if (response['status']) {
-        //       User user = response['user'];
-        //       Provider.of<UserProvider>(context, listen: false).setUser(user);
-        //       Navigator.pushReplacementNamed(context, '/dashboard');
-        //     } else {
-        //       Flushbar(
-        //         title: "Failed Login",
-        //         message: response['message']['message'].toString(),
-        //         duration: Duration(seconds: 3),
-        //       ).show(context);
-        //     }
-        //   });
-        // } else {
-        //   print("form is invalid");
-        // }
+        dynamic response = await FromServer.attemptLogin(_email, _password);
+        setState(() {
+          _isLoginAttemptActive = false;
+        });
+
+        AuthStorage.saveAuthDetails(response.body);
+
+        if(response.statusCode == 200){
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(
+                  builder: (context) => Homepage()));
+        }
+
+        print(response.body.toString());
       }
     };
 
@@ -73,18 +79,22 @@ class _LoginState extends State<Login> {
           padding: EdgeInsets.all(40.0),
           child: Form(
             key: formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                SizedBox(height: 45.0),
-                usernameField,
-                SizedBox(height: 30.0),
-                passwordField,
-                SizedBox(height: 30.0),
-                longButtons("Login", doLogin),
-                SizedBox(height: 5.0),
-              ],
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(height: 45.0),
+                  _titleText(),
+                  SizedBox(height: 84.0),
+                  usernameField,
+                  SizedBox(height: 30.0),
+                  passwordField,
+                  SizedBox(height: 30.0),
+                  _isLoginAttemptActive ? Center(child: loading) : loginButton("Login", doLogin),
+                  SizedBox(height: 5.0),
+                ],
+              ),
             ),
           ),
         ),
@@ -92,7 +102,7 @@ class _LoginState extends State<Login> {
     );
   }
 
-  MaterialButton longButtons(String title, Function fun,
+  MaterialButton loginButton(String title, Function fun,
       {Color color: const Color(0xfff063057), Color textColor: Colors.white}) {
     return MaterialButton(
       onPressed: fun,
@@ -104,7 +114,8 @@ class _LoginState extends State<Login> {
           title,
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: 16.0
+            fontSize: 16.0,
+            color: Design.textPrimary,
           ),
         ),
       ),
@@ -115,7 +126,7 @@ class _LoginState extends State<Login> {
     );
   }
 
-  InputDecoration buildInputDecoration(String hintText, IconData icon) {
+  InputDecoration buildEmailInputDecoration(String hintText, IconData icon) {
     return InputDecoration(
       prefixIcon: Icon(icon, color: Design.accentSecondary),
       hintText: hintText,
@@ -125,6 +136,55 @@ class _LoginState extends State<Login> {
       contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
       enabledBorder: enabledCustomBorder(),
       focusedBorder: focusedCustomBorder(),
+      errorBorder: enabledCustomBorder(),
+      focusedErrorBorder: focusedCustomBorder(),
+    );
+  }
+
+  Widget _titleText(){
+    return Column(
+      children: [
+        Text(
+          'Welcome',
+          style: TextStyle(
+            color: Design.accentPrimary,
+            fontSize: 32.0,
+          ),
+        ),
+        // SizedBox(height: 10.0,),
+        Divider(height: 10.0, thickness: 2.0, color: Design.accentTertiaryBright, indent: 25.0, endIndent: 25.0,),
+      ],
+    );
+  }
+
+  InputDecoration buildPasswordInputDecoration(String hintText, IconData icon) {
+    return InputDecoration(
+      prefixIcon: Icon(icon, color: Design.accentSecondary),
+      hintText: hintText,
+      hintStyle: TextStyle(
+        color: Design.textPrimary,
+      ),
+      suffixIcon: IconButton(
+        icon: Icon(
+          // Based on passwordVisible state choose the icon
+          _passwordVisible
+              ? Icons.visibility
+              : Icons.visibility_off,
+          color: Theme.of(context).primaryColorDark,
+          size: 24.0,
+        ),
+        onPressed: () {
+          // Update the state i.e. toggle the state of passwordVisible variable
+          setState(() {
+            _passwordVisible = !_passwordVisible;
+          });
+        },
+      ),
+      contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+      enabledBorder: enabledCustomBorder(),
+      focusedBorder: focusedCustomBorder(),
+      errorBorder: enabledCustomBorder(),
+      focusedErrorBorder: focusedCustomBorder(),
     );
   }
 
