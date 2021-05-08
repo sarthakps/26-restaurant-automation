@@ -106,7 +106,6 @@ export default function HideAppBar({props, login, logout, avatar, subscription, 
       <Toolbar />
       <Container>
       </Container>
-      {/* <div ref={divRefmid}>BELLLOOOOO</div> */}
     </React.Fragment>
   );
 }

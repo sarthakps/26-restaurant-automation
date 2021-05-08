@@ -237,9 +237,9 @@ const Menu = () => {
 
       <Header logout={"log out"} avatar={user_image} logoutpath={"/kitchenpersonnel/login"} height={"65px"} color={"white"} color2={"#0A0908"}/> 
 
-      <div className="row">
+      <div className="row" style={{height: "200px"}}>
 
-<div className="container text-center" style={{marginTop: "100px", marginBottom: "100px", width:"40%"}}>
+<div className="container text-center" style={{marginTop: "100px", marginBottom: "0px", width:"40%"}}>
       <h1 class="w3-jumbo" style={{textAlign: "center", marginTop: "0px", marginBottom: "50px", fontFamily: "Open Sans Condensed", fontSize: "100px !important", color: "#0a0908", filter: "brightness(100%)"}}>Pending Orders</h1>
       
       <h5 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)"}}>Analize the customer satisfaction by analyzing the feedback given by different user, organized in a form of graph, sorted by the different questions, to increase readability.</h5>

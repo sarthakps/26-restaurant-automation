@@ -155,7 +155,8 @@ const RevenueAnalysis = () => {
         const getRevenue = async() => {
             try {
                 const res_id = localStorage.getItem("resID");
-                const body = {restaurant_id:res_id, date1N, date2N}
+                const email_id = localStorage.getItem("emailID");
+                const body = {restaurant_id:res_id, email_id, date1N, date2N}
     
                 const resRevenue = await fetch('/restaurantmanager/revenue', {
                     method: "POST",

@@ -26,6 +26,18 @@
   filter: brightness(90%);
 }
 
+.w3-jumbo_two {
+  font-size: 30px !important;
+  letter-spacing: 0.26em;
+  filter: brightness(90%);
+}
+
+.w3-jumbo_three {
+  font-size: 75px !important;
+  letter-spacing: 0.23em;
+  filter: brightness(100%);
+}
+
 .row {
   justify-content: center;
 }

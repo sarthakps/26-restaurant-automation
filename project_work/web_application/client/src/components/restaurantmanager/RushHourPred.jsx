@@ -110,51 +110,29 @@ import { Chart } from 'react-charts'
   }));
 
 const RushHourPred = () => {
-        const [revenue, setRevenue] = useState([]);
+        const [rush, setRush] = useState([]);
+        const [days_forecast, setDays_forecast] = useState(7);
         const divRef = useRef();
         const info = useRef();
-
-
-        const changeDateToISO = (marked_date) => {
-          var ans = marked_date.toString();   
-          var result = ans.split(" ");
-          var day = result[2];
-          var year = result[3];
-          var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-          var intMonth = parseInt(months.indexOf(result[1])) + 1;
-          var month = intMonth < 10 ? '0' + intMonth.toString() : intMonth.toString();
-          var result = year + '-' + month + '-' + day;
-
-          return result;
-        }
       
-        const onClickHandle = () => {
-
-        //   if(date1==null || date2==null){
-        //       Swal.fire({
-        //         position: 'top-end',
-        //         icon: 'error',
-        //         title: 'Please enter a proper date range',
-        //         showConfirmButton: false,
-        //         timer: 1500
-        //     })
-        //   }
-
-        //   if(date1!=null && date2!=null){
-        //     date1N = changeDateToISO(date1);
-        //     date2N = changeDateToISO(date2);
-        //     getRevenue();
-        //   }
+        const onClickHandle = (e) => {
+          const day = e.currentTarget.value;
+          console.log("day : ", day)
+          //setDays_forecast(day);
+          console.log("day state : ", days_forecast);
+          getRush();
         }
         
         
     
-        const getRevenue = async() => {
+        const getRush = async() => {
             try {
                 const res_id = localStorage.getItem("resID");
-                const body = {restaurant_id:res_id}
+                const email_id = localStorage.getItem("emailID");
+                const body = {restaurant_id:res_id, email_id, days_forecast}
+                console.log("BODY : ", body)
     
-                const resRevenue = await fetch('/restaurantmanager/rush_hour', {
+                const resRush = await fetch('/restaurantmanager/rush_hour', {
                     method: "POST",
                     headers:{
                         "Content-Type": "application/json",
@@ -164,11 +142,11 @@ const RushHourPred = () => {
                     return res.json();
                 })
 
-               if(resRevenue.msg == "some error"){
+               if(resRush.msg == "some error"){
                     Swal.fire({
                       position: 'top-end',
                       icon: 'error',
-                      title: 'No revenue record for today!',
+                      title: 'An error occured!',
                       showConfirmButton: false,
                       timer: 1500
                   })
@@ -176,8 +154,8 @@ const RushHourPred = () => {
 
                else{
                 //console.log("resRevenue.ans", resRevenue.ans);
-                setRevenue(resRevenue.ans);
-                console.log("revenue : ", resRevenue.ans);
+                setRush(resRush.ans);
+                console.log("rush : ", resRush.ans);
                     Swal.fire({
                       position: 'top-end',
                       icon: 'success',
@@ -192,9 +170,6 @@ const RushHourPred = () => {
             }
         }
     
-        // useEffect(() => {
-        //     getRevenue();
-        // }, [date1N, date2N])
 
 
   const classes = useStyles();
@@ -228,13 +203,25 @@ const RushHourPred = () => {
 
 //   const isSelected = (feedback_id) => selected.indexOf(feedback_id) !== -1;
 
-  const emptyRows = rowsPerPage - Math.min(rowsPerPage, revenue.length - page * rowsPerPage);
+  const emptyRows = rowsPerPage - Math.min(rowsPerPage, rush.length - page * rowsPerPage);
 
-  const user_image = localStorage.getItem("user_image")
+  const user_image = localStorage.getItem("user_image");
 
 
-  // const data = revenue;
-  // console.log("DATA : ", revenue)
+  const temp_data = [
+    { time_stamp: 'A1', rush_predicted: 100 },
+    { time_stamp: 'A2', rush_predicted: 300 },
+    { time_stamp: 'B1', rush_predicted: 100 },
+    { time_stamp: 'B2', rush_predicted: 80 },
+    { time_stamp: 'B3', rush_predicted: 40 },
+    { time_stamp: 'B4', rush_predicted: 30 },
+    { time_stamp: 'B5', rush_predicted: 50 },
+    { time_stamp: 'C1', rush_predicted: 100 },
+    { time_stamp: 'C2', rush_predicted: 200 },
+    { time_stamp: 'D1', rush_predicted: 150 },
+    { time_stamp: 'D2', rush_predicted: 50 },
+  ];
+
 
 
     return (
@@ -252,32 +239,6 @@ const RushHourPred = () => {
               </div> 
 
               <div className="row" style={{textAlign: "center", marginTop: "50px", width: "50%"}}>
-                {/* <h4>From : &nbsp; &nbsp; </h4>
-                      <div style={{marginTop: "15px"}}>
-                        <DatePicker 
-                        selected={date1} 
-                        onChange={date => setDate1(date)} 
-                        dateFormat='yyyy-MM-dd'
-                        maxDate={new Date()}
-                        isClearable
-                        showYearDropdown
-                        showMonthDropdown
-                        scrollableMonthYearDropdown
-                        /> 
-                      </div>    
-                      <h4> &nbsp; &nbsp; To :  &nbsp; &nbsp;</h4>
-                      <div style={{marginTop: "15px", marginRight: "110px"}}>
-                      <DatePicker 
-                      selected={date2} 
-                      onChange={date => setDate2(date)} 
-                      dateFormat='yyyy-MM-dd'
-                      maxDate={new Date()}
-                      isClearable
-                      showYearDropdown
-                      showMonthDropdown
-                      scrollableMonthYearDropdown
-                      />
-                      </div> */}
 
                 <TextField
                 variant="outlined"
@@ -290,8 +251,8 @@ const RushHourPred = () => {
                 name="ucpi"
                 autoComplete="email"
                 autoFocus
-                // required value = {user_name}
-                //  onChange={e => setUsername(e.target.value)}
+                required value = {days_forecast}
+                 onChange={e => setDays_forecast(e.target.value)}
                 />
 
                     <div className="container text-center">
@@ -308,12 +269,12 @@ const RushHourPred = () => {
 
                       <div>
 
-                        {revenue ? 
+                       
                             <div>
                             <BarChart
                               width={500}
                               height={300}
-                              data={revenue}
+                              data={rush}
                               margin={{
                                 top: 5,
                                 right: 90,
@@ -326,13 +287,11 @@ const RushHourPred = () => {
                               <YAxis />
                               <Tooltip />
                               <Legend />
-                              <Bar dataKey="rush predicted" fill="#8884d8" />
+                              <Bar dataKey="rush_predicted" fill="#8884d8" />
                             </BarChart>      
                         </div>
 
-                        : <h2>Please choose a date range to view the revenue</h2>
-
-                        }
+                       
                           
                         </div>
                      
@@ -377,7 +336,7 @@ const RushHourPred = () => {
       <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={revenue.length}
+          count={rush.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onChangePage={handleChangePage}
@@ -408,7 +367,7 @@ const RushHourPred = () => {
               order={order}
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
-              rowCount={revenue.length}
+              rowCount={rush.length}
               style={{color:"white", fontSize:"18px"}}
               
             />
@@ -416,7 +375,7 @@ const RushHourPred = () => {
             
 
             <TableBody style={{color:"white", fontSize:"18px"}}>
-              {stableSort(revenue, getComparator(order, orderBy, filter))
+              {stableSort(rush, getComparator(order, orderBy, filter))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => { 
                     
