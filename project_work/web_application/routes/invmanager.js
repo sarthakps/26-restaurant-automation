@@ -180,6 +180,7 @@ router.put('/inventory', verifyToken, async(req, res) => {
     });   
 })
 
+
 //delete inventory item
 router.delete('/inventory_item', verifyToken, async(req, res) => {
     jwt.verify(req.token, 'secretkey',async (err,authData)=>{

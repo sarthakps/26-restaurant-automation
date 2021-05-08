@@ -100,7 +100,7 @@ router.post('/viewmenu',verifyToken, async(req, res) => {
     //INITIALIZE JWT VERIFICATION
     jwt.verify(req.token, 'secretkey',async (err,authData)=>{
         if(err){
-            console.log(err)
+
             //INVALID TOKEN/TIMEOUT so delete the entry from databse 
             // const deleted_info = await pool.query("DELETE FROM fcm_jwt WHERE EMAIL_ID=$1 ",[req.body.email_id])
             res.status(400).json({msg: "Session expired. Login again"})
@@ -108,7 +108,7 @@ router.post('/viewmenu',verifyToken, async(req, res) => {
         }else{
             //WHEN USER HAS VALID JWT TOKEN
             const data = req.body;
-            const viewmenu =  await pool.query("SELECT dish_id, dish_name, description, dish_price, status, jain_availability FROM menu WHERE restaurant_id=$1", [data.restaurant_id]);
+            const viewmenu =  await pool.query("SELECT dish_id, dish_name, description, dish_price, status, jain_availability, veg FROM menu WHERE restaurant_id=$1", [data.restaurant_id]);
             
             if(!viewmenu.rows[0] && !viewmenu.rows.length){
                 return res.status(400).json({
@@ -124,277 +124,6 @@ router.post('/viewmenu',verifyToken, async(req, res) => {
     });   
     
 })
-
-
-
-// works
-router.post('/revenue', verifyToken, async(req, res) => {
-
-    
-    //INITIALIZE JWT VERIFICATION
-    jwt.verify(req.token, 'secretkey',async (err,authData)=>{
-        if(err){
-
-            console.log(err)
-            //INVALID TOKEN/TIMEOUT so delete the entry from databse 
-            // const deleted_info = await pool.query("DELETE FROM fcm_jwt WHERE EMAIL_ID=$1 ",[req.body.email_id])
-            res.status(400).json({msg: "Session expired. Login again"})
-            
-        }else{
-                    try {
-                        const data = req.body;
-                        const final = await pool.query("SELECT bill_id, table_no, no_of_occupants, final_bill, time_stamp FROM revenue WHERE restaurant_id=$1", [data.restaurant_id]);
-   
-                        var myArr = final.rows;
-                        // var answer = await iter(myArr);
-                        var answer = myArr;
-
-                        if(!answer[0] && !answer.length){
-                            res.status(400).json({
-                                error:1,
-                                msg: "some error"
-                            });
-                        } else {
-                            res.json({"ans": answer});
-                        }
-
-                    } catch (err) {
-                        console.log(err.message)
-                    }
-            }     
-    }); 
-})
-
-
-// works
-router.post('/register-user',verifyToken, async(req,res) => {  
-
-//INITIALIZE JWT VERIFICATION
-    jwt.verify(req.token, 'secretkey',async (err,authData)=>{
-        if(err){
-
-            //INVALID TOKEN/TIMEOUT so delete the entry from databse 
-            // const deleted_info = await pool.query("DELETE FROM fcm_jwt WHERE EMAIL_ID=$1 ",[req.body.email_id])
-            res.status(400).json({msg: "Session expired. Login again"})
-            
-        }else{
-
-        try {
-            const data = req.body;
-            data.email_id=data.emailid_user;
-
-            // check if one or more mandatory field is empty
-            // return error if true
-            if(!data.restaurant_id || !data.user_image || !data.usertype_id || !data.user_name || !data.email_id || !data.contact_no || !data.password){
-                return res.status(400).json({
-                    error: 1,
-                    msg: "One or more required field is empty!"
-                }); 
-            } 
-
-            // check if the email ID is already registered or not
-            // return error if true
-            const user = await pool.query("SELECT email_id from users WHERE email_id=$1", [data.email_id]);
-            if(user.rows.length){
-                return res.status(400).json({
-                    error: 1,
-                    msg: "This email ID is already registered!"
-                });
-            }
-            
-            // check if maximum allowed registrations corresponding to user's role for the given restaurant is reached or not
-            // if maximum users of given role are already registered, return error
-            // const userRole = await pool.query("SELECT user_role from usertype WHERE usertype_id= $1", data.usertype_id);
-            const subscriptiontypeId = await pool.query("SELECT subscription_type_id FROM restaurant WHERE restaurant_id = $1", [data.restaurant_id]);  
-            const usertypeid=data.usertype_id; 
-            const subscriptionTypeId=subscriptiontypeId.rows[0]['subscription_type_id']; 
-            
-            // console.log(typeof(usertypeid),typeof(data.restaurant_id))
-            switch(usertypeid){
-                // if user role == waiter
-                case 1:
-                    const maxwaiters = await pool.query("SELECT max_waiter FROM subscription WHERE subscription_type_id = $1", [subscriptionTypeId]);
-                    const maxWaiters = maxwaiters.rows[0]['max_waiter']
-                    
-                    const currentwaiters = await pool.query("SELECT count(*) from users WHERE restaurant_id = $1 and usertype_id = $2", [data.restaurant_id, usertypeid]);
-                    const currentWaiters = parseInt(currentwaiters.rows[0]['count'])
-                    
-                    if(currentWaiters >= maxWaiters){
-                        return res.status(400).json({
-                            error: 1,
-                            msg: "Maximum number of allowed waiters are already registered! Your plan only allows a maximum of " + maxWaiters.toString() + " waiters!"
-                        });
-                    }
-                    break;
-
-                // if user role == inventory manager
-                case 2:
-                    const maxinventoryManager = await pool.query("SELECT max_inv_manager FROM subscription WHERE subscription_type_id = $1", [subscriptionTypeId]);
-                    const maxInventoryManager = maxinventoryManager.rows[0]['max_inv_manager']
-                    const currentinventoryManager = await pool.query("SELECT count(*) from users WHERE restaurant_id = $1 and usertype_id = $2", [data.restaurant_id, usertypeid]);
-                    const currentInventoryManager = parseInt(currentinventoryManager.rows[0]['count'])
-                    if(currentInventoryManager >= maxInventoryManager){
-                        return res.status(400).json({
-                            error: 1,
-                            msg: "Maximum number of allowed inventory managers are already registered! Your plan only allows a maximum of " + maxWaiters.toString() + " inventory managers!"
-                        });
-                    }
-                    break;
-
-                // if user role == kitchen personnel
-                case 3:
-                    const maxkitchenPersonnel = await pool.query("SELECT max_kitchen_personnel FROM subscription WHERE subscription_type_id = $1",[ subscriptionTypeId]);
-                    const maxKitchenPersonnel = maxkitchenPersonnel.rows[0]['max_kitchen_personnel']
-                    const currentkitchenPersonnel = await pool.query("SELECT count(*) from users WHERE restaurant_id = $1 and usertype_id = $2", [data.restaurant_id, usertypeid]);
-                    const currentKitchenPersonnel = parseInt(currentkitchenPersonnel.rows[0]['count'])
-                    if(currentKitchenPersonnel >= maxKitchenPersonnel){
-                        return res.status(400).json({
-                            error: 1,
-                            msg: "Maximum number of allowed kitchen personnel are already registered! Your plan only allows a maximum of " + maxWaiters.toString() + " kitchen personnel!"
-                        });
-                    }
-                    break;
-            }
-
-            // generating hashed password (salt rounds = 12)
-            const salt = await bcrypt.genSalt(12);
-            const hashedPassword = await bcrypt.hash(data.password, salt);
-            
-            // inserting new user into the database
-            const newUser = await pool.query(
-            "INSERT INTO users(restaurant_id,user_image,usertype_id,user_name,email_id,contact_no,contact_no_optional,password) VALUES ($1, $2, $3,$4, $5,$6,$7,$8)",
-            [data.restaurant_id, data.user_image, usertypeid, data.user_name, data.email_id, data.contact_no, data.contact_no2, hashedPassword]);
-
-            return res.status(200).json({
-                msg: "Registered successfully!"
-            });
-        } catch (err) {
-            console.log(err.message)
-        }
-
-    }
-    });
-})
-
-
-// works
-router.post('/mark_attendance', verifyToken, async(req,res) => {
-    jwt.verify(req.token, 'secretkey',async (err,authData)=>{
-        if(err){
-
-            //INVALID TOKEN/TIMEOUT 
-            res.status(400).json({msg: "Session expired. Login again"})
-            
-        }else{
-    
-                try {
-                    const data = req.body;
-                    if(!data.restaurant_id || !data.user_id || !data.attendance_status){
-                        
-                        res.status(400).json({
-                            error:1,
-                            msg: "Provide all values"   
-                        }); 
-
-                    } else { 
-                    
-                        const time_now= await pool.query("SELECT NOW()");
-                        
-                        const username = await pool.query("SELECT user_name from users WHERE user_id=$1", [data.user_id])
-                        const username2 = username.rows[0].user_name;
-                        const newUser = await pool.query(
-                        "INSERT INTO attendance(restaurant_id,user_id, user_name, time_stamp,attendance_status) VALUES ($1, $2, $3, $4, $5)",
-                            [data.restaurant_id,data.user_id, username2, time_now.rows[0]['now'],data.attendance_status]);
-                            
-                        res.json({msg:"Attendance marked" });
-                    }
-                } catch (err) {
-                    console.log(err.message)
-                }
-            }
-    });
-})
-
-
-// works
-// ATTENDANCE
-router.post('/view_attendance',verifyToken,  async (req,res)=>{
-jwt.verify(req.token, 'secretkey',async (err,authData)=>{
-        if(err){
-
-            //INVALID TOKEN/TIMEOUT 
-            res.status(400).json({msg: "Session expired. Login again"})
-            
-        }else{
-
-    const data = req.body;
-    
-                try {
-
-                    if(!req.body.restaurant_id)
-                    {
-                        res.status(400).json({
-                            error:1,
-                            msg: "Provide a restaurant ID"   
-                        }); 
-                    }
-                    else{
-                        const results = await pool.query('SELECT user_id,user_name,time_stamp,attendance_status FROM ATTENDANCE WHERE restaurant_id=$1', [data.restaurant_id]);
-                        //console.log(results.rows[0]);
-                        if(!results.rows[0] && !results.rows.length)
-                        {
-                            res.status(400).json({
-                                error:1,
-                                msg: "No attendance record found"   
-                            }); 
-                        }
-                        else{
-                            res.status(200).json(results.rows);
-                        }
-                    }
-                    
-                    
-                } 
-                catch (err) {
-                    console.log(err.message)
-                }
-            }
-    });
-})
-
-
-// FEEDBACK
-router.post('/feedback', verifyToken, async (req,res)=>{
-
-    jwt.verify(req.token, 'secretkey',async (err,authData)=>{
-        if(err){
-
-            //INVALID TOKEN/TIMEOUT
-            res.status(400).json({msg: "Session expired. Login again"})
-            
-        }else{
-    
-                try{
-                    const data = req.body;
-                    const results = await pool.query(`select FEEDBACK_ID,CATEGORY1,CATEGORY2,CATEGORY3,CATEGORY4 from feedback WHERE restaurant_id=$1`, [data.restaurant_id]);
-                    if(!results.rows[0] && !results.rows.length)
-                    {
-                        res.status(400).json({
-                            error:1,
-                            msg: "No feedback record found"   
-                        }); 
-                    }
-                    else{
-                        res.status(200).json(results.rows);
-                    }
-                    
-                }
-                catch(err){
-                    console.log(err.message);
-                }
-            }   
-    });    
-});
 
 
 // ALL USERS
@@ -515,7 +244,353 @@ router.post('/viewusers',verifyToken, async(req, res) => {
 
 
 
-// delete staff member : requires restaurant_id and user_id
+// works
+router.post('/revenue', async(req, res) => {
+
+    jwt.verify(req.token, 'secretkey',async (err,authData)=>{
+        if(err){
+
+            console.log(err)
+            //INVALID TOKEN/TIMEOUT 
+            res.status(400).json({msg: "Session expired. Login again"})
+            
+        }else{
+            
+                    try {
+                        const data = req.body;
+
+                        const final = await pool.query("SELECT sum(final_bill) as final_bill, split_part(time_stamp, ' ', 1) as time_stamp from revenue where restaurant_id=$1 and split_part(time_stamp, ' ', 1) >= $2 and split_part(time_stamp, ' ', 1) <= $3 group by split_part(time_stamp, ' ', 1)", [data.restaurant_id, data.date1N, data.date2N]);
+                        var myArr = final.rows;
+
+                        if(!myArr[0] && !myArr.length){
+                            res.status(400).json({
+                                error:1,
+                                msg: "some error"
+                            });
+                        } else {
+                            res.json({"ans": myArr});
+                        }
+
+                    } catch (err) {
+                        console.log(err.message)
+                    }
+            }      
+})
+
+
+// works
+router.post('/register-user',async(req,res) => {  
+
+    try {
+        const data = req.body;
+
+        // check if one or more mandatory field is empty
+        // return error if true
+        if(!data.restaurant_id || !data.user_image || !data.usertype_id || !data.user_name || !data.email_id || !data.contact_no || !data.password){
+            return res.status(400).json({
+                error: 1,
+                msg: "One or more required field is empty!"
+            }); 
+        } 
+
+        // check if the email ID is already registered or not
+        // return error if true
+        const user = await pool.query("SELECT email_id from users WHERE email_id=$1", [data.email_id]);
+        if(user.rows.length){
+            return res.status(400).json({
+                error: 1,
+                msg: "This email ID is already registered!"
+            });
+        }
+        
+        // check if maximum allowed registrations corresponding to user's role for the given restaurant is reached or not
+        // if maximum users of given role are already registered, return error
+        // const userRole = await pool.query("SELECT user_role from usertype WHERE usertype_id= $1", data.usertype_id);
+        const subscriptiontypeId = await pool.query("SELECT subscription_type_id FROM restaurant WHERE restaurant_id = $1", [data.restaurant_id]);  
+        const usertypeid=data.usertype_id; 
+        const subscriptionTypeId=subscriptiontypeId.rows[0]['subscription_type_id']; 
+        
+        // console.log(typeof(usertypeid),typeof(data.restaurant_id))
+        switch(usertypeid){
+            // if user role == waiter
+            case 1:
+                const maxwaiters = await pool.query("SELECT max_waiter FROM subscription WHERE subscription_type_id = $1", [subscriptionTypeId]);
+                const maxWaiters = maxwaiters.rows[0]['max_waiter']
+                
+                const currentwaiters = await pool.query("SELECT count(*) from users WHERE restaurant_id = $1 and usertype_id = $2", [data.restaurant_id, usertypeid]);
+                const currentWaiters = parseInt(currentwaiters.rows[0]['count'])
+                
+                if(currentWaiters >= maxWaiters){
+                    return res.status(400).json({
+                        error: 1,
+                        msg: "Maximum number of allowed waiters are already registered! Your plan only allows a maximum of " + maxWaiters.toString() + " waiters!"
+                    });
+                }
+                break;
+
+            // if user role == inventory manager
+            case 2:
+                const maxinventoryManager = await pool.query("SELECT max_inv_manager FROM subscription WHERE subscription_type_id = $1", [subscriptionTypeId]);
+                const maxInventoryManager = maxinventoryManager.rows[0]['max_inv_manager']
+                const currentinventoryManager = await pool.query("SELECT count(*) from users WHERE restaurant_id = $1 and usertype_id = $2", [data.restaurant_id, usertypeid]);
+                const currentInventoryManager = parseInt(currentinventoryManager.rows[0]['count'])
+                if(currentInventoryManager >= maxInventoryManager){
+                    return res.status(400).json({
+                        error: 1,
+                        msg: "Maximum number of allowed inventory managers are already registered! Your plan only allows a maximum of " + maxWaiters.toString() + " inventory managers!"
+                    });
+                }
+                break;
+
+            // if user role == kitchen personnel
+            case 3:
+                const maxkitchenPersonnel = await pool.query("SELECT max_kitchen_personnel FROM subscription WHERE subscription_type_id = $1",[ subscriptionTypeId]);
+                const maxKitchenPersonnel = maxkitchenPersonnel.rows[0]['max_kitchen_personnel']
+                const currentkitchenPersonnel = await pool.query("SELECT count(*) from users WHERE restaurant_id = $1 and usertype_id = $2", [data.restaurant_id, usertypeid]);
+                const currentKitchenPersonnel = parseInt(currentkitchenPersonnel.rows[0]['count'])
+                if(currentKitchenPersonnel >= maxKitchenPersonnel){
+                    return res.status(400).json({
+                        error: 1,
+                        msg: "Maximum number of allowed kitchen personnel are already registered! Your plan only allows a maximum of " + maxWaiters.toString() + " kitchen personnel!"
+                    });
+                }
+                break;
+        }
+
+        // generating hashed password (salt rounds = 12)
+        const salt = await bcrypt.genSalt(12);
+        const hashedPassword = await bcrypt.hash(data.password, salt);
+        
+        // inserting new user into the database
+        const newUser = await pool.query(
+        "INSERT INTO users(restaurant_id,user_image,usertype_id,user_name,email_id,contact_no,contact_no_optional,password) VALUES ($1, $2, $3,$4, $5,$6,$7,$8)",
+        [data.restaurant_id, data.user_image, usertypeid, data.user_name, data.email_id, data.contact_no, data.contact_no2, hashedPassword]);
+
+        return res.status(200).json({
+            msg: "Registered successfully!"
+        });
+    } catch (err) {
+        console.log("ERRRRR", err.message)
+    }
+})
+
+
+// works
+router.post('/mark_attendance',async(req,res) => {
+    jwt.verify(req.token, 'secretkey',async (err,authData)=>{
+        if(err){
+
+            //INVALID TOKEN/TIMEOUT 
+            res.status(400).json({msg: "Session expired. Login again"})
+            
+        }else{
+    
+                try {
+                    const data = req.body;
+                    if(!data.restaurant_id || !data.user_id){
+                        
+                        res.status(400).json({
+                            error:1,
+                            msg: "Provide all values"   
+                        }); 
+
+                    } else { 
+                    
+                        var date = new Date();
+                        var currentISODate = ISODateTimeString(date);
+                        
+                        const username = await pool.query("SELECT user_name from users WHERE user_id=$1", [data.user_id])
+                        const username2 = username.rows[0].user_name;
+                        console.log(currentISODate)
+                        const newUser = await pool.query(
+                        "INSERT INTO attendance(restaurant_id,user_id, user_name, time_stamp,attendance_status) VALUES ($1, $2, $3, $4, $5)",
+                            [data.restaurant_id,data.user_id, username2, currentISODate ,true]);
+                            
+                        res.status(200).json({msg:"Attendance marked" });
+                    }
+                } catch (err) {
+                    console.log(err.message)
+                }
+            }
+})
+
+
+// works
+// ATTENDANCE
+router.post('/view_attendance', async (req,res)=>{
+jwt.verify(req.token, 'secretkey',async (err,authData)=>{
+        if(err){
+
+            //INVALID TOKEN/TIMEOUT 
+            res.status(400).json({msg: "Session expired. Login again"})
+            
+        }else{
+
+    const data = req.body;
+    
+                try {
+
+                    if(!req.body.restaurant_id)
+                    {
+                        res.status(400).json({
+                            error:1,
+                            msg: "Provide a restaurant ID"   
+                        }); 
+                    }
+                    else{
+                        const results = await pool.query("SELECT user_id,user_name,attendance_status, split_part(time_stamp, ' ', 1) as time_stamp FROM ATTENDANCE WHERE restaurant_id=$1 and split_part(time_stamp, ' ', 1) >= $2 and split_part(time_stamp, ' ', 1) <= $3", [data.restaurant_id, data.date1N, data.date2N]);
+                        
+                        console.log(results.rows[0]);
+                        if(!results.rows[0] && !results.rows.length)
+                        {
+                            res.status(400).json({
+                                error:1,
+                                msg: "No attendance record found"   
+                            }); 
+                        }
+                        else{
+                            res.status(200).json(results.rows);
+                        }
+                    }
+                    
+                    
+                } 
+                catch (err) {
+                    console.log(err.message)
+                }
+            }
+})
+
+// FEEDBACK 
+router.post('/feedback',async (req,res)=>{
+
+    jwt.verify(req.token, 'secretkey',async (err,authData)=>{
+        if(err){
+
+            //INVALID TOKEN/TIMEOUT
+            res.status(400).json({msg: "Session expired. Login again"})
+            
+        }else{
+    
+                try{
+                    const data = req.body;
+                    const results = await pool.query(`select FEEDBACK_ID, bill_id ,question_id, score from feedback WHERE restaurant_id=$1 group by (feedback_id, bill_id)`, [data.restaurant_id]);
+                    const results2 = results.rows;
+                    //console.log("results2 : ", results2)
+
+                    const questions = await pool.query("SELECT question_id, question FROM feedback_questions")
+                    const questions2 = questions.rows;
+                    //console.log("questions2 : ", questions2)
+
+
+                    var final_ans = [];
+                    var total_feed = 0;
+                    var cnt = 0;
+                        results2.forEach((element, index, array) => {
+                            var feedback_id = element.feedback_id;
+                            var bill_id = element.bill_id;
+                            var question_id = element.question_id;
+                            var score = element.score;
+
+                            questions2.forEach((element, index, array) => {
+                                if(element.question_id == question_id){
+                                    final_ans.push({
+                                        "feedback_id" : feedback_id,
+                                        "bill_id": bill_id,
+                                        "question": element.question,
+                                        "score": score
+                                    })
+                                    total_feed += score;
+                                    cnt += 1;
+                                }
+                            })     
+                                
+                        });
+                        total_feed = total_feed/cnt;
+
+                    if(!final_ans[0] && !final_ans.length)
+                    {
+                        res.status(400).json({
+                            error:1,
+                            msg: "No feedback record found"   
+                        }); 
+                    }
+                    else{
+                        res.status(200).json({final_ans: final_ans, "avg_feed": total_feed});
+                    }
+                    
+                }
+                catch(err){
+                    console.log(err.message);
+                }
+            }       
+});
+
+
+
+router.post('/avg_feedback',async (req,res)=>{
+
+    jwt.verify(req.token, 'secretkey',async (err,authData)=>{
+        if(err){
+
+            //INVALID TOKEN/TIMEOUT
+            res.status(400).json({msg: "Session expired. Login again"})
+            
+        }else{
+    
+                try{
+                    const data = req.body;
+                    const count = await pool.query("SELECT count(*) FROM feedback WHERE restaurant_id=$1", [data.restaurant_id])
+                    const results = await pool.query(`select sum(score),question_id from feedback WHERE restaurant_id=$1 group by question_id`, [data.restaurant_id]);
+                    const results2 = results.rows;
+                    console.log("results2 : ", results2)
+                    console.log("COUNT : ", count.rows[0].count)
+
+                    const questions = await pool.query("SELECT question_id, question FROM feedback_questions")
+                    const questions2 = questions.rows;
+                    //console.log("questions2 : ", questions2)
+
+
+                    var final_ans = [];
+                    // var avg1, avg2, avg3 = 0;
+                    var cnt = 0;
+                        results2.forEach((element, index, array) => {
+                            var question_id = element.question_id;
+                            var score = element.sum
+                        
+                            questions2.forEach((element, index, array) => {
+                                if(element.question_id == question_id){
+                                    final_ans.push({
+                                        "name": element.question,
+                                        "score": score/count.rows[0].count
+                                    })
+                                }
+                            })     
+                                
+                        });
+                       
+
+                    if(!final_ans[0] && !final_ans.length)
+                    {
+                        res.status(400).json({
+                            error:1,
+                            msg: "No feedback record found"   
+                        }); 
+                    }
+                    else{
+                        res.status(200).json(final_ans);
+                    }
+                    
+                }
+                catch(err){
+                    console.log(err.message);
+                }
+            }       
+});
+
+
+
+// delete stff member : requires restaurant_id and user_id
 router.post('/delete_staff', async(req, res) => {
     try{
         const data = req.body;
@@ -557,6 +632,7 @@ router.post('/delete_staff', async(req, res) => {
         console.log(err.message);
     }
 });
+
 const {PythonShell} =require('python-shell');
 // Required at least 30 entries in database for forecasting
 // Input: restaurant_id and days_forecast(no. of days to forecast)
@@ -742,35 +818,9 @@ router.post('/rush_hour_train',verifyToken, async (req, res) => {
     });
 });
 
-async function iter(myArr){
-
-    var response = [];
-    var date = new Date();
-    var currentISODate = ISODateString(date);
-    myArr.forEach((element, index, array) => {
-        var date2 = element.time_stamp.split(" ");
-
-        if(date2[0] == currentISODate){
-            response.push({
-                "bill_id" : element.bill_id,
-                "table_no": element.table_no,
-                "no_of_occupants": element.no_of_occupants,
-                "final_bill": element.final_bill,
-                "time_stamp": date2[0] + " " + date2[1],
-            })
-            //sum += element.final_bill;
-        }
-
-    });
-
-    return response;
-}
-
 
 function matchDate(myArr){
 
-    // var response = [];
-    // var response = new Map();
     var response = new Set();
     var date = new Date();
     var currentISODate = ISODateString(date);
@@ -804,7 +854,7 @@ function ISODateTimeString(d){
           + pad(d.getUTCHours())+':'
           + pad(d.getUTCMinutes())+':'
           + pad(d.getUTCSeconds())}
-   
+  
 
 async function verifyToken(req,res,next){
 

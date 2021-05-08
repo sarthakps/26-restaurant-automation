@@ -141,28 +141,29 @@ router.post('/ordered_dishes', verifyToken, async(req, res) => {
                     const array = final.rows;
                     const final2 = await iter(array);
        
-                    const dishName = await pool.query("SELECT dish_id, dish_name from menu");
+                    const dishName = await pool.query("SELECT dish_id, dish_name from menu WHERE restaurant_id=$1", [data.restaurant_id]);
                     //console.log("DISHNAME", dishName.rows)
                     const dishName2 = dishName.rows;
 
-                    //console.log("FINAL2.LENGTH", final2.length)
+                    //console.log("FINAL2 dish_id", final2[0].dish_id)
+                    var final_ans = [];
                     if(final2.length == 1){
                         dishName2.forEach((element, index, array) => {
-                            if(element.dish_id == final_dishid){
+                            if(element.dish_id == final2[0].dish_id){
                                 final_ans.push({
-                                    "order_id" : final2.order_id,
-                                    "table_no": final2.table_no,
+                                    "order_id" : final2[0].order_id,
+                                    "table_no": final2[0].table_no,
                                     "dish_name": element.dish_name,
-                                    "dish_qty": final2.dish_qty,
-                                    "no_of_occupants": final2.no_of_occupants,
-                                    "time_stamp": final2.time_stamp
+                                    "dish_qty": final2[0].dish_qty,
+                                    "no_of_occupants": final2[0].no_of_occupants,
+                                    "time_stamp": final2[0].time_stamp
                                 })
                             }
                         })  
                     }
 
                     else{
-                        var final_ans = []
+                        
                         final2.forEach((element, index, array) => {
                             var final_dishid = element.dish_id;
                             var order_id = element.order_id;
@@ -190,7 +191,7 @@ router.post('/ordered_dishes', verifyToken, async(req, res) => {
 
                     }
                     
-                    console.log(final_ans)
+                    //console.log(final_ans)
                     res.json({"ans": final_ans});
                 }
 
@@ -257,30 +258,6 @@ async function iter(myArr){
             })
         }
     });
-    return response;
-}
-
-async function getDishName(myArr){
-
-    var response = [];
-    var temp = []
-    myArr.forEach(async(element, index, array) => {
-
-        const dishName = await pool.query("SELECT dish_name from menu WHERE dish_id=$1", [element.dish_id]);
-
-        if(dishName.rows[0]){
-            response.push({
-                "order_id" : element.order_id,
-                "table_no": element.table_no,
-                "dish_name": dishName.rows[0].dish_name,
-                "dish_qty": element.dish_qty,
-                "no_of_occupants": element.no_of_occupants,
-                "time_stamp": element.time_stamp
-            })
-        }
-        
-    });
-    console.log("RESPONSE", temp)
     return response;
 }
 
