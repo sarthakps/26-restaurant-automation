@@ -280,7 +280,7 @@ router.post('/fcmtest', async(req, res) => {
             }else{
                 try{
                     const data = req.body;
-                    if(!data.restaurant_id || !data.table_no || !data.dish_id || !data.dish_qty || !data.no_of_occupants || data.dish_id.length==0 || data.dish_qty.length==0 || data.dish_id.length!=data.dish_qty.length)
+                    if(!data.restaurant_id || !data.table_no || !data.is_jain_wanted || !data.dish_id || !data.dish_qty || !data.no_of_occupants || data.dish_id.length==0 || data.dish_qty.length==0 || data.dish_id.length!=data.dish_qty.length || data.is_jain_wanted.length!=data.dish_qty.length)
                     {
                         res.status(400).json({
                             error:1,
@@ -306,7 +306,7 @@ router.post('/fcmtest', async(req, res) => {
                             let index;    
                             for(index=0;index<data.dish_id.length;index++)
                             {
-                                const result = await pool.query('INSERT INTO ORDERED_DISHES(RESTAURANT_ID,TABLE_NO,DISH_ID,DISH_QTY,NO_OF_OCCUPANTS,TIME_STAMP,delivered) VALUES($1,$2,$3,$4,$5,$6,$7)',[data.restaurant_id,data.table_no,data.dish_id[index],data.dish_qty[index],data.no_of_occupants,currentISODate,false])
+                                const result = await pool.query('INSERT INTO ORDERED_DISHES(RESTAURANT_ID,TABLE_NO,DISH_ID,DISH_QTY,NO_OF_OCCUPANTS,TIME_STAMP,delivered,is_jain_wanted) VALUES($1,$2,$3,$4,$5,$6,$7,$8)',[data.restaurant_id,data.table_no,data.dish_id[index],data.dish_qty[index],data.no_of_occupants,currentISODate,false,data.is_jain_wanted[index]])
                                 
                                 //push orders into notification array
                                 notif_arr.push({
@@ -315,6 +315,7 @@ router.post('/fcmtest', async(req, res) => {
                                     "dish_id":data.dish_id[index],
                                     "dish_qty":data.dish_qty[index],
                                     "no_of_occupants":data.no_of_occupants,
+                                    "is_jain_wanted":data.is_jain_wanted[index],
                                     "time_stamp":currentISODate,
                                     "delivered":false
                                 })
