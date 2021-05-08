@@ -41,6 +41,23 @@ class FromServer {
     return response;
   }
 
+  static Future<List<dynamic>> getFeedbackForm() async {
+    Map payload = {
+      'token': await AuthStorage.getJWT(),
+      'email_id': await AuthStorage.getEmail(),
+    };
+
+    String body = json.encode(payload);
+
+    final response = await http.post('https://restaurant-automation-sen.herokuapp.com/waiter/send_feedback_questions',
+        headers: {"Content-Type": "application/json"}, body: body);
+
+    var data = json.decode(response.body);
+    var questions = data['questions'] as List;
+
+    return questions;
+  }
+
   static void placeOrder(List<Dish> dishes, int tableNo, int noOfOccupants) async {
     Map payload = Map();
     payload['email_id'] = await AuthStorage.getEmail();
