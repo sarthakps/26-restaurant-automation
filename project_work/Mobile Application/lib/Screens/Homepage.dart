@@ -5,8 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:mdi/mdi.dart';
 import 'package:restaurant_management/Objects/Dish.dart';
 import 'package:restaurant_management/Screens/ConfirmOrder.dart';
+import 'package:restaurant_management/Screens/ShowBill.dart';
+import 'package:restaurant_management/Screens/TakeFeedback.dart';
 import 'package:restaurant_management/Services/FromServer.dart';
 import 'package:restaurant_management/Values/Design.dart';
+
+import '../Values/Design.dart';
+import '../Values/Design.dart';
+import '../Values/Design.dart';
 
 class Homepage extends StatefulWidget {
 
@@ -40,6 +46,7 @@ class _HomepageState extends State<Homepage> {
   final FocusNode _searchFocusNode = FocusNode();
   ValueNotifier<bool> searchFocus = ValueNotifier<bool>(false);
   bool isJainWanted = false;
+  int _selectedTableNumber = 1;
 
   List<Dish> _dishesList = List<Dish>();
   List<Dish> _filteredDishesList = List<Dish>();
@@ -165,44 +172,66 @@ class _HomepageState extends State<Homepage> {
   }
 
   Widget _searchBar(){
-    return TextField(
-      controller: _filter,
-      onChanged: (query){
-        _debouncer.run(() {
-          _filterDishes();
-        });
-      },
-      focusNode: _searchFocusNode,
-      style: const TextStyle(
-        color: Design.textPrimary,
-        fontSize: Design.textMedium,
-      ),
-      decoration: InputDecoration(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 6.0),
-        hintText: 'Search dishes...',
-        hintStyle: const TextStyle(color: Design.textPrimary),
-        prefixIcon: Icon(Icons.search, size: 30.0, color: Design.accentPrimary,),
-        // suffixIcon: _searchFocusNode.hasFocus ? Icon(Icons.clear, size: 24.0, color: Design.accentTertiaryBright,) : null,
-        suffixIcon: ValueListenableBuilder(
-          valueListenable: searchFocus,
-          builder: (context, isFocused, child){
-            if(isFocused){
-              return InkWell(
-                borderRadius: BorderRadius.circular(24.0),
-                child: Icon(Icons.clear, size: 24.0, color: Design.accentTertiaryBright),
-                onTap: (){
-                  print('x pressed');
-                  _filter.text = '';
-                  _searchFocusNode.unfocus();
+    return Row(
+      children: [
+        Expanded(
+          child: TextField(
+            controller: _filter,
+            onChanged: (query){
+              _debouncer.run(() {
+                _filterDishes();
+              });
+            },
+            focusNode: _searchFocusNode,
+            style: const TextStyle(
+              color: Design.textPrimary,
+              fontSize: Design.textMedium,
+            ),
+            decoration: InputDecoration(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 6.0),
+              hintText: 'Search dishes...',
+              hintStyle: const TextStyle(color: Design.textPrimary),
+              prefixIcon: Icon(Icons.search, size: 30.0, color: Design.accentPrimary,),
+              // suffixIcon: _searchFocusNode.hasFocus ? Icon(Icons.clear, size: 24.0, color: Design.accentTertiaryBright,) : null,
+              suffixIcon: ValueListenableBuilder(
+                valueListenable: searchFocus,
+                builder: (context, isFocused, child){
+                  if(isFocused){
+                    return InkWell(
+                      borderRadius: BorderRadius.circular(24.0),
+                      child: Icon(Icons.clear, size: 24.0, color: Design.accentTertiaryBright),
+                      onTap: (){
+                        print('x pressed');
+                        _filter.text = '';
+                        _searchFocusNode.unfocus();
+                      },
+                    );
+                  }
+                  return SizedBox(height: 0, width: 0,);
                 },
-              );
-            }
-            return SizedBox(height: 0, width: 0,);
+              ),
+              enabledBorder: enabledCustomBorder(),
+              focusedBorder: focusedCustomBorder(),
+            ),
+          ),
+        ),
+        SizedBox(width: 8.0,),
+        InkWell(
+          borderRadius: BorderRadius.circular(40.0),
+          child: Container(
+            width: 40.0,
+            height: 40.0,
+            child: Icon(
+              Icons.payment,
+              size: 28.0,
+              color: Design.accentSecondary,
+            ),
+          ),
+          onTap: (){
+            _showTableSelectorDialog();
           },
         ),
-        enabledBorder: enabledCustomBorder(),
-        focusedBorder: focusedCustomBorder(),
-      ),
+      ],
     );
   }
 
@@ -228,20 +257,126 @@ class _HomepageState extends State<Homepage> {
             'PLACE ORDER',
           ),
           onPressed: () async {
-
             List<Dish> orderedDishes = List<Dish>();
             _dishesList.forEach((dish) {
               if(dish.quantity > 0){
                 orderedDishes.add(dish);
               }
             });
-
             Navigator.push(context,
                 MaterialPageRoute(
                     builder: (context) => ConfirmOrder(orderedDishes, widget._retrievedDishes)));
           },
         ),
       ),
+    );
+  }
+
+  Future<void> _showTableSelectorDialog(){
+    return showDialog<void>(
+        context: context,
+        builder: (context){
+          return StatefulBuilder(
+            builder: (context, setStateOfTableNoSelectorPopup){
+              return AlertDialog(
+                contentPadding: EdgeInsets.zero,
+                content: Container(
+                  color: Design.backgroundPrimary,
+                  width: MediaQuery.of(context).size.width * 0.7,
+                  // height: 100.0,
+                  padding: EdgeInsets.fromLTRB(15, 15, 15, 8),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Generate Bill',
+                          style: TextStyle(
+                            color: Design.accentPrimary,
+                            fontSize: 24.0,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 25.0,),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Select table number:',
+                          style: TextStyle(
+                            color: Design.textPrimary,
+                            fontSize: 16.0,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10.0,),
+                      Container(child: _tableNumberListView(setStateOfTableNoSelectorPopup), height: 40.0,),
+                      SizedBox(height: 20.0,),
+                      FlatButton(
+                        height: 40.0,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0)
+                        ),
+                        color: Design.accentPrimary,
+                        child: Text(
+                          'PROCEED',
+                        ),
+                        onPressed: () async {
+                          Navigator.push(context,
+                              MaterialPageRoute(
+                                  builder: (context) => ShowBill(_selectedTableNumber)));
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        }
+    );
+  }
+
+  Widget _tableNumberListView(setStateOfTableNoSelectorPopup){
+    return ListView.separated(
+      scrollDirection: Axis.horizontal,
+      itemCount: 50,
+      itemBuilder: (BuildContext context, int index) {
+        return Container(
+          padding: EdgeInsets.symmetric(horizontal: 15.0),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24.0),
+            color: (_selectedTableNumber-1) == index ? Design.accentTertiary : Colors.transparent,
+          ),
+          child: InkWell(
+            child: Center(
+              child: Text(
+                (index+1).toString(),
+                style: TextStyle(
+                  color: Design.textPrimary,
+                  fontSize: Design.textLarge,
+                ),
+              ),
+            ),
+            onTap: (){
+              setStateOfTableNoSelectorPopup((){
+                _selectedTableNumber = index + 1;
+              });
+            },
+          ),
+        );
+      },
+      separatorBuilder: (BuildContext context, int index) {
+        return Container(
+          width: 13.5,
+          padding: EdgeInsets.only(left: 6, right: 6, top: 12.0, bottom: 12.0),
+          child: Container(
+            width: 1.5,
+            color: Design.accentTertiary,
+          ),
+        );
+      },
     );
   }
 
