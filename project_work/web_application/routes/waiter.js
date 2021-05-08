@@ -15,7 +15,7 @@ const pool = require('../db')
 
 
 var admin = require('firebase-admin');
-var serviceAccount=require("./canteen-management-456ca-firebase-adminsdk-9j8r5-1317415eb1.json")
+var serviceAccount=require("./fire-init")
 var app_fcm = admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
   });
