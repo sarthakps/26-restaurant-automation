@@ -15,7 +15,7 @@ const pool = require('../db')
 
 
 var admin = require('firebase-admin');
-var serviceAccount=require("./fire-init")
+var serviceAccount=require("./fireinit.json")
 var app_fcm = admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
   });
