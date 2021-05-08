@@ -248,7 +248,7 @@ const HomePage = () => {
 
                   <div className="container" style={{width: "30%", marginLeft: "850px", paddingTop: "80px"}}>
                     <h1 className="w3-jumbo" style={{ marginTop:"100px", fontFamily: "Open Sans Condensed", color: "white", filter: "brightness(100%)"}}>About Us</h1>
-                      <p className="w3-jumbo_one" style={{ marginTop: "80px", fontFamily: "Open Sans Condensed", fontSize: "2.5rem !important", color: "white", filter: "brightness(100%)"}}>From automating the mundane task of placing an order to organising business related statistics, we’ve got you covered. <br /> With four different profile accesses for Manager, Waiter, Kitchen personnel and Inventory manager, our software helps increase the efficiency of your space.</p>
+                      <p className="w3-jumbo_one" style={{ marginTop: "80px", fontFamily: "Open Sans Condensed", fontSize: "2.5rem !important", color: "white", filter: "brightness(100%)"}}>From automating the mundane task of placing an order to organising business related statistics, we’ve got you covered. <br /> With four different profile accesses for Manager, Waiter, Kitchen personnel and Inventory manager, our website helps increase the efficiency of your space.</p>
 
                       <div className="row" style={{marginTop:"40px"}}>
                       <div style={{filter: "brightness(100%)", marginRight:"40px"}}>
@@ -348,7 +348,7 @@ const HomePage = () => {
                         </div>
                         <div className="row">
                             <DoneAllRoundedIcon style={{marginLeft: "-180px", marginTop: "15px"}}/>
-                            <h3 style={{marginLeft: "10px", fontSize:"18px"}}>Upto 10 waiters</h3>
+                            <h3 style={{marginLeft: "10px", fontSize:"18px"}}>Upto 20 waiters</h3>
                         </div>
                         <div className="row">
                             <DoneAllRoundedIcon style={{marginLeft: "-140px", marginTop: "15px"}}/>
@@ -358,7 +358,7 @@ const HomePage = () => {
                             <DoneAllRoundedIcon style={{marginLeft: "-145px", marginTop: "15px"}}/>
                             <h3 style={{marginLeft: "10px", fontSize:"18px"}}>1 Kitchen Personnel</h3>
                         </div>
-                        <h3 style={{marginLeft: "150px", marginTop: "20px", fontSize:"18px"}}>24x7 Maintenance Support:</h3>
+                        <h3 style={{marginLeft: "150px", marginTop: "20px", fontSize:"18px"}}>24x7 Maintenance Support</h3>
                     </div>
                    </div>
 
@@ -371,25 +371,25 @@ const HomePage = () => {
                     </div>
 
                   <div className="row" style={{ width: "100%", marginTop: "20px"}}>
-                    <Card cardwidth={"25%"} backcolor={"white"} fontcolor={"#ffffff"} cardheight={"120px"} borderradius={2} h3={"Maulina Raina"} p={"201801186"} marginRight={"3%"} marginLeft={"5%"}/>
+                    <Card cardwidth={"25%"} backcolor={"white"} fontcolor={"#ffffff"} cardheight={"120px"} borderradius={2} h3={"Sarthak Patel"} p={"201801435"} marginRight={"3%"} marginLeft={"5%"}/>
                     <Card cardwidth={"25%"} cardheight={"120px"} borderradius={2} h3={"Shreya Joshi"} p={"201801174"} marginRight={"3%"} marginLeft={"5%"}/>
+                    <Card cardwidth={"25%"} cardheight={"120px"} borderradius={2} h3={"Pratvi Shah"} p={"201801407"} marginRight={"3%"} marginLeft={"5%"}/>
+                  </div>
+
+                  <div className="row" style={{ width: "100%", marginTop: "50px"}}>
+                    <Card cardwidth={"25%"} backcolor={"white"} fontcolor={"#ffffff"} cardheight={"120px"} borderradius={2} h3={"Bhavya Ganatra"} p={"201801444"} marginRight={"3%"} marginLeft={"5%"}/>
+                    <Card cardwidth={"25%"} cardheight={"120px"} borderradius={2} h3={"Maulina Raina"} p={"201801186"} marginRight={"3%"} marginLeft={"5%"}/>
                     <Card cardwidth={"25%"} cardheight={"120px"} borderradius={2} h3={"Aaditi Roy"} p={"201801103"} marginRight={"3%"} marginLeft={"5%"}/>
                   </div>
 
                   <div className="row" style={{ width: "100%", marginTop: "50px"}}>
-                    <Card cardwidth={"25%"} backcolor={"white"} fontcolor={"#ffffff"} cardheight={"120px"} borderradius={2} h3={"Student name"} p={"Student ID"} marginRight={"3%"} marginLeft={"5%"}/>
-                    <Card cardwidth={"25%"} cardheight={"120px"} borderradius={2} h3={"Student name"} p={"Student ID"} marginRight={"3%"} marginLeft={"5%"}/>
-                    <Card cardwidth={"25%"} cardheight={"120px"} borderradius={2} h3={"Student name"} p={"Student ID"} marginRight={"3%"} marginLeft={"5%"}/>
+                    <Card cardwidth={"25%"} backcolor={"white"} fontcolor={"#ffffff"} cardheight={"120px"} borderradius={2} h3={"Manish Parmar"} p={"201801231"} marginRight={"3%"} marginLeft={"5%"}/>
+                    <Card cardwidth={"25%"} cardheight={"120px"} borderradius={2} h3={"Hiren Mangroliya"} p={"201801129"} marginRight={"3%"} marginLeft={"5%"}/>
+                    <Card cardwidth={"25%"} cardheight={"120px"} borderradius={2} h3={"Asutosh Sangada"} p={"201801236"} marginRight={"3%"} marginLeft={"5%"}/>
                   </div>
 
                   <div className="row" style={{ width: "100%", marginTop: "50px"}}>
-                    <Card cardwidth={"25%"} backcolor={"white"} fontcolor={"#ffffff"} cardheight={"120px"} borderradius={2} h3={"Student name"} p={"Student ID"} marginRight={"3%"} marginLeft={"5%"}/>
-                    <Card cardwidth={"25%"} cardheight={"120px"} borderradius={2} h3={"Student name"} p={"Student ID"} marginRight={"3%"} marginLeft={"5%"}/>
-                    <Card cardwidth={"25%"} cardheight={"120px"} borderradius={2} h3={"Student name"} p={"Student ID"} marginRight={"3%"} marginLeft={"5%"}/>
-                  </div>
-
-                  <div className="row" style={{ width: "100%", marginTop: "50px"}}>
-                    <Card cardwidth={"25%"} backcolor={"white"} fontcolor={"#ffffff"} cardheight={"120px"} borderradius={2} h3={"Student name"} p={"Student ID"} marginRight={"3%"} marginLeft={"5%"}/>
+                    <Card cardwidth={"25%"} backcolor={"white"} fontcolor={"#ffffff"} cardheight={"120px"} borderradius={2} h3={"Zenil Kothari"} p={"201801128"} marginRight={"3%"} marginLeft={"5%"}/>
                   </div>
 
                   </div>
