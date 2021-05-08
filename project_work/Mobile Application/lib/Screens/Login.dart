@@ -60,12 +60,13 @@ class _LoginState extends State<Login> {
           _isLoginAttemptActive = false;
         });
 
-        AuthStorage.saveAuthDetails(response.body);
+
+        AuthStorage.saveAuthDetails(response.body, _email);
 
         if(response.statusCode == 200){
           Navigator.pushReplacement(context,
               MaterialPageRoute(
-                  builder: (context) => Homepage()));
+                  builder: (context) => Homepage([])));
         }
 
         print(response.body.toString());

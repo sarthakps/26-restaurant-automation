@@ -1,14 +1,21 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mdi/mdi.dart';
 import 'package:restaurant_management/Objects/Dish.dart';
 import 'package:restaurant_management/Values/Design.dart';
 
+import '../Services/FromServer.dart';
+import '../Values/Design.dart';
+import 'Homepage.dart';
+
 class ConfirmOrder extends StatefulWidget {
 
   final List<Dish> _orderedDishes;
+  final List<Dish> _retrievedDishes;
 
-  ConfirmOrder(this._orderedDishes);
+  ConfirmOrder(this._orderedDishes, this._retrievedDishes);
 
   @override
   _ConfirmOrderState createState() => _ConfirmOrderState();
@@ -88,17 +95,12 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // IconButton to increase food amount by 0.1
-                  InkWell(
-                    borderRadius: BorderRadius.circular(24.0),
-                    child: Icon(Icons.add_circle_outline_sharp, size: 25.0, color: Design.accentPrimary,),
-                    onTap: (){
-                      double amt = double.parse(_foodAmountController.text);
-                      amt = amt + 1;
-                      _foodAmountController.text = amt.toStringAsFixed(1);
-                      widget._orderedDishes[index].quantity = amt;
-                      priceListenable.value = widget._orderedDishes[index].price * widget._orderedDishes[index].quantity;
-                    },
+                  Text(
+                    'QTY =',
+                    style: TextStyle(
+                      fontSize: Design.textMedium,
+                      color: Design.textPrimary,
+                    ),
                   ),
                   Container(
                     width: 40.0,
@@ -123,21 +125,10 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                       ),
                     ),
                   ),
-                  InkWell(
-                    borderRadius: BorderRadius.circular(24.0),
-                    child: Icon(Icons.remove_circle_outline_sharp, size: 25.0, color: Design.accentPrimary,),
-                    onTap: (){
-                      double amt = double.parse(_foodAmountController.text);
-                      amt = amt>0 ? amt - 1 : 0;
-                      _foodAmountController.text = amt.toStringAsFixed(1);
-                      widget._orderedDishes[index].quantity = amt;
-                      priceListenable.value = widget._orderedDishes[index].price * widget._orderedDishes[index].quantity;
-                    },
-                  ),
                 ],
               ),
               SizedBox(width: 10.0,),
-              widget._orderedDishes[index].isJainAvailable ?
+              isJainWanted.value ?
               Container(
                 width: 1.5,
                 height: 27.0,
@@ -147,8 +138,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                 ),
               ) : SizedBox(width: 0, height: 0,),
               SizedBox(width: 10.0,),
-              widget._orderedDishes[index].isJainAvailable ?
-              Row(
+              isJainWanted.value ? Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
@@ -167,9 +157,6 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                           tristate: false,
                           value: isJainWanted.value,
                           activeColor: Design.accentSecondary,
-                          onChanged: (value){
-                            isJainWanted.value = value;
-                          },
                         );
                       },
                     ),
@@ -239,6 +226,12 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
     );
   }
 
+  void _closeConfirmOrder(){
+    Future.delayed(Duration(seconds: 4), (){
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Homepage(widget._retrievedDishes)), (Route<dynamic> route) => false);
+    });
+  }
+
   Widget _placeOrderButton(){
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -250,12 +243,6 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
           // endIndent: 12.0,
         ),
         Container(child: _tableNumberListView(), height: 40.0,),
-        // Divider(
-        //   color: Design.accentSecondary,
-        //   thickness: 1.5,
-        //   indent: 12.0,
-        //   endIndent: 12.0,
-        // ),
         Container(
           width: MediaQuery.of(context).size.width,
           color: Design.backgroundPrimary,
@@ -277,7 +264,38 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
               child: Text(
                 'CONFIRM ORDER',
               ),
-              onPressed: (){},
+              onPressed: () async {
+                await FromServer.placeOrder(widget._orderedDishes, 6, 4);
+                showDialog<void>(
+                      context: context,
+                      builder: (context){
+                        return StatefulBuilder(
+                          builder: (context, setStateOfQtySelectorPopup){
+                            _closeConfirmOrder();
+                            return AlertDialog(
+                              contentPadding: EdgeInsets.zero,
+                              content: Container(
+                                color: Design.backgroundPrimary,
+                                width: MediaQuery.of(context).size.width * 0.7,
+                                height: 100.0,
+                                padding: EdgeInsets.all(20),
+                                child: Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'Placed Successfully!',
+                                      style: TextStyle(
+                                        color: Design.accentPrimary,
+                                        fontSize: 21.0,
+                                      ),
+                                    )
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      }
+                  );
+              },
             ),
           ),
         ),
