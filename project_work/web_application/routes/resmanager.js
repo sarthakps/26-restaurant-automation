@@ -275,103 +275,113 @@ router.post('/revenue', async(req, res) => {
                         console.log(err.message)
                     }
             }      
+    });
 })
 
 
 // works
 router.post('/register-user',async(req,res) => {  
+    jwt.verify(req.token, 'secretkey',async (err,authData)=>{
+        if(err){
 
-    try {
-        const data = req.body;
+            //INVALID TOKEN/TIMEOUT 
+            res.status(400).json({msg: "Session expired. Login again"})
+            
+        }else{
 
-        // check if one or more mandatory field is empty
-        // return error if true
-        if(!data.restaurant_id || !data.user_image || !data.usertype_id || !data.user_name || !data.email_id || !data.contact_no || !data.password){
-            return res.status(400).json({
-                error: 1,
-                msg: "One or more required field is empty!"
-            }); 
-        } 
+            try {
+                const data = req.body;
 
-        // check if the email ID is already registered or not
-        // return error if true
-        const user = await pool.query("SELECT email_id from users WHERE email_id=$1", [data.email_id]);
-        if(user.rows.length){
-            return res.status(400).json({
-                error: 1,
-                msg: "This email ID is already registered!"
-            });
-        }
-        
-        // check if maximum allowed registrations corresponding to user's role for the given restaurant is reached or not
-        // if maximum users of given role are already registered, return error
-        // const userRole = await pool.query("SELECT user_role from usertype WHERE usertype_id= $1", data.usertype_id);
-        const subscriptiontypeId = await pool.query("SELECT subscription_type_id FROM restaurant WHERE restaurant_id = $1", [data.restaurant_id]);  
-        const usertypeid=data.usertype_id; 
-        const subscriptionTypeId=subscriptiontypeId.rows[0]['subscription_type_id']; 
-        
-        // console.log(typeof(usertypeid),typeof(data.restaurant_id))
-        switch(usertypeid){
-            // if user role == waiter
-            case 1:
-                const maxwaiters = await pool.query("SELECT max_waiter FROM subscription WHERE subscription_type_id = $1", [subscriptionTypeId]);
-                const maxWaiters = maxwaiters.rows[0]['max_waiter']
+                // check if one or more mandatory field is empty
+                // return error if true
+                if(!data.restaurant_id || !data.user_image || !data.usertype_id || !data.user_name || !data.email_id || !data.contact_no || !data.password){
+                    return res.status(400).json({
+                        error: 1,
+                        msg: "One or more required field is empty!"
+                    }); 
+                } 
+
+                // check if the email ID is already registered or not
+                // return error if true
+                const user = await pool.query("SELECT email_id from users WHERE email_id=$1", [data.email_id]);
+                if(user.rows.length){
+                    return res.status(400).json({
+                        error: 1,
+                        msg: "This email ID is already registered!"
+                    });
+                }
                 
-                const currentwaiters = await pool.query("SELECT count(*) from users WHERE restaurant_id = $1 and usertype_id = $2", [data.restaurant_id, usertypeid]);
-                const currentWaiters = parseInt(currentwaiters.rows[0]['count'])
+                // check if maximum allowed registrations corresponding to user's role for the given restaurant is reached or not
+                // if maximum users of given role are already registered, return error
+                // const userRole = await pool.query("SELECT user_role from usertype WHERE usertype_id= $1", data.usertype_id);
+                const subscriptiontypeId = await pool.query("SELECT subscription_type_id FROM restaurant WHERE restaurant_id = $1", [data.restaurant_id]);  
+                const usertypeid=data.usertype_id; 
+                const subscriptionTypeId=subscriptiontypeId.rows[0]['subscription_type_id']; 
                 
-                if(currentWaiters >= maxWaiters){
-                    return res.status(400).json({
-                        error: 1,
-                        msg: "Maximum number of allowed waiters are already registered! Your plan only allows a maximum of " + maxWaiters.toString() + " waiters!"
-                    });
-                }
-                break;
+                // console.log(typeof(usertypeid),typeof(data.restaurant_id))
+                switch(usertypeid){
+                    // if user role == waiter
+                    case 1:
+                        const maxwaiters = await pool.query("SELECT max_waiter FROM subscription WHERE subscription_type_id = $1", [subscriptionTypeId]);
+                        const maxWaiters = maxwaiters.rows[0]['max_waiter']
+                        
+                        const currentwaiters = await pool.query("SELECT count(*) from users WHERE restaurant_id = $1 and usertype_id = $2", [data.restaurant_id, usertypeid]);
+                        const currentWaiters = parseInt(currentwaiters.rows[0]['count'])
+                        
+                        if(currentWaiters >= maxWaiters){
+                            return res.status(400).json({
+                                error: 1,
+                                msg: "Maximum number of allowed waiters are already registered! Your plan only allows a maximum of " + maxWaiters.toString() + " waiters!"
+                            });
+                        }
+                        break;
 
-            // if user role == inventory manager
-            case 2:
-                const maxinventoryManager = await pool.query("SELECT max_inv_manager FROM subscription WHERE subscription_type_id = $1", [subscriptionTypeId]);
-                const maxInventoryManager = maxinventoryManager.rows[0]['max_inv_manager']
-                const currentinventoryManager = await pool.query("SELECT count(*) from users WHERE restaurant_id = $1 and usertype_id = $2", [data.restaurant_id, usertypeid]);
-                const currentInventoryManager = parseInt(currentinventoryManager.rows[0]['count'])
-                if(currentInventoryManager >= maxInventoryManager){
-                    return res.status(400).json({
-                        error: 1,
-                        msg: "Maximum number of allowed inventory managers are already registered! Your plan only allows a maximum of " + maxWaiters.toString() + " inventory managers!"
-                    });
-                }
-                break;
+                    // if user role == inventory manager
+                    case 2:
+                        const maxinventoryManager = await pool.query("SELECT max_inv_manager FROM subscription WHERE subscription_type_id = $1", [subscriptionTypeId]);
+                        const maxInventoryManager = maxinventoryManager.rows[0]['max_inv_manager']
+                        const currentinventoryManager = await pool.query("SELECT count(*) from users WHERE restaurant_id = $1 and usertype_id = $2", [data.restaurant_id, usertypeid]);
+                        const currentInventoryManager = parseInt(currentinventoryManager.rows[0]['count'])
+                        if(currentInventoryManager >= maxInventoryManager){
+                            return res.status(400).json({
+                                error: 1,
+                                msg: "Maximum number of allowed inventory managers are already registered! Your plan only allows a maximum of " + maxWaiters.toString() + " inventory managers!"
+                            });
+                        }
+                        break;
 
-            // if user role == kitchen personnel
-            case 3:
-                const maxkitchenPersonnel = await pool.query("SELECT max_kitchen_personnel FROM subscription WHERE subscription_type_id = $1",[ subscriptionTypeId]);
-                const maxKitchenPersonnel = maxkitchenPersonnel.rows[0]['max_kitchen_personnel']
-                const currentkitchenPersonnel = await pool.query("SELECT count(*) from users WHERE restaurant_id = $1 and usertype_id = $2", [data.restaurant_id, usertypeid]);
-                const currentKitchenPersonnel = parseInt(currentkitchenPersonnel.rows[0]['count'])
-                if(currentKitchenPersonnel >= maxKitchenPersonnel){
-                    return res.status(400).json({
-                        error: 1,
-                        msg: "Maximum number of allowed kitchen personnel are already registered! Your plan only allows a maximum of " + maxWaiters.toString() + " kitchen personnel!"
-                    });
+                    // if user role == kitchen personnel
+                    case 3:
+                        const maxkitchenPersonnel = await pool.query("SELECT max_kitchen_personnel FROM subscription WHERE subscription_type_id = $1",[ subscriptionTypeId]);
+                        const maxKitchenPersonnel = maxkitchenPersonnel.rows[0]['max_kitchen_personnel']
+                        const currentkitchenPersonnel = await pool.query("SELECT count(*) from users WHERE restaurant_id = $1 and usertype_id = $2", [data.restaurant_id, usertypeid]);
+                        const currentKitchenPersonnel = parseInt(currentkitchenPersonnel.rows[0]['count'])
+                        if(currentKitchenPersonnel >= maxKitchenPersonnel){
+                            return res.status(400).json({
+                                error: 1,
+                                msg: "Maximum number of allowed kitchen personnel are already registered! Your plan only allows a maximum of " + maxWaiters.toString() + " kitchen personnel!"
+                            });
+                        }
+                        break;
                 }
-                break;
+
+                // generating hashed password (salt rounds = 12)
+                const salt = await bcrypt.genSalt(12);
+                const hashedPassword = await bcrypt.hash(data.password, salt);
+                
+                // inserting new user into the database
+                const newUser = await pool.query(
+                "INSERT INTO users(restaurant_id,user_image,usertype_id,user_name,email_id,contact_no,contact_no_optional,password) VALUES ($1, $2, $3,$4, $5,$6,$7,$8)",
+                [data.restaurant_id, data.user_image, usertypeid, data.user_name, data.email_id, data.contact_no, data.contact_no2, hashedPassword]);
+
+                return res.status(200).json({
+                    msg: "Registered successfully!"
+                });
+            } catch (err) {
+                console.log("ERRRRR", err.message)
+            }
         }
-
-        // generating hashed password (salt rounds = 12)
-        const salt = await bcrypt.genSalt(12);
-        const hashedPassword = await bcrypt.hash(data.password, salt);
-        
-        // inserting new user into the database
-        const newUser = await pool.query(
-        "INSERT INTO users(restaurant_id,user_image,usertype_id,user_name,email_id,contact_no,contact_no_optional,password) VALUES ($1, $2, $3,$4, $5,$6,$7,$8)",
-        [data.restaurant_id, data.user_image, usertypeid, data.user_name, data.email_id, data.contact_no, data.contact_no2, hashedPassword]);
-
-        return res.status(200).json({
-            msg: "Registered successfully!"
-        });
-    } catch (err) {
-        console.log("ERRRRR", err.message)
-    }
+    });
 })
 
 
@@ -412,13 +422,14 @@ router.post('/mark_attendance',async(req,res) => {
                     console.log(err.message)
                 }
             }
+    });
 })
 
 
 // works
 // ATTENDANCE
 router.post('/view_attendance', async (req,res)=>{
-jwt.verify(req.token, 'secretkey',async (err,authData)=>{
+    jwt.verify(req.token, 'secretkey',async (err,authData)=>{
         if(err){
 
             //INVALID TOKEN/TIMEOUT 
@@ -426,7 +437,7 @@ jwt.verify(req.token, 'secretkey',async (err,authData)=>{
             
         }else{
 
-    const data = req.body;
+        const data = req.body;
     
                 try {
 
@@ -459,6 +470,7 @@ jwt.verify(req.token, 'secretkey',async (err,authData)=>{
                     console.log(err.message)
                 }
             }
+    });
 })
 
 // FEEDBACK 
@@ -523,7 +535,8 @@ router.post('/feedback',async (req,res)=>{
                 catch(err){
                     console.log(err.message);
                 }
-            }       
+            }     
+    });  
 });
 
 
@@ -585,7 +598,8 @@ router.post('/avg_feedback',async (req,res)=>{
                 catch(err){
                     console.log(err.message);
                 }
-            }       
+            }     
+    });  
 });
 
 
@@ -853,7 +867,8 @@ function ISODateTimeString(d){
          + pad(d.getUTCDate()) +' '
           + pad(d.getUTCHours())+':'
           + pad(d.getUTCMinutes())+':'
-          + pad(d.getUTCSeconds())}
+          + pad(d.getUTCSeconds())
+}
   
 
 async function verifyToken(req,res,next){
