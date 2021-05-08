@@ -1,0 +1,40 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "db.js",
+  "engines": {
+    "node": "12.18.4",
+    "npm": "6.14.6"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index",
+    "dev": "nodemon index",
+    "heroku-postbuild": "cd client && npm install && npm run build",
+    "flow": "flow"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "eslint": "^7.24.0",
+    "express": "^4.17.1",
+    "firebase": "^8.4.3",
+    "firebase-admin": "^9.7.0",
+    "handy-storage": "^2.1.6",
+    "jsonwebtoken": "^8.5.1",
+    "pg": "^8.6.0",
+    "python-shell": "^3.0.0",
+    "store": "^2.0.12"
+  },
+  "devDependencies": {
+    "flow-bin": "^0.148.0",
+    "flow-remove-types": "^2.149.0",
+    "nodemon": "^2.0.7"
+  },
+  "description": ""
+}

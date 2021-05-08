@@ -1,0 +1,127 @@
+@import url("https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300&display=swap");
+@import url(//db.onlinewebfonts.com/c/05289e866fe7e1e99d27a7a31f8d3b66?family=Trattatello);
+
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans+Condensed:wght@300&display=swap");
+
+* {
+  box-sizing: border-box;
+}
+
+.w3-tangerine {
+  font-family: poppins;
+  color: #c9ab81;
+  font-size: 20px;
+  size: 20px;
+}
+
+.w3-jumbo {
+  font-size: 60px !important;
+  letter-spacing: 0.16em;
+  filter: brightness(90%);
+}
+
+.w3-jumbo_one {
+  font-size: 16px !important;
+  letter-spacing: 0.16em;
+  filter: brightness(90%);
+}
+
+.w3-jumbo_two {
+  font-size: 30px !important;
+  letter-spacing: 0.26em;
+  filter: brightness(90%);
+}
+
+.w3-jumbo_three {
+  font-size: 75px !important;
+  letter-spacing: 0.23em;
+  filter: brightness(100%);
+}
+
+.row {
+  justify-content: center;
+}
+
+.title {
+  text-align: center;
+}
+
+.col-sm-6 {
+  padding: 0;
+  width: 420px;
+}
+
+.container {
+  justify-content: center;
+}
+
+.container .row .col-sm-6 {
+  width: 380px;
+}
+
+.card {
+  width: 380px;
+  text-align: center;
+}
+
+.frame1 {
+  width: 380px;
+  height: 210px;
+  overflow: hidden;
+  margin-right: 100px;
+}
+.frame1 img {
+  object-fit: cover;
+  width: 100%;
+  transform: translateY(0);
+  transition: 10s ease-out;
+}
+.frame1:hover img {
+  object-fit: cover;
+  width: 100%;
+  transform: translateY(calc(-100% + 300px));
+  transition: 10s ease-out;
+}
+
+.frame2 {
+  width: 370px;
+  height: 210px;
+  overflow: hidden;
+}
+.frame2 img {
+  object-fit: cover;
+  width: 100%;
+  transform: translateY(0);
+  transition: 10s ease-out;
+}
+.frame2:hover img {
+  object-fit: cover;
+  width: 100%;
+  transform: translateY(calc(-100% + 300px));
+  transition: 10s ease-out;
+}
+
+.frame3 {
+  width: 370px;
+  height: 210px;
+  overflow: hidden;
+}
+.frame3 img {
+  object-fit: cover;
+  width: 100%;
+  transform: translateY(0);
+  transition: 10s ease-out;
+}
+.frame3:hover img {
+  object-fit: cover;
+  width: 100%;
+  transform: translateY(calc(-100% + 300px));
+  transition: 10s ease-out;
+}
+
+.darkened-image {
+  filter: brightness(30%);
+
+  /* background-image: url(
+'https://media.geeksforgeeks.org/wp-content/cdn-uploads/20191121162913/s11.png'); */
+}

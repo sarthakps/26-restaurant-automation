@@ -1,0 +1,76 @@
+/* .w3-tangerine {
+  font-family: caviar_dreamsbold, sans-serif;
+  color: #c9ab81;
+}
+
+.w3-jumbo {
+  font-size: 60px !important;
+  letter-spacing: 0.16em;
+}
+
+.btn-outline-dark {
+  border-radius: 5px;
+  border-color: #c9ab81;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  padding-left: 50px;
+  padding-right: 50px;
+  letter-spacing: 0.26em;
+  color: white;
+  font-family: open sans condensed, sans-serif;
+}
+
+
+.btn-outline-dark:hover {
+  background-color: transperent !important;
+  border: 1px solid #c9ab81 !important;
+}
+
+.MuiPaper-root {
+  background-color: whitesmoke;
+}
+
+.goback {
+  border-width: 1.5px;
+  background-color: transparent;
+  border-color: #a9927d;
+  color: white;
+  text-align: center;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 10px;
+  width: 185px;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin: 5px;
+}
+
+.goback span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+.goback span:after {
+  content: "\f015";
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  left: -90%;
+  transition: 0.5s;
+}
+
+.goback:hover {
+  background-color: #a9927d;
+  color: white;
+}
+
+.goback:hover span {
+  padding-left: 25px;
+}
+
+.goback:hover span:after {
+  opacity: 1;
+  right: 0;
+} */
