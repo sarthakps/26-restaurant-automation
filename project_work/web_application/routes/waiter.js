@@ -327,6 +327,7 @@ router.post('/fcmtest', async(req, res) => {
     
                             //get fcm_tokens of all kitchen personnel with same restaurant_id
                             var kitchen_personnel_fcm = await pool.query("SELECT fcm_token FROM fcm_jwt WHERE restaurant_id=$1 and usertype_id=$2", [data.restaurant_id,3]);
+                            if(kitchen_personnel_fcm.rowCount!=0){
                             var tokens=[]
                             kitchen_personnel_fcm['rows'].forEach((element, index, array) => {
                                 tokens.push(element['fcm_token'])
@@ -352,7 +353,7 @@ router.post('/fcmtest', async(req, res) => {
                             .catch((error) => {
                                 console.log('Error sending message:', error);
                             });
-                                
+                            }
                             return res.status(200).json({
                                 msg: "Added Successfully!",
                                 data: notif
@@ -369,7 +370,6 @@ router.post('/fcmtest', async(req, res) => {
             }
         });
     });
-
 
 
 // data in request = email_id, restaurant_id, tabel_no
