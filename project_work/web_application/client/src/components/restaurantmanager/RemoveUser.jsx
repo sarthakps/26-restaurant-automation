@@ -110,6 +110,8 @@ const RemoveUser = () => {
             console.log(atten.users)
             setResatten(atten.users)
 
+            console.log("statuss", atten)
+
         } catch (err) {
             console.error(err.message)
         }
@@ -129,13 +131,14 @@ const RemoveUser = () => {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [filter, setFilter] = useState("");
 
-  const [userID, setUserID] = useState("");
 
-    const removeUserFun = async(user_id) => {
+    const removeUserFun = async(e) => {
         try {
           console.log("USER ID", user_id)
             const restaurant_id = localStorage.getItem("resID");
             const email_id = localStorage.getItem("emailID")
+            var user_id = e.currentTarget.value;
+            
             const body = {user_id, restaurant_id, email_id};
 
             const mark = await fetch("/restaurantmanager/delete_staff", {
@@ -156,7 +159,7 @@ const RemoveUser = () => {
                 showConfirmButton: false,
                 timer: 1500
             })
-            window.location.reload();
+            getUsers();
           }
                 
             else{
@@ -174,14 +177,6 @@ const RemoveUser = () => {
             console.error(err.message)
         }
     }
-
-  const handleClickFun = (e) => {
-    //setUserID("1");
-      //console.log("userID in handle click ",e.currentTarget.value)
-      setUserID(e.currentTarget.value)
-      console.log("userID :", userID)
-      removeUserFun(userID)
-  }
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -219,7 +214,7 @@ const RemoveUser = () => {
            <div className="container text-center" style={{marginTop: "100px", marginBottom: "100px", width:"40%"}}>
                  <h1 class="w3-jumbo" style={{textAlign: "center", marginTop: "0px", marginBottom: "50px", fontFamily: "Open Sans Condensed", fontSize: "100px !important", color: "#0a0908", filter: "brightness(100%)"}}>Remove a User</h1>
                  
-                 <h5 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)"}}>Analize the customer satisfaction by analyzing the feedback given by different user, organized in a form of graph, sorted by the different questions, to increase readability.</h5>
+                 <h5 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)", fontSize: "20px"}}>We’re sorry to hear them leave. Nevertheless wishing them the best. Drop their details out from the list below.</h5>
                  
            </div> 
        </div>
@@ -306,7 +301,7 @@ const RemoveUser = () => {
                       color="primary"
                       className={classes.submit123} 
                       value={row.user_id} 
-                      onClick={(e) => handleClickFun(e)}
+                      onClick={(e) => removeUserFun(e)}
                     >Remove</Button></TableCell>
 
                     </TableRow>

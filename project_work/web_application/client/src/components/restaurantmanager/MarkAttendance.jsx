@@ -130,13 +130,17 @@ const Attendance = () => {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [filter, setFilter] = useState("");
 
-  const [userID, setUserID] = useState("");
+  // const [userID, setUserID] = useState("");
 
-    const markAttendance = async(user_id) => {
+    const markAttendance = async(e) => {
         try {
           console.log("USER ID", user_id)
             const restaurant_id = localStorage.getItem("resID");
-            const body = {user_id, restaurant_id};
+            const email_id = localStorage.getItem("emailID");
+            var user_id = e.currentTarget.value;
+            console.log("USER_ID : ", user_id)
+
+            const body = {user_id, restaurant_id, email_id};
 
             const mark = await fetch("/restaurantmanager/mark_attendance", {
                 method: "POST",
@@ -156,7 +160,7 @@ const Attendance = () => {
                 showConfirmButton: false,
                 timer: 1500
             })
-            window.location.reload();
+            getUsers();
           }
                 
             else{
@@ -175,11 +179,11 @@ const Attendance = () => {
         }
     }
 
-  const handleClickFun = (e) => {
-      setUserID(e.currentTarget.value)
-      console.log("userID :", userID)
-      markAttendance(userID)
-  }
+  // const handleClickFun = (e) => {
+  //     setUserID(e.currentTarget.value)
+  //     console.log("userID :", userID)
+  //     markAttendance(userID)
+  // }
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -219,18 +223,12 @@ const Attendance = () => {
               <div className="container text-center" style={{marginTop: "100px", marginBottom: "100px", width:"40%"}}>
                     <h1 class="w3-jumbo" style={{textAlign: "center", marginTop: "0px", marginBottom: "50px", fontFamily: "Open Sans Condensed", fontSize: "100px !important", color: "#0a0908", filter: "brightness(100%)"}}>Mark Attendance</h1>
                     
-                    <h5 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)"}}>Analize the customer satisfaction by analyzing the feedback given by different user, organized in a form of graph, sorted by the different questions, to increase readability.</h5>
+                    <h5 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)", fontSize: "20px"}}>You need a top-notch team to run a top-notch business. Mark the presence of your team through this simple and easy-to-use attendance feature. 
+              </h5>
                     
               </div> 
           </div>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
+
   <div className="container text-center">
 <div className={classes.root}>
       <Paper className={classes.paper}>
@@ -311,7 +309,7 @@ const Attendance = () => {
                       className={classes.submit123}
                      
                       value={row.user_id} 
-                      onClick={(e) => handleClickFun(e)}
+                      onClick={(e) => markAttendance(e)}
                      
                     >Mark Attendance</Button></TableCell>
                        

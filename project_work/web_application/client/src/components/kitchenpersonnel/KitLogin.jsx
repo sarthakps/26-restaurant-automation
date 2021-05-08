@@ -44,6 +44,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    marginTop: "30px"
   },
   avatar123: {
     margin: theme.spacing(1),
@@ -78,6 +79,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 const ResLogin = (props) => {
+    const [restaurant_id, setRestaurant_id] = useState("")
     const [email_id, setUid] = useState("")
     const [password, setPassword] = useState("")
 
@@ -85,10 +87,12 @@ const ResLogin = (props) => {
         e.preventDefault();
         //console.log("jay shree krishna");
         try {
-            const body = {email_id, password};
+            const body = {restaurant_id, email_id, password};
 
             var emailid = email_id;
             localStorage.setItem("emailID", emailid);
+            var res_id = restaurant_id;
+            localStorage.setItem("resID", res_id);
 
             // proxy
             const submitLogin = await fetch("/kitchenpersonnel/login", {
@@ -99,15 +103,13 @@ const ResLogin = (props) => {
                 return res.json()
             })
 
-            //console.log(submitLogin.msg);
+            console.log(submitLogin);
 
             if(submitLogin.msg === "Successfully logged in!"){
                 Swal.fire("Congrats!", submitLogin.msg, "success")
                 props.history.push("/kitchenpersonnel/pending-orders")
-
-                var res_id = submitLogin.restaurant_id;
-                localStorage.setItem("resID", res_id);
                 //console.log("IN ResLogin file: ", res_id);
+                localStorage.setItem("user_image", submitLogin.user_image);
 
             }
             else{
@@ -147,6 +149,19 @@ const ResLogin = (props) => {
             <Avatar className={classes.Red123}><LockOutlinedIcon /></Avatar>
             <Typography component="h2" variant="h5">LOGIN</Typography>
               <form  action="POST" onSubmit={onSubmitForm} className={classes.form123}>
+               <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="id"
+                  label="Restaurant ID"
+                  name="id"
+                  type="id"
+                  autoFocus
+                  required value = {restaurant_id}
+                  onChange={e => setRestaurant_id(e.target.value)}
+                />
                 <TextField
                     variant="outlined"
                     margin="normal"
@@ -188,9 +203,6 @@ const ResLogin = (props) => {
                     LOGIN
                   </Button>
                   </Box>
-                <br/>
-                <br/>
-                <br/>
                 
               </form>
 

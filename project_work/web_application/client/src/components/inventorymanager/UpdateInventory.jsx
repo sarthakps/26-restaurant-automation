@@ -24,7 +24,7 @@ import Header from '../restaurantmanager/Header'
 import Footer from '../restaurantmanager/Footer'
 import Button from '@material-ui/core/Button';
 import '../stylebutton.css'
-import menuimg2 from '../restaurantmanager/res_menu6.jpg'
+import menuimg2 from './inv.jpg'
 
 import EnhancedTableToolbar from '../restaurantmanager/EnhancedTableToolBar'
 import EnhancedTableHead from '../restaurantmanager/EnhancedTableHead'
@@ -166,7 +166,7 @@ const UpdateInventory = () => {
                   showConfirmButton: false,
                   timer: 1500
               })
-              window.location.reload();
+              getMenu();
           }
           else{
               Swal.fire({
@@ -245,7 +245,8 @@ const UpdateInventory = () => {
                     <div className="container text-center" style={{marginTop: "100px", marginBottom: "100px", width:"40%"}}>
                           <h1 class="w3-jumbo" style={{textAlign: "center", marginTop: "0px", marginBottom: "50px", fontFamily: "Open Sans Condensed", fontSize: "100px !important", color: "#0a0908", filter: "brightness(100%)"}}>Update Inventory</h1>
                           
-                          <h5 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)"}}>Lorem It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</h5>
+                          <h5 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)", fontSize: "20px"}}>From updating freshly bought ingredients to cross checking all your depletions, update your inventory and keep the flow going. After all, a good diner demands an impeccable inventory. 
+                          </h5>
                           
                       </div>   
       </div>

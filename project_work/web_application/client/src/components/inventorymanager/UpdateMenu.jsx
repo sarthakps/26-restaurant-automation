@@ -24,7 +24,7 @@ import Header from '../restaurantmanager/Header'
 import Footer from '../restaurantmanager/Footer'
 import '../stylebutton.css'
 import Button from '@material-ui/core/Button';
-import menuimg2 from '../restaurantmanager/res_menu6.jpg'
+import menuimg2 from './menu.jpg'
 
 import EnhancedTableToolbar from '../restaurantmanager/EnhancedTableToolBar'
 import EnhancedTableHead from '../restaurantmanager/EnhancedTableHead'
@@ -170,7 +170,7 @@ const UpdateMenu = () => {
                   showConfirmButton: false,
                   timer: 1500
               })
-              window.location.reload();
+              getMenu();
           }
           else{
               Swal.fire({
@@ -248,7 +248,8 @@ const UpdateMenu = () => {
                     <div className="container text-center" style={{marginTop: "100px", marginBottom: "100px", width:"40%"}}>
                           <h1 class="w3-jumbo" style={{textAlign: "center", marginTop: "0px", marginBottom: "50px", fontFamily: "Open Sans Condensed", fontSize: "100px !important", color: "#0a0908", filter: "brightness(100%)"}}>Update Menu</h1>
                           
-                          <h5 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)"}}>Lorem It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</h5>
+                          <h5 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)", fontSize: "20px"}}>Out of ingredients and can’t serve a particular dish? Fear not! Keep your Menu updated without any hassle and never let your customers down.
+                          </h5>
                           
                       </div>   
       </div>

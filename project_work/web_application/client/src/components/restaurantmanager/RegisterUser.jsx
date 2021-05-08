@@ -80,11 +80,12 @@ const useStyles = makeStyles((theme) => ({
 const RegisterUser = () => {
 
     const restaurant_id = localStorage.getItem("resID");
+    const email_id = localStorage.getItem("emailID");
     //const [restaurant_id, setRestaurantid] = useState();
     const [user_image, setUserimage] = useState("");
     const [usertype_id, setUsertypeid] = useState();
     const [user_name, setUsername] = useState("");
-    const [email_id, setEmailid] = useState("");
+    const [emailid_user, setEmailid] = useState("");
     const [contact_no, setContactno] = useState("");
     const [contact_no2, setContactno2] = useState("");
     const [password, setPassword] = useState("");
@@ -95,8 +96,8 @@ const RegisterUser = () => {
     const onSubmitProfile = async(e) => {
         e.preventDefault();
         try {
-            const body = {restaurant_id, usertype_id, user_name, email_id, contact_no, contact_no2, password, user_image};
-            //console.log("BODY : ", body);
+            const body = {restaurant_id, usertype_id, user_name, email_id, emailid_user, contact_no, contact_no2, password, user_image};
+            console.log("BODY : ", body);
             const head = {
               headers:  {"Content-Type": "application/json"}};
             const resSubmit = await axios.post("/restaurantmanager/register-user", JSON.stringify(body),head)
@@ -151,7 +152,7 @@ const RegisterUser = () => {
       <body style={{background:"#F2F4F3"}}>
 
 
-      <Header logout={"log out"} avatar={user_image} logoutpath={"/restaurantmanager/login"} homepath={"/restaurantmanager/reshome"} height={"65px"} color={"white"} color2={"#0A0908"}/> 
+      <Header logout={"log out"} avatar={user_image2} logoutpath={"/restaurantmanager/login"} homepath={"/restaurantmanager/reshome"} height={"65px"} color={"white"} color2={"#0A0908"}/> 
       
       
       <div className="row">
@@ -159,7 +160,7 @@ const RegisterUser = () => {
               <div className="container text-center" style={{marginTop: "100px", marginBottom: "100px", width:"40%"}}>
                           <h1 class="w3-jumbo" style={{textAlign: "center", marginTop: "0px", marginBottom: "50px", fontFamily: "Open Sans Condensed", fontSize: "100px !important", color: "#0a0908", filter: "brightness(100%)"}}>Register a User</h1>
                           
-                          <h5 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)"}}>Lorem  typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</h5>
+                          <h5 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)", fontSize: "20px"}}>We hear someone new has joined your family! Congratulations to them and you for this new endeavour.. Add their details below to officially welcome them.</h5>
                           
               </div>  
 
@@ -219,7 +220,7 @@ const RegisterUser = () => {
                 <optgroup label="Select User role">
                     <option value={1}>Waiter</option>
                     <option value={2}>Inventory Manager</option>
-                    <option value={2}>Kitchen Personnel</option>
+                    <option value={3}>Kitchen Personnel</option>
                 </optgroup>
                 </Select>
             </FormControl>
@@ -264,7 +265,7 @@ const RegisterUser = () => {
                 name="umail"
                 autoComplete="email"
                 autoFocus
-                required value = {email_id}
+                required value = {emailid_user}
                 onChange={e => setEmailid(e.target.value)}
                 />
 

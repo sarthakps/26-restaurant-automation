@@ -128,7 +128,7 @@ router.post('/ordered_dishes', verifyToken, async(req, res) => {
             //WHEN USER HAS VALID JWT TOKEN
             try {
                 const data = req.body;
-                const final = await pool.query("SELECT order_id, table_no, dish_id, dish_qty, no_of_occupants, time_stamp, delivered FROM ordered_dishes WHERE restaurant_id=$1 and delivered=false", [data.restaurant_id]);
+                const final = await pool.query("SELECT order_id, table_no, dish_id, dish_qty, no_of_occupants, time_stamp, delivered, is_jain_wanted FROM ordered_dishes WHERE restaurant_id=$1 and delivered=false", [data.restaurant_id]);
                 //console.log( "FINAL.ROWS", final.rows)
 
                 if(!final.rows[0] && !final.rows.length){
@@ -156,7 +156,8 @@ router.post('/ordered_dishes', verifyToken, async(req, res) => {
                                     "dish_name": element.dish_name,
                                     "dish_qty": final2[0].dish_qty,
                                     "no_of_occupants": final2[0].no_of_occupants,
-                                    "time_stamp": final2[0].time_stamp
+                                    "time_stamp": final2[0].time_stamp,
+                                    "is_jain_wanted": final2[0].is_jain_wanted
                                 })
                             }
                         })  
@@ -172,6 +173,7 @@ router.post('/ordered_dishes', verifyToken, async(req, res) => {
                             var no_of_occupants = element.no_of_occupants;
                             var time_stamp = element.time_stamp;
                             var delivered = element.delivered;
+                            var is_jain_wanted = element.is_jain_wanted
 
                             dishName2.forEach((element, index, array) => {
                                 if(element.dish_id == final_dishid){
@@ -182,7 +184,8 @@ router.post('/ordered_dishes', verifyToken, async(req, res) => {
                                         "dish_qty": dish_qty,
                                         "no_of_occupants": no_of_occupants,
                                         "time_stamp": time_stamp,
-                                        "delivered": delivered
+                                        "delivered": delivered,
+                                        "is_jain_wanted" : is_jain_wanted
                                     })
                                 }
                             })     
@@ -254,7 +257,8 @@ async function iter(myArr){
                 "dish_id": element.dish_id,
                 "dish_qty": element.dish_qty,
                 "no_of_occupants": element.no_of_occupants,
-                "time_stamp": date2[1]
+                "time_stamp": date2[1],
+                "is_jain_wanted": element.is_jain_wanted
             })
         }
     });

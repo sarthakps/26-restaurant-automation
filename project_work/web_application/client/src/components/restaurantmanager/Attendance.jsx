@@ -151,10 +151,8 @@ const Attendance = () => {
             //const jsonData = await atten.json();
             //console.log(jsonData)
             setResatten(atten)
-            console.log("ATTEN AAAAAAAAAAA : ", atten)
 
             if(atten){
-              console.log("BELLOOOOO")
               Swal.fire({
                 position: 'top-end',
                 icon: 'success',
@@ -221,7 +219,7 @@ const Attendance = () => {
 <div className="container text-center" style={{marginTop: "100px", marginBottom: "100px", width:"40%"}}>
       <h1 class="w3-jumbo" style={{textAlign: "center", marginTop: "0px", marginBottom: "50px", fontFamily: "Open Sans Condensed", fontSize: "100px !important", color: "#0a0908", filter: "brightness(100%)"}}>View Attendance Record</h1>
       
-      <h5 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)"}}>Analize the customer satisfaction by analyzing the feedback given by different user, organized in a form of graph, sorted by the different questions, to increase readability.</h5>
+      <h5 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)", fontSize: "20px"}}>Without proper records, it can be difficult, if not impossible, to effectively monitor performance and productivity levels. Analyse the attendance records of your team through this simple and effective functionality. </h5>
       
 </div> 
 

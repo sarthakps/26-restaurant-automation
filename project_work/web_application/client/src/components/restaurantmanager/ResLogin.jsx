@@ -45,6 +45,7 @@ const useStyles = makeStyles((theme) => ({
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
+      marginTop: "30px"
     },
     avatar123: {
       margin: theme.spacing(1),
@@ -72,18 +73,21 @@ const useStyles = makeStyles((theme) => ({
 
 
 const ResLogin = (props) => {
+    const [restaurant_id, setRestaurant_id] = useState("")
     const [email_id, setUid] = useState("")
     const [password, setPassword] = useState("")
     
 
     const onSubmitForm = async e => {
         e.preventDefault();
-        //console.log("jay shree krishna");
         try {
-            const body = {email_id, password};
+            const body = {restaurant_id, email_id, password};
+            console.log("body : ", body)
 
             var emailid = email_id;
             localStorage.setItem("emailID", emailid);
+            var res_id = restaurant_id;
+            localStorage.setItem("resID", res_id);
 
             // proxy
             const submitLogin = await fetch("/restaurantmanager/login", {
@@ -100,9 +104,8 @@ const ResLogin = (props) => {
                 Swal.fire("Congrats!", submitLogin.msg, "success")
                 props.history.push("/restaurantmanager/reshome")
 
-                var res_id = submitLogin.restaurant_id;
-                localStorage.setItem("resID", res_id);
-                //console.log("IN ResLogin file: ", res_id);
+                //console.log("IN ResLogin file: ", submitLogin);
+                localStorage.setItem("user_image", submitLogin.user_image);
 
             }
             else{
@@ -151,6 +154,20 @@ const ResLogin = (props) => {
                   margin="normal"
                   required
                   fullWidth
+                  id="id"
+                  label="Restaurant ID"
+                  name="id"
+                  type="id"
+                  autoFocus
+                  required value = {restaurant_id}
+                  onChange={e => setRestaurant_id(e.target.value)}
+                />
+
+              <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
                   id="email"
                   label="Email Address"
                   name="email"
@@ -187,10 +204,6 @@ const ResLogin = (props) => {
                 </Button>
 
                 </Box>
-                
-                <br/>
-                <br/>
-                <br/>
                 
               </form>
 

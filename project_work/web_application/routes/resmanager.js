@@ -20,6 +20,13 @@ const jwt=require('jsonwebtoken')
 router.post('/login', async(req,res) => {
     try {
         const data = req.body;
+        
+        if(!data.email_id || !data.password ){
+            return res.status(400).json({
+                error: 2,
+                msg: "One or more entries are missing!"
+            });
+        }
         // check if a user with the given email ID exists in the database
         // if not, return error
         const login = await pool.query("SELECT * FROM manager WHERE email_id=$1", [data.email_id]);
@@ -30,17 +37,22 @@ router.post('/login', async(req,res) => {
                 msg: "A user with this email ID does not exist!"
             });
         }
-
         else{
             // validate password
-                bcrypt.compare(data.password, login.rows[0].password, async function(err, result2) {
+
+                // bcrypt.compare(data.password, login.rows[0].password, async function(err, result2) {
                     
-                     // handle bcrypt compare error
-                    if (result2==false) { 
-                        res.status(400).json({'msg':'Invalid password!'})
+                //      // handle bcrypt compare error
+                //     if (result2==false) { 
+                //         return res.status(400).json({'msg':'Invalid password!'})
+                //     }
+                    const result = await pool.query("SELECT * FROM manager WHERE email_id=$1 and password=$2", [data.email_id,data.password]);
+                    if(result.rowCount==0)
+                    {
+                        return res.status(400).json({
+                            msg:"Invalid password or email"
+                        })
                     }
-                    const result = await pool.query("SELECT * FROM manager WHERE email_id=$1", [data.email_id]);
-                    
                     //GET JWT TOKEN 
                     const emailid=data.email_id
                     
@@ -53,6 +65,11 @@ router.post('/login', async(req,res) => {
                             const fcmToken="temporary_fcm_token"   
                             const checkEntry =  await pool.query("SELECT email_id FROM fcm_jwt WHERE email_id=$1", [data.email_id]);
                             
+                            
+                            if(typeof data.restaurant_id==="undefined"){
+                                const res_id = await pool.query( "SELECT restaurant_id from manager where email_id=$1",[data.email_id]);
+                                data.restaurant_id=res_id.rows[0].restaurant_id
+                            }
                             //if already logged in then update
                             if(checkEntry && typeof(checkEntry.rows[0])!=='undefined')
                             {
@@ -60,17 +77,16 @@ router.post('/login', async(req,res) => {
                                 const newUser = await pool.query(
                                     "UPDATE fcm_jwt SET last_jwt = $1 WHERE email_id=$2", [token, data.email_id]);
                                     
-                            }//if there is no login info then insert
-                            else{
+                            }//if there is no email id info then insert
+                            else {
                                     console.log('inserting')
-                                    //usertype_id=4 for manager
                                     const newUser = await pool.query(
-                                    "INSERT INTO fcm_jwt(email_id,fcm_token,last_jwt,restaurant_id,usertype_id) VALUES ($1, $2, $3, $4,4)",
+                                    "INSERT INTO fcm_jwt(email_id,fcm_token,last_jwt,restaurant_id,usertype_id) VALUES ($1, $2, $3,$4,4)",
                                     [data.email_id, fcmToken, token,data.restaurant_id]);
                                     
                             }
-
-                        //TOKEN CREATED WITHOUT ERROR  RETURN IT ALONG WITH LOGIN DATA
+                            
+                            //TOKEN CREATED WITHOUT ERROR  RETURN IT ALONG WITH LOGIN DATA
                             return  res.status(200).json({
                                     token: token,
                                     msg: "Successfully logged in!",
@@ -84,7 +100,7 @@ router.post('/login', async(req,res) => {
                         
                     }); 
                     
-                });
+                // });
                 
                     
                  
@@ -92,6 +108,9 @@ router.post('/login', async(req,res) => {
         
         } catch (err) {
             console.log(err.message);
+            res.status(400).json({
+                msg:"Error"
+            })
         }
 })
 
@@ -245,7 +264,7 @@ router.post('/viewusers',verifyToken, async(req, res) => {
 
 
 // works
-router.post('/revenue', async(req, res) => {
+router.post('/revenue', verifyToken, async(req, res) => {
 
     jwt.verify(req.token, 'secretkey',async (err,authData)=>{
         if(err){
@@ -275,118 +294,124 @@ router.post('/revenue', async(req, res) => {
                         console.log(err.message)
                     }
             }      
-    });
+})
 })
 
-
 // works
-router.post('/register-user',async(req,res) => {  
+router.post('/register-user',verifyToken, async(req,res) => {  
+
+    //INITIALIZE JWT VERIFICATION
     jwt.verify(req.token, 'secretkey',async (err,authData)=>{
         if(err){
 
-            //INVALID TOKEN/TIMEOUT 
+            //INVALID TOKEN/TIMEOUT so delete the entry from databse 
+            // const deleted_info = await pool.query("DELETE FROM fcm_jwt WHERE EMAIL_ID=$1 ",[req.body.email_id])
             res.status(400).json({msg: "Session expired. Login again"})
             
         }else{
 
-            try {
-                const data = req.body;
+        try {
+            const data = req.body;
+            data.email_id=data.emailid_user;
 
-                // check if one or more mandatory field is empty
-                // return error if true
-                if(!data.restaurant_id || !data.user_image || !data.usertype_id || !data.user_name || !data.email_id || !data.contact_no || !data.password){
-                    return res.status(400).json({
-                        error: 1,
-                        msg: "One or more required field is empty!"
-                    }); 
-                } 
+            console.log("data : ", data)
 
-                // check if the email ID is already registered or not
-                // return error if true
-                const user = await pool.query("SELECT email_id from users WHERE email_id=$1", [data.email_id]);
-                if(user.rows.length){
-                    return res.status(400).json({
-                        error: 1,
-                        msg: "This email ID is already registered!"
-                    });
-                }
-                
-                // check if maximum allowed registrations corresponding to user's role for the given restaurant is reached or not
-                // if maximum users of given role are already registered, return error
-                // const userRole = await pool.query("SELECT user_role from usertype WHERE usertype_id= $1", data.usertype_id);
-                const subscriptiontypeId = await pool.query("SELECT subscription_type_id FROM restaurant WHERE restaurant_id = $1", [data.restaurant_id]);  
-                const usertypeid=data.usertype_id; 
-                const subscriptionTypeId=subscriptiontypeId.rows[0]['subscription_type_id']; 
-                
-                // console.log(typeof(usertypeid),typeof(data.restaurant_id))
-                switch(usertypeid){
-                    // if user role == waiter
-                    case 1:
-                        const maxwaiters = await pool.query("SELECT max_waiter FROM subscription WHERE subscription_type_id = $1", [subscriptionTypeId]);
-                        const maxWaiters = maxwaiters.rows[0]['max_waiter']
-                        
-                        const currentwaiters = await pool.query("SELECT count(*) from users WHERE restaurant_id = $1 and usertype_id = $2", [data.restaurant_id, usertypeid]);
-                        const currentWaiters = parseInt(currentwaiters.rows[0]['count'])
-                        
-                        if(currentWaiters >= maxWaiters){
-                            return res.status(400).json({
-                                error: 1,
-                                msg: "Maximum number of allowed waiters are already registered! Your plan only allows a maximum of " + maxWaiters.toString() + " waiters!"
-                            });
-                        }
-                        break;
+            // check if one or more mandatory field is empty
+            // return error if true
+            if(!data.restaurant_id || !data.user_image || !data.usertype_id || !data.user_name || !data.email_id || !data.contact_no || !data.password){
+                return res.status(400).json({
+                    error: 1,
+                    msg: "One or more required field is empty!"
+                }); 
+            } 
 
-                    // if user role == inventory manager
-                    case 2:
-                        const maxinventoryManager = await pool.query("SELECT max_inv_manager FROM subscription WHERE subscription_type_id = $1", [subscriptionTypeId]);
-                        const maxInventoryManager = maxinventoryManager.rows[0]['max_inv_manager']
-                        const currentinventoryManager = await pool.query("SELECT count(*) from users WHERE restaurant_id = $1 and usertype_id = $2", [data.restaurant_id, usertypeid]);
-                        const currentInventoryManager = parseInt(currentinventoryManager.rows[0]['count'])
-                        if(currentInventoryManager >= maxInventoryManager){
-                            return res.status(400).json({
-                                error: 1,
-                                msg: "Maximum number of allowed inventory managers are already registered! Your plan only allows a maximum of " + maxWaiters.toString() + " inventory managers!"
-                            });
-                        }
-                        break;
-
-                    // if user role == kitchen personnel
-                    case 3:
-                        const maxkitchenPersonnel = await pool.query("SELECT max_kitchen_personnel FROM subscription WHERE subscription_type_id = $1",[ subscriptionTypeId]);
-                        const maxKitchenPersonnel = maxkitchenPersonnel.rows[0]['max_kitchen_personnel']
-                        const currentkitchenPersonnel = await pool.query("SELECT count(*) from users WHERE restaurant_id = $1 and usertype_id = $2", [data.restaurant_id, usertypeid]);
-                        const currentKitchenPersonnel = parseInt(currentkitchenPersonnel.rows[0]['count'])
-                        if(currentKitchenPersonnel >= maxKitchenPersonnel){
-                            return res.status(400).json({
-                                error: 1,
-                                msg: "Maximum number of allowed kitchen personnel are already registered! Your plan only allows a maximum of " + maxWaiters.toString() + " kitchen personnel!"
-                            });
-                        }
-                        break;
-                }
-
-                // generating hashed password (salt rounds = 12)
-                const salt = await bcrypt.genSalt(12);
-                const hashedPassword = await bcrypt.hash(data.password, salt);
-                
-                // inserting new user into the database
-                const newUser = await pool.query(
-                "INSERT INTO users(restaurant_id,user_image,usertype_id,user_name,email_id,contact_no,contact_no_optional,password) VALUES ($1, $2, $3,$4, $5,$6,$7,$8)",
-                [data.restaurant_id, data.user_image, usertypeid, data.user_name, data.email_id, data.contact_no, data.contact_no2, hashedPassword]);
-
-                return res.status(200).json({
-                    msg: "Registered successfully!"
+            // check if the email ID is already registered or not
+            // return error if true
+            const user = await pool.query("SELECT email_id from users WHERE email_id=$1", [data.email_id]);
+            if(user.rows.length){
+                return res.status(400).json({
+                    error: 1,
+                    msg: "This email ID is already registered!"
                 });
-            } catch (err) {
-                console.log("ERRRRR", err.message)
             }
+            
+            // check if maximum allowed registrations corresponding to user's role for the given restaurant is reached or not
+            // if maximum users of given role are already registered, return error
+            // const userRole = await pool.query("SELECT user_role from usertype WHERE usertype_id= $1", data.usertype_id);
+            const subscriptiontypeId = await pool.query("SELECT subscription_type_id FROM restaurant WHERE restaurant_id = $1", [data.restaurant_id]);  
+            const usertypeid=data.usertype_id; 
+            const subscriptionTypeId=subscriptiontypeId.rows[0]['subscription_type_id']; 
+            
+            // console.log(typeof(usertypeid),typeof(data.restaurant_id))
+            switch(usertypeid){
+                // if user role == waiter
+                case 1:
+                    const maxwaiters = await pool.query("SELECT max_waiter FROM subscription WHERE subscription_type_id = $1", [subscriptionTypeId]);
+                    const maxWaiters = maxwaiters.rows[0]['max_waiter']
+                    
+                    const currentwaiters = await pool.query("SELECT count(*) from users WHERE restaurant_id = $1 and usertype_id = $2", [data.restaurant_id, usertypeid]);
+                    const currentWaiters = parseInt(currentwaiters.rows[0]['count'])
+                    
+                    if(currentWaiters >= maxWaiters){
+                        return res.status(400).json({
+                            error: 1,
+                            msg: "Maximum number of allowed waiters are already registered! Your plan only allows a maximum of " + maxWaiters.toString() + " waiters!"
+                        });
+                    }
+                    break;
+
+                // if user role == inventory manager
+                case 2:
+                    const maxinventoryManager = await pool.query("SELECT max_inv_manager FROM subscription WHERE subscription_type_id = $1", [subscriptionTypeId]);
+                    const maxInventoryManager = maxinventoryManager.rows[0]['max_inv_manager']
+                    const currentinventoryManager = await pool.query("SELECT count(*) from users WHERE restaurant_id = $1 and usertype_id = $2", [data.restaurant_id, usertypeid]);
+                    const currentInventoryManager = parseInt(currentinventoryManager.rows[0]['count'])
+                    if(currentInventoryManager >= maxInventoryManager){
+                        return res.status(400).json({
+                            error: 1,
+                            msg: "Maximum number of allowed inventory managers are already registered! Your plan only allows a maximum of " + maxWaiters.toString() + " inventory managers!"
+                        });
+                    }
+                    break;
+
+                // if user role == kitchen personnel
+                case 3:
+                    const maxkitchenPersonnel = await pool.query("SELECT max_kitchen_personnel FROM subscription WHERE subscription_type_id = $1",[ subscriptionTypeId]);
+                    const maxKitchenPersonnel = maxkitchenPersonnel.rows[0]['max_kitchen_personnel']
+                    const currentkitchenPersonnel = await pool.query("SELECT count(*) from users WHERE restaurant_id = $1 and usertype_id = $2", [data.restaurant_id, usertypeid]);
+                    const currentKitchenPersonnel = parseInt(currentkitchenPersonnel.rows[0]['count'])
+                    if(currentKitchenPersonnel >= maxKitchenPersonnel){
+                        return res.status(400).json({
+                            error: 1,
+                            msg: "Maximum number of allowed kitchen personnel are already registered! Your plan only allows a maximum of " + maxWaiters.toString() + " kitchen personnel!"
+                        });
+                    }
+                    break;
+            }
+
+            // generating hashed password (salt rounds = 12)
+            const salt = await bcrypt.genSalt(12);
+            const hashedPassword = await bcrypt.hash(data.password, salt);
+            
+            // inserting new user into the database
+            const newUser = await pool.query(
+            "INSERT INTO users(restaurant_id,user_image,usertype_id,user_name,email_id,contact_no,contact_no_optional,password) VALUES ($1, $2, $3,$4, $5,$6,$7,$8)",
+            [data.restaurant_id, data.user_image, usertypeid, data.user_name, data.email_id, data.contact_no, data.contact_no2, hashedPassword]);
+
+            return res.status(200).json({
+                msg: "Registered successfully!"
+            });
+        } catch (err) {
+            console.log(err.message)
         }
+
+    }
     });
 })
 
 
 // works
-router.post('/mark_attendance',async(req,res) => {
+router.post('/mark_attendance',verifyToken, async(req,res) => {
     jwt.verify(req.token, 'secretkey',async (err,authData)=>{
         if(err){
 
@@ -422,14 +447,13 @@ router.post('/mark_attendance',async(req,res) => {
                     console.log(err.message)
                 }
             }
-    });
 })
-
+})
 
 // works
 // ATTENDANCE
-router.post('/view_attendance', async (req,res)=>{
-    jwt.verify(req.token, 'secretkey',async (err,authData)=>{
+router.post('/view_attendance',verifyToken,  async (req,res)=>{
+jwt.verify(req.token, 'secretkey',async (err,authData)=>{
         if(err){
 
             //INVALID TOKEN/TIMEOUT 
@@ -437,7 +461,7 @@ router.post('/view_attendance', async (req,res)=>{
             
         }else{
 
-        const data = req.body;
+    const data = req.body;
     
                 try {
 
@@ -470,11 +494,11 @@ router.post('/view_attendance', async (req,res)=>{
                     console.log(err.message)
                 }
             }
-    });
+})
 })
 
 // FEEDBACK 
-router.post('/feedback',async (req,res)=>{
+router.post('/feedback',verifyToken, async (req,res)=>{
 
     jwt.verify(req.token, 'secretkey',async (err,authData)=>{
         if(err){
@@ -535,13 +559,12 @@ router.post('/feedback',async (req,res)=>{
                 catch(err){
                     console.log(err.message);
                 }
-            }     
-    });  
+            }       
+});
 });
 
 
-
-router.post('/avg_feedback',async (req,res)=>{
+router.post('/avg_feedback', verifyToken, async (req,res)=>{
 
     jwt.verify(req.token, 'secretkey',async (err,authData)=>{
         if(err){
@@ -556,8 +579,8 @@ router.post('/avg_feedback',async (req,res)=>{
                     const count = await pool.query("SELECT count(*) FROM feedback WHERE restaurant_id=$1", [data.restaurant_id])
                     const results = await pool.query(`select sum(score),question_id from feedback WHERE restaurant_id=$1 group by question_id`, [data.restaurant_id]);
                     const results2 = results.rows;
-                    console.log("results2 : ", results2)
-                    console.log("COUNT : ", count.rows[0].count)
+                    //console.log("results2 : ", results2)
+                    //console.log("COUNT : ", count.rows[0].count)
 
                     const questions = await pool.query("SELECT question_id, question FROM feedback_questions")
                     const questions2 = questions.rows;
@@ -598,14 +621,13 @@ router.post('/avg_feedback',async (req,res)=>{
                 catch(err){
                     console.log(err.message);
                 }
-            }     
-    });  
+            }       
+});
 });
 
 
-
 // delete stff member : requires restaurant_id and user_id
-router.post('/delete_staff', async(req, res) => {
+router.post('/delete_staff', verifyToken, async(req, res) => {
     try{
         const data = req.body;
         // Check for empty field
@@ -655,17 +677,17 @@ const {PythonShell} =require('python-shell');
 // end_date: date corresponding to last entry of response
 // response: no of visitors of a restaurant on each day from statr_date to end_date
 // Here, function outputs past 30 days' visitors and expected visitors in next "days_predict"
-router.post('/rush_hour',verifyToken, async (req, res) => {
+router.post('/rush_hour', async (req, res) => {
 
     //INITIALIZE JWT VERIFICATION
-    jwt.verify(req.token, 'secretkey',async (err,authData)=>{
+    /*jwt.verify(req.token, 'secretkey',async (err,authData)=>{
         if(err){
 
             //INVALID TOKEN/TIMEOUT so delete the entry from databse 
             // const deleted_info = await pool.query("DELETE FROM fcm_jwt WHERE EMAIL_ID=$1 ",[req.body.email_id])
             res.status(400).json({msg: "Session expired. Login again"})
             
-        }else{
+        }else{*/
             
                     try {
                         const data = req.body;
@@ -687,10 +709,21 @@ router.post('/rush_hour',verifyToken, async (req, res) => {
                             const noOfEntries = await pool.query('select COUNT(DISTINCT time_stamp) FROM revenue WHERE restaurant_id=$1',[data.restaurant_id]);
                             const checkdate = resForlastDate.rows[0].date;
                             const startDate = new Date();
-                            startDate.setDate(checkdate.getDate() - 30);
+                            startDate.setDate(checkdate.getDate());
                             const endDate = new Date();
                             endDate.setDate(checkdate.getDate() + 7);
-
+                            // console.log(checkdate);
+                            // console.log(startDate);
+                            // console.log(endDate);
+                            const dates = [];
+                            let idx=0;
+                            for(idx=0;idx<data.days_predict;idx++)
+                            {
+                                const addDate = new Date();
+                                addDate.setDate(checkdate.getDate()+idx)
+                                dates.push(addDate);
+                            }console.log(dates);
+                            const final_response=[];
                             
                             if(!final || !noOfEntries || noOfEntries.rows[0].count<30){
                                 res.status(400).json({
@@ -737,11 +770,21 @@ router.post('/rush_hour',verifyToken, async (req, res) => {
                                         
                                     }
                                     else{
-                                        res.status(200).json({
-                                            "start_date":ISOISTDateTimeString(startDate),
-                                            "end_date":ISOISTDateTimeString(endDate),
-                                            "reply":response
+                                        let idxx=0;
+                                        for(idxx=0;idxx<data.days_predict;idxx++)
+                                        {
+                                            final_response.push({
+                                                "time_stamp":ISODateTimeString(dates[idxx]),
+                                                "rush_predicted":response[idxx]
                                             });
+                                        }
+                                        console.log(final_response);
+                                        res.status(200).json({final_response});
+                                        // res.status(200).json({
+                                        //     "start_date":ISOISTDateTimeString(startDate),
+                                        //     "end_date":ISOISTDateTimeString(endDate),
+                                        //     "reply":response
+                                        //     });
                                     }
                                 });
                                 
@@ -751,8 +794,8 @@ router.post('/rush_hour',verifyToken, async (req, res) => {
                     } catch (err) {
                         console.log(err.message)
                     }
-            }      
-    });
+            // }      
+    // });
 });
 // Train model
 // To train model. It will just return success message generated from train.py
@@ -867,8 +910,7 @@ function ISODateTimeString(d){
          + pad(d.getUTCDate()) +' '
           + pad(d.getUTCHours())+':'
           + pad(d.getUTCMinutes())+':'
-          + pad(d.getUTCSeconds())
-}
+          + pad(d.getUTCSeconds())}
   
 
 async function verifyToken(req,res,next){
@@ -876,6 +918,7 @@ async function verifyToken(req,res,next){
     const data =req.body
     const checkEntry =  await pool.query("SELECT last_jwt FROM fcm_jwt WHERE email_id=$1", [data.email_id]);
     const bearerToken = checkEntry.rows[0];
+    //console.log("bearerToken", bearerToken)
     
     if(typeof(bearerToken)!=='undefined'){
         req.token=bearerToken['last_jwt'];

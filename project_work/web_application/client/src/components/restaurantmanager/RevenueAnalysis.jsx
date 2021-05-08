@@ -157,6 +157,7 @@ const RevenueAnalysis = () => {
                 const res_id = localStorage.getItem("resID");
                 const email_id = localStorage.getItem("emailID");
                 const body = {restaurant_id:res_id, email_id, date1N, date2N}
+                console.log("body", body)
     
                 const resRevenue = await fetch('/restaurantmanager/revenue', {
                     method: "POST",
@@ -251,7 +252,7 @@ const RevenueAnalysis = () => {
               <div className="container text-center" style={{marginTop: "100px", marginBottom: "100px", width:"40%"}}>
                     <h1 class="w3-jumbo" style={{textAlign: "center", marginTop: "0px", marginBottom: "50px", fontFamily: "Open Sans Condensed", fontSize: "100px !important", color: "#0a0908", filter: "brightness(100%)"}}>Revenue Analysis</h1>
                     
-                    <h5 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)"}}>Analize the customer satisfaction by analyzing the feedback given by different user, organized in a form of graph, sorted by the different questions, to increase readability.</h5>
+                    <h5 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)", fontSize: "20px"}}>Measuring revenue is key to being able to understand the profitability of your business and we help you do just that. Keep track of the revenue generated and utilise it for future business plans. </h5>
                     
               </div> 
 

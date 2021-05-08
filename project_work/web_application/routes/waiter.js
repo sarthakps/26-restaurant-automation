@@ -15,30 +15,20 @@ const pool = require('../db')
 
 
 var admin = require('firebase-admin');
-var serviceAccount=require("./fireinit.json")
+var serviceAccount = require(".\\restaurant-automation-8ad32-firebase-adminsdk-tixax-5d244a4be7.json")
 var app_fcm = admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
   });
-
-
-
-
 
 
 // login + jwt + email
 router.post('/login', async(req,res) => {
     try {
         const data = req.body;
-        if(!data.email_id || !data.password){
-            return res.status(400).json({
-                error: 2,
-                msg: "One or more entries are missing!"
-            });
-        }
         // check if a user with the given email ID exists in the database
         // if not, return error
         const login = await pool.query("SELECT * FROM users WHERE email_id=$1", [data.email_id]);
-        console.log(login)
+        
         if(login.rows.length == 0){
             return res.status(400).json({
                 error: 1,
@@ -49,9 +39,14 @@ router.post('/login', async(req,res) => {
             bcrypt.compare(data.password, login.rows[0].password, async function(err, result2) {
                 
                 // handle bcrypt compare error
+// =======
+//                 if (err) { 
+//                     throw (err); 
+// =======
                 if (result2==false) { 
                     
                     return res.status(400).json({'msg':'Incorrect password!'})
+
                 }
                 
                 //GET JWT TOKEN 
@@ -63,10 +58,8 @@ router.post('/login', async(req,res) => {
                     }else{
                         
                         const fcmToken="temporary_fcm_token"   
-                        const checkEntry =  await pool.query("SELECT email_id FROM fcm_jwt WHERE email_id=$1", [data.email_id]);
-                        
-                        
-
+                        const checkEntry =  await pool.query("SELECT email_id FROM fcm_jwt WHERE email_id=$1 and restaurant_id=$2", [data.email_id,data.restaurant_id]);
+                        const checkEmailEntry =  await pool.query("SELECT email_id FROM fcm_jwt WHERE email_id=$1", [data.email_id]);
                         //if already logged in then update
                         if(checkEntry && typeof(checkEntry.rows[0])!=='undefined')
                         {
@@ -75,12 +68,18 @@ router.post('/login', async(req,res) => {
                                 "UPDATE fcm_jwt SET last_jwt = $1 WHERE email_id=$2", [token, data.email_id]);
                                 
                         }//if there is no email id info then insert
-                        else {
+                        else if(typeof(checkEmailEntry.rows[0])=='undefined'){
                                 console.log('inserting')
                                 const newUser = await pool.query(
                                 "INSERT INTO fcm_jwt(email_id,fcm_token,last_jwt,restaurant_id,usertype_id) VALUES ($1, $2, $3,$4,1)",
-                                [data.email_id, fcmToken, token,login.restaurant_id]);
+                                [data.email_id, fcmToken, token,data.restaurant_id]);
                                 
+                        }//password is verified and there is log of email so resturant_id would be wrong
+                        else{
+                            console.log('invalid details')
+                            return res.status(400).json({
+                                error:"Invalid value of restaurant_id"
+                            })
                         }
 
                         //TOKEN CREATED WITHOUT ERROR  RETURN IT ALONG WITH LOGIN DATA
@@ -88,17 +87,16 @@ router.post('/login', async(req,res) => {
                                 token: token,
                                 msg: "Successfully logged in!",
                                 user_id: login.rows[0].user_id,
-                                restaurant_id: login.rows[0].restaurant_id,
+                                restaurant_id: data.restaurant_id,
                                 user_name: login.rows[0].user_name,
                         });
                     }
+                  
                     
+
                 }); 
                 
-            });
-            
-            
-                    
+            });     
                  
         }
         
@@ -109,6 +107,7 @@ router.post('/login', async(req,res) => {
         })
     }
 })
+
 // ===== dev
 
 router.post('/send_feedback_questions',verifyToken,async(req, res) =>{
@@ -271,7 +270,7 @@ router.post('/fcmtest', async(req, res) => {
     // data:{
     //     order: data sent to the kitchen personnel
     // }
-    router.post('/insert_order', verifyToken, async(req, res) =>{
+ router.post('/insert_order', verifyToken, async(req, res) =>{
         jwt.verify(req.token, 'secretkey',async (err,authData)=>{
             if(err){
                 
@@ -280,7 +279,7 @@ router.post('/fcmtest', async(req, res) => {
             }else{
                 try{
                     const data = req.body;
-                    if(!data.restaurant_id || !data.table_no || !data.dish_id || !data.dish_qty || !data.no_of_occupants || data.dish_id.length==0 || data.dish_qty.length==0 || data.dish_id.length!=data.dish_qty.length)
+                    if(!data.restaurant_id || !data.table_no || !data.is_jain_wanted || !data.dish_id || !data.dish_qty || !data.no_of_occupants || data.dish_id.length==0 || data.dish_qty.length==0 || data.dish_id.length!=data.dish_qty.length || data.is_jain_wanted.length!=data.dish_qty.length)
                     {
                         res.status(400).json({
                             error:1,
@@ -306,7 +305,7 @@ router.post('/fcmtest', async(req, res) => {
                             let index;    
                             for(index=0;index<data.dish_id.length;index++)
                             {
-                                const result = await pool.query('INSERT INTO ORDERED_DISHES(RESTAURANT_ID,TABLE_NO,DISH_ID,DISH_QTY,NO_OF_OCCUPANTS,TIME_STAMP,delivered) VALUES($1,$2,$3,$4,$5,$6,$7)',[data.restaurant_id,data.table_no,data.dish_id[index],data.dish_qty[index],data.no_of_occupants,currentISODate,false])
+                                const result = await pool.query('INSERT INTO ORDERED_DISHES(RESTAURANT_ID,TABLE_NO,DISH_ID,DISH_QTY,NO_OF_OCCUPANTS,TIME_STAMP,delivered,is_jain_wanted) VALUES($1,$2,$3,$4,$5,$6,$7,$8)',[data.restaurant_id,data.table_no,data.dish_id[index],data.dish_qty[index],data.no_of_occupants,currentISODate,false,data.is_jain_wanted[index]])
                                 
                                 //push orders into notification array
                                 notif_arr.push({
@@ -315,6 +314,7 @@ router.post('/fcmtest', async(req, res) => {
                                     "dish_id":data.dish_id[index],
                                     "dish_qty":data.dish_qty[index],
                                     "no_of_occupants":data.no_of_occupants,
+                                    "is_jain_wanted":data.is_jain_wanted[index],
                                     "time_stamp":currentISODate,
                                     "delivered":false
                                 })

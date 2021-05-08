@@ -203,12 +203,12 @@ const Menu = () => {
               <div className="container text-center" style={{marginTop: "100px", marginBottom: "100px", width:"40%"}}>
                     <h1 class="w3-jumbo" style={{textAlign: "center", marginTop: "0px", marginBottom: "50px", fontFamily: "Open Sans Condensed", fontSize: "100px !important", color: "#0a0908", filter: "brightness(100%)"}}>MENU</h1>
                     
-                    <h5 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)"}}>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</h5>
+                    <h5 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)", fontSize: "20px"}}>An instant snapshot of a restaurant and the one piece of advertising every guest will read. Access and ensure you have an appealing, clean menu which is essential in communicating your brand. </h5>
                     
                 </div>   
 </div>
     
-            <div className="row" style={{justifyContent: "center"}}>
+            <div className="row" style={{justifyContent: "center", marginTop: "20px"}}>
                     <i class="fas fa-ellipsis-h" style={{marginTop: "20px", filter: "brightness(90%)"}}></i>
                     <i class="fas fa-ellipsis-h" style={{marginTop: "20px", filter: "brightness(90%)"}}></i>
                     <i class="fas fa-ellipsis-h" style={{marginTop: "20px", filter: "brightness(90%)"}}></i>
@@ -234,109 +234,13 @@ const Menu = () => {
   <br />
   <br />
   <br />
-      {/* <Paper className={classes.paper} style={{background:"white", fontSize:"22px"}}>
-      <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={resmenu.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
-          style={{color:"#5e503f" ,  fontSize:"22px"}}
-        />
-        <EnhancedTableToolbar
+
+
+     <EnhancedTableToolbar
             filter={filter}
             onFilterChange={handleFilterChange}
-            style={{fontColor:"white" ,  fontSize:"22px"}}
         />
-        <h4>{filter}</h4>
-        <TableContainer>
-          <Table
-            className={classes.table}
-            aria-labelledby="tableTitle"
-            size={dense ? 'small' : 'medium'}
-            aria-label="enhanced table"
-          >
-            <EnhancedTableHead
-              classes={classes}
-              headCells={headCells}
-              order={order}
-              orderBy={orderBy}
-              onRequestSort={handleRequestSort}
-              rowCount={resmenu.length}
-              style={{color:"#DAA520" ,  fontSize:"22px"}}
-            />
-            <TableBody>
-              {stableSort(resmenu, getComparator(order, orderBy, filter))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => { 
-                    
-                  const labelId = `enhanced-table-checkbox-${index}`;
-                  
-
-                  return (
-                    
-                    (row.dish_name.toLowerCase().includes(filter) || row.description.toLowerCase().includes(filter) || row.status.toLowerCase().includes(filter)) && 
-        
-                    <Fragment>
-                        
-                    <TableRow
-                      hover
-                      role="checkbox"
-                      tabIndex={-1}
-                      key={row.dish_id}
-                    >
-                      <TableCell padding="checkbox">
-                        
-                      </TableCell>
-
-                      <TableCell component="th" scope="row" padding="none">
-                        {row.dish_id}
-                      </TableCell>
-                      <TableCell align="center" style={{color:"#5e503f"}}>{row.dish_name}</TableCell>
-                   
-                        <TableCell align="center" style={{color:"#5e503f"}}>{row.description}</TableCell>
-                   
-                      <TableCell align="center" style={{color:"#5e503f"}}>{row.dish_price}</TableCell>
-                      <TableCell align="center" style={{color:"#5e503f"}}>{row.status}</TableCell>
-                      <TableCell align="center" style={{color:"#5e503f"}}>{row.jain_availability ? 'yes' : 'no'}</TableCell>
-                    </TableRow>
-                    
-                    </Fragment>
-                  );
-                })}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        
-      </Paper> */}
-      {/* <FormControlLabel
-        control={<Switch checked={dense} onChange={handleChangeDense} />}
-        label="Dense padding"
-      /> */}
-
-{/* <table class="table table-bordered table-white">
-                <thead class="thead-dark">
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Dish Price</th>
-                    <th>Status</th>  
-                    <th>Jain Availability</th>                  
-                </tr>
-                </thead>
-                <br />
-                <tbody> */}
-
-
-                
+        <h4>{filter}</h4>           
 
 <TablePagination
           rowsPerPageOptions={[20, 30, 50]}
@@ -362,6 +266,7 @@ const Menu = () => {
             <div className="col" style={{width: "40% !important", marginLeft: "20px", marginRight: "50px"}}>
 
                 {resmenu.slice(page * (rowsPerPage), page * (rowsPerPage) + (rowsPerPage/2)).map(menu => (
+                  (menu.dish_name.toLowerCase().includes(filter)) && 
                
                     <>
                         <h5 style={{textAlign: "left", letterSpacing: "0.16em", fontFamily: "Open Sans Condensed", fontSize: "30px !important", color: "#5e503f", overflow: "hidden"}}>
@@ -396,6 +301,8 @@ const Menu = () => {
 
                 {resmenu.slice(page * (rowsPerPage) + (rowsPerPage/2), page*(rowsPerPage) + (rowsPerPage) ).map(menu => (
                
+                    (menu.dish_name.toLowerCase().includes(filter)) && 
+
                     <>
                         <h5 style={{textAlign: "left", letterSpacing: "0.16em", fontFamily: "Open Sans Condensed", fontSize: "30px !important", color: "#5e503f", overflow: "hidden"}}>
                             <strong>

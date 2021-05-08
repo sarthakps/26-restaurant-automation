@@ -13,16 +13,13 @@ import "@fontsource/open-sans-condensed"
 const InvHome = () => {
 
     const divRef = useRef();
+    const user_image = localStorage.getItem("user_image");
 
     return (    
 
         <Fragment>
 
             <body style={{backgroundColor:"#f2f4f3"}}>
-
-        {/* <div>
-        <img className="darkened-image" src={backimg} style={{height:"800px", width:"100%" }}/>
-        </div> */}
 
 <div style={{width: "100%", height: "2px", marginTop:"0px", paddingTop:"0px"}}>
         <img className="darkened-image" src={backimg} style={{width: "100%", height: "670px", background:"no repeat center fixed", backgroundSize: "cover"}} />
@@ -39,7 +36,7 @@ const InvHome = () => {
        
 
 
-    <Header logout={"log out"} avatar={""}  logoutpath={"/inventorymanager/login"} height={"65px"} color={"white"} color2={"#0A0908"}/>
+    <Header logout={"log out"} avatar={user_image}  logoutpath={"/inventorymanager/login"} height={"65px"} color={"white"} color2={"#0A0908"}/>
     <br />
     <br /> 
     <br /> 

@@ -111,7 +111,7 @@ import { Chart } from 'react-charts'
 
 const RushHourPred = () => {
         const [rush, setRush] = useState([]);
-        const [days_forecast, setDays_forecast] = useState(7);
+        const [days_predict, setDays_forecast] = useState(7);
         const divRef = useRef();
         const info = useRef();
       
@@ -119,7 +119,7 @@ const RushHourPred = () => {
           const day = e.currentTarget.value;
           console.log("day : ", day)
           //setDays_forecast(day);
-          console.log("day state : ", days_forecast);
+          console.log("day state : ", days_predict);
           getRush();
         }
         
@@ -129,7 +129,7 @@ const RushHourPred = () => {
             try {
                 const res_id = localStorage.getItem("resID");
                 const email_id = localStorage.getItem("emailID");
-                const body = {restaurant_id:res_id, email_id, days_forecast}
+                const body = {restaurant_id:res_id, email_id, days_predict}
                 console.log("BODY : ", body)
     
                 const resRush = await fetch('/restaurantmanager/rush_hour', {
@@ -141,6 +141,7 @@ const RushHourPred = () => {
                 }).then(res => {
                     return res.json();
                 })
+                console.log(resRush.final_response);
 
                if(resRush.msg == "some error"){
                     Swal.fire({
@@ -154,8 +155,8 @@ const RushHourPred = () => {
 
                else{
                 //console.log("resRevenue.ans", resRevenue.ans);
-                setRush(resRush.ans);
-                console.log("rush : ", resRush.ans);
+                setRush(resRush.final_response);
+                console.log("rush : ", resRush.final_response);
                     Swal.fire({
                       position: 'top-end',
                       icon: 'success',
@@ -234,7 +235,7 @@ const RushHourPred = () => {
               <div className="container text-center" style={{marginTop: "100px", marginBottom: "100px", width:"40%"}}>
                     <h1 class="w3-jumbo" style={{textAlign: "center", marginTop: "0px", marginBottom: "50px", fontFamily: "Open Sans Condensed", fontSize: "100px !important", color: "#0a0908", filter: "brightness(100%)"}}>Rush Hour Prediction</h1>
                     
-                    <h4 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)"}}>Analize the customer satisfaction by analyzing the feedback given by different user, organized in a form of graph, sorted by the different questions, to increase readability.</h4>
+                    <h4 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)", fontSize: "20px"}}>Every restaurant’s USP depends on how valued the guests feel when they are being served. We help you predict the expected rush for an upcoming working day so that you manage your reservations accordingly and provide your best service. </h4>
                     
               </div> 
 
@@ -251,7 +252,7 @@ const RushHourPred = () => {
                 name="ucpi"
                 autoComplete="email"
                 autoFocus
-                required value = {days_forecast}
+                required value = {days_predict}
                  onChange={e => setDays_forecast(e.target.value)}
                 />
 
@@ -401,7 +402,7 @@ const RushHourPred = () => {
                         {row.bill_id}
                       </TableCell> */}
                       <TableCell align="center" style={{color:"#5e503f", fontSize:"15px"}}>{row.time_stamp}</TableCell>
-                      <TableCell align="center" style={{color:"#5e503f", fontSize:"15px"}}>{row.final_bill}</TableCell>
+                      <TableCell align="center" style={{color:"#5e503f", fontSize:"15px"}}>{row.rush_predicted}</TableCell>
                       
                     </TableRow>
                     

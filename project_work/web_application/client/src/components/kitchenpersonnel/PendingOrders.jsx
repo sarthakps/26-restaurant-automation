@@ -11,6 +11,27 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+
+import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { Container, Row, Col } from 'reactstrap';
+import {
+  Collapse,
+  Navbar,
+  NavbarToggler,
+  NavbarBrand,
+  Nav,
+  NavItem,
+  NavLink,
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
+  NavbarText
+} from 'reactstrap';
+
+
 // import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -26,6 +47,12 @@ import Button from '@material-ui/core/Button';
 
 import EnhancedTableToolbar from '../restaurantmanager/EnhancedTableToolBar'
 import EnhancedTableHead from '../restaurantmanager/EnhancedTableHead'
+
+// import { Messaging } from './Messaging';
+
+// import { requestFirebaseNotificationPermission } from './firebaseInit'
+
+// axios.defaults.baseURL = 'http://localhost:3001/v1';
   
   function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -61,6 +88,7 @@ import EnhancedTableHead from '../restaurantmanager/EnhancedTableHead'
     { id: 'dish_qty', numeric: false, disablePadding: false, label: 'Dish Quantity' },
     { id: 'table_no', numeric: false, disablePadding: false, label: 'Table No.' },
     { id: 'time', numeric: false, disablePadding: false, label: 'Time of Order' },
+    { id: 'jain', numeric: false, disablePadding: false, label: 'Jain Requirement'},
     { id: 'ready', numeric: false, disablePadding: false, label: 'Ready!' }
   ];
 
@@ -96,6 +124,8 @@ const Menu = () => {
     const getMenu = async() => {
         try {
 
+          console.log("in getmenu")
+
             const res_id = localStorage.getItem("resID");
             const email_id = localStorage.getItem("emailID");
             //console.log("In Menu file : ", res_id);
@@ -110,23 +140,24 @@ const Menu = () => {
             })
             //console.log(menuDishes.ans);
             if(!menuDishes.ans){
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'error',
-                    title: 'No pending orders as of now!',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
+                // Swal.fire({
+                //     position: 'top-end',
+                //     icon: 'error',
+                //     title: 'No pending orders as of now!',
+                //     showConfirmButton: false,
+                //     timer: 1500
+                // })
             }
             else{
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Here are the pending orders',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
+                // Swal.fire({
+                //     position: 'top-end',
+                //     icon: 'success',
+                //     title: 'Here are the pending orders',
+                //     showConfirmButton: false,
+                //     timer: 1500
+                // })
                 setResmenu(menuDishes.ans);
+                console.log("ordered dishes", menuDishes.ans)
             }
             
 
@@ -138,6 +169,9 @@ const Menu = () => {
     useEffect(() => {
         getMenu();
     }, [])
+
+
+      setInterval(getMenu(), 30000);
 
 
     const deliveredFun = async(e) => {
@@ -166,7 +200,7 @@ const Menu = () => {
                   showConfirmButton: false,
                   timer: 1500
               })
-              window.location.reload()
+              getMenu()
           }
           else{
               Swal.fire({
@@ -232,6 +266,21 @@ const Menu = () => {
     }
   };
 
+// FIREBASE
+// requestFirebaseNotificationPermission()
+//   .then((firebaseToken) => {
+//     // eslint-disable-next-line no-console
+//     console.log(firebaseToken);
+//   })
+//   .catch((err) => {
+//     return err;
+//   });
+
+
+//toastify
+
+// const notify = () => toast("Wow so easy!");
+
     return (
       <body style={{background:"#F2F4F3"}}>
 
@@ -242,7 +291,7 @@ const Menu = () => {
 <div className="container text-center" style={{marginTop: "100px", marginBottom: "0px", width:"40%"}}>
       <h1 class="w3-jumbo" style={{textAlign: "center", marginTop: "0px", marginBottom: "50px", fontFamily: "Open Sans Condensed", fontSize: "100px !important", color: "#0a0908", filter: "brightness(100%)"}}>Pending Orders</h1>
       
-      <h5 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)"}}>Analize the customer satisfaction by analyzing the feedback given by different user, organized in a form of graph, sorted by the different questions, to increase readability.</h5>
+      <h5 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)", fontSize: "20px"}}>They say food made with love tastes the best. We say food made with a relaxed mind beats that. Welcome to your personal organiser for the day’s orders! Hope you have a great time at work.</h5>
       
 </div> 
 </div>
@@ -250,7 +299,7 @@ const Menu = () => {
         <div className="container text-center">
 
 <div className={classes.root}>
-      <Paper className={classes.paper} style={{background:"#F2F4F3", fontSize:"22px", boxShadow:"0px", marginTop: "200px"}}>
+      <Paper className={classes.paper} style={{background:"white", fontSize:"22px", boxShadow:"0px", marginTop: "200px"}}>
       <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
@@ -317,6 +366,7 @@ const Menu = () => {
                    
                         <TableCell align="center" style={{color:"#5e503f"}}>{row.table_no}</TableCell>
                         <TableCell align="center" style={{color:"#5e503f"}}>{row.time_stamp}</TableCell>
+                        <TableCell align="center" style={{color:"#5e503f"}}>{row.is_jain_wanted ? "yes" : "no"}</TableCell>
                       <TableCell align="center" > <Button
                   type="submit"
                   variant="contained"
@@ -359,9 +409,30 @@ const Menu = () => {
         <br />
         </div>
 
+      {/* TOAST */}
+            {/* <div>
+              <button onClick={notify}>Notify!</button>
+              <ToastContainer />
+            </div> */}
+
         <div ref={divRef} >
                     <Footer />
           </div>
+
+
+            {/* <ToastContainer autoClose={2000} position="top-center" />
+              <Navbar bg="primary" variant="dark">
+                <Navbar.Brand href="#home">Firebase notifictations with React and Express</Navbar.Brand>
+              </Navbar>
+              <Container className="center-column">
+                <Row>
+                  <Col>
+                    <Messaging />
+                  </Col>
+                </Row>
+            </Container> */}
+
+
         </body>
     )
 }

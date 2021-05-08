@@ -101,7 +101,8 @@ const FeedbackAnalysis = () => {
     const getFeedback = async() => {
         try {
             const restaurant_id = localStorage.getItem("resID");
-            const body = {restaurant_id};
+            const email_id = localStorage.getItem("emailID");
+            const body = {restaurant_id, email_id};
             //console.log("HELLOOOO");
             const resFeedback = await fetch('/restaurantmanager/feedback', {
                 method: "POST",
@@ -137,7 +138,8 @@ const FeedbackAnalysis = () => {
     const getAvgFeedback = async() => {
         try {
             const restaurant_id = localStorage.getItem("resID");
-            const body = {restaurant_id};
+            const email_id = localStorage.getItem("emailID");
+            const body = {restaurant_id, email_id};
             //console.log("HELLOOOO");
             const resFeedback = await fetch('/restaurantmanager/avg_feedback', {
                 method: "POST",
@@ -230,7 +232,7 @@ const FeedbackAnalysis = () => {
               <div className="container text-center" style={{marginTop: "100px", marginBottom: "100px", width:"40%"}}>
                     <h1 class="w3-jumbo" style={{textAlign: "center", marginTop: "0px", marginBottom: "50px", fontFamily: "Open Sans Condensed", fontSize: "100px !important", color: "#0a0908", filter: "brightness(100%)"}}>Feedback Analysis</h1>
                     
-                    <h5 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)"}}>Analize the customer satisfaction by analyzing the feedback given by different user, organized in a form of graph, sorted by the different questions, to increase readability.</h5>
+                    <h5 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)", fontSize: "20px"}}>Feedbacks help you in developing a strong relation with your audience. Analyse all your feedback constructively through this functionality of ours. Customer voice is priceless for your business, so never stop listening!</h5>
                     
               </div> 
 

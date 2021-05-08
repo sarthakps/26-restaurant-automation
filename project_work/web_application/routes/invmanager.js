@@ -75,6 +75,7 @@ router.post('/login', async(req,res) => {
                                 user_id: login.rows[0].user_id,
                                 restaurant_id: data.restaurant_id,
                                 user_name: login.rows[0].user_name,
+                                user_image: login.rows[0].user_image
                         });
                     }
                     

@@ -63,6 +63,17 @@ const useStyles = makeStyles((theme) => ({
     root123: {
       height: '100vh',
     },
+    root: {
+      flexGrow: 1,
+      bottom: theme.spacing(2),
+      right: theme.spacing(2),
+    },
+    menuButton: {
+      marginRight: theme.spacing(2),
+    },
+    title: {
+      flexGrow: 1,
+    },
     image1: {
       backgroundRepeat: 'no-repeat',
       backgroundColor:
@@ -134,14 +145,8 @@ const HomePage = () => {
             <img src={sample} style={{height: "50px", width: "180px", float: "left"}}/>
           </Typography>
 
-          {/* <Button color="inherit" style={{color: "black"}} >About us</Button> 
 
-            <Button color="inherit" style={{color: "black", marginRight: "20px"}}>logout</Button>
-            
-            <Button color="inherit" style={{color: "black", marginRight: "20px"}}>subscription</Button>  */}
-
-
-            <div className="row" style={{marginLeft : "770px"}} >
+            <div className="row">
                 <Button
                     Button color="inherit" 
                     style={{color: "black"}}
@@ -193,7 +198,9 @@ const HomePage = () => {
               
 
               <div class="w3-container w3-tangerine">
-                  <h1 class="w3-jumbo_three" style={{textAlign: "center", marginTop: "-200px", fontFamily: "Open Sans Condensed", fontSize: "100px !important", color: "white"}}>Restaurant Automation</h1>
+                  <h1 class="w3-jumbo_three" style={{textAlign: "center", marginTop: "-250px", fontFamily: "Open Sans Condensed", fontSize: "100px !important", color: "white"}}>Restaurant Automation</h1>
+                  <h3 style={{textAlign: "center", marginTop: "30px", fontFamily: "Open Sans Condensed", fontSize: "100px !important", color: "#f2f4f3", filter: "brightness(90%)"}}>Convenience is what we believe in 
+                  </h3>
               </div>
                        
           </div>
@@ -208,9 +215,9 @@ const HomePage = () => {
                       <div style={{ paddingRight: "100px", marginLeft: "200px", marginTop: "100px", width: "33%"}}> 
 
                       <div className="row">
-                        <h2 style={{color: "black",marginRight: "0px",fontFamily: "proxima-nova", letterSpacing: "-.03em", lineHeight: "1.3", fontWeight: "400", fontSize: "34px"}}>Choose a role : </h2> 
+                        <h2 style={{color: "black",marginRight: "0px",fontFamily: "proxima-nova", letterSpacing: "-.03em", lineHeight: "1.3", fontWeight: "400", fontSize: "27px"}}>Choose a role : </h2> 
 
-                            <h5 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)"}}>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an .</h5>
+                            {/* <h5 style={{fontFamily: "Rubik", color: "#a9927d", filter: "brightness(100%)"}}>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an .</h5> */}
                       
                         </div>
                         <br />
@@ -241,7 +248,7 @@ const HomePage = () => {
 
                   <div className="container" style={{width: "30%", marginLeft: "850px", paddingTop: "80px"}}>
                     <h1 className="w3-jumbo" style={{ marginTop:"100px", fontFamily: "Open Sans Condensed", color: "white", filter: "brightness(100%)"}}>About Us</h1>
-                      <p className="w3-jumbo_one" style={{ marginTop: "80px", fontFamily: "Open Sans Condensed", fontSize: "2.5rem !important", color: "white", filter: "brightness(100%)"}}>standard dummy text ever since the 1500s, when an unknown printer took a galley of type <br />and scrambled it to make a type specimen book. It has survived not only five centuries</p>
+                      <p className="w3-jumbo_one" style={{ marginTop: "80px", fontFamily: "Open Sans Condensed", fontSize: "2.5rem !important", color: "white", filter: "brightness(100%)"}}>From automating the mundane task of placing an order to organising business related statistics, we’ve got you covered. <br /> With four different profile accesses for Manager, Waiter, Kitchen personnel and Inventory manager, our software helps increase the efficiency of your space.</p>
 
                       <div className="row" style={{marginTop:"40px"}}>
                       <div style={{filter: "brightness(100%)", marginRight:"40px"}}>
@@ -259,7 +266,7 @@ const HomePage = () => {
 
                       </div>
 
-                      <p className="w3-jumbo_one" style={{ marginTop: "30px", fontFamily: "Open Sans Condensed", fontSize: "2.5rem !important", color: "white", filter: "brightness(100%)"}}>standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a types</p>
+                      <p className="w3-jumbo_one" style={{ marginTop: "30px", fontFamily: "Open Sans Condensed", fontSize: "2.5rem !important", color: "white", filter: "brightness(100%)"}}>To know more, check out the subscriptions below. Join our family today!</p>
 
                   </div>
                     
@@ -277,22 +284,22 @@ const HomePage = () => {
                     <img src={sub1} style={{width: "470px", height: "490px", marginTop: "0px", marginLeft: "-10px", marginBottom: "0px"}}/>
                     <div className="contaier text-center">
                         <h1 className="w3-jumbo_two" style={{marginLeft: "150px", marginTop: "70px"}}>Silver Subscription</h1>
-                        <h3 style={{marginLeft : "-170px", marginTop: "20px", fontSize:"20px"}}>money:</h3>
+                        <h3 style={{marginLeft : "-170px", marginTop: "20px", fontSize:"20px"}}>5000 Rs.</h3>
                         <h3 style={{marginLeft : "70px", marginTop: "20px", fontSize:"20px"}}>This package includes services to:</h3>
                         <div className="row">
                             <DoneAllRoundedIcon style={{marginLeft: "-60px", marginTop: "15px"}}/>
                             <h3 style={{marginLeft: "10px", fontSize:"18px"}}>1 Restaurant Manager</h3>
                         </div>
                         <div className="row">
-                            <DoneAllRoundedIcon style={{ marginLeft: "-110px",marginTop: "15px"}}/>
+                            <DoneAllRoundedIcon style={{ marginLeft: "-120px",marginTop: "15px"}}/>
                             <h3 style={{marginLeft: "10px", fontSize:"18px"}}>Upto 3 waiters</h3>
                         </div>
                         <div className="row">
-                            <DoneAllRoundedIcon style={{ marginLeft: "-60px",marginTop: "15px"}}/>
+                            <DoneAllRoundedIcon style={{ marginLeft: "-70px",marginTop: "15px"}}/>
                             <h3 style={{marginLeft: "10px", fontSize:"18px"}}>1 Inventory Manager</h3>
                         </div>
                         <div className="row">
-                            <DoneAllRoundedIcon style={{marginLeft: "-60px", marginTop: "15px"}}/>
+                            <DoneAllRoundedIcon style={{marginLeft: "-70px", marginTop: "15px"}}/>
                             <h3 style={{marginLeft: "10px", fontSize:"18px"}}>1 Kitchen Personnel</h3>
                         </div>
       
@@ -305,7 +312,7 @@ const HomePage = () => {
 
                    <div className="contaier">
                         <h1 className="w3-jumbo_two" style={{marginRight: "150px", marginTop: "150px"}}>Gold Subscription</h1>
-                        <h3 style={{marginLeft: "0px", marginTop: "20px", fontSize:"18px"}}>Money:</h3>
+                        <h3 style={{marginLeft: "0px", marginTop: "20px", fontSize:"18px"}}>8000 Rs.</h3>
                         <h3 style={{marginLeft: "0px", marginTop: "20px", fontSize:"18px"}}>This package includes services to:</h3>
                         <div className="row">
                             <DoneAllRoundedIcon style={{marginLeft: "-360px", marginTop: "15px"}}/>
@@ -333,7 +340,7 @@ const HomePage = () => {
                     <img src={sub3} style={{width: "470px", height: "490px", marginTop: "0px", marginLeft: "-10px", marginBottom: "0px"}}/>
                     <div className="contaier">
                         <h1 className="w3-jumbo_two" style={{marginLeft: "150px", marginTop: "70px"}}>Platinum Subscription</h1>
-                        <h3 style={{marginLeft: "150px", marginTop: "20px", fontSize:"18px"}}>Money:</h3>
+                        <h3 style={{marginLeft: "150px", marginTop: "20px", fontSize:"18px"}}>10,000 Rs.</h3>
                         <h3 style={{marginLeft: "150px", marginTop: "20px", fontSize:"18px"}}>This package includes services to:</h3>
                         <div className="row">
                             <DoneAllRoundedIcon style={{marginLeft: "-130px", marginTop: "15px"}}/>
@@ -364,7 +371,7 @@ const HomePage = () => {
                     </div>
 
                   <div className="row" style={{ width: "100%", marginTop: "20px"}}>
-                    <Card cardwidth={"25%"} backcolor={"white"} fontcolor={"#ffffff"} cardheight={"120px"} borderradius={2} h3={"Maulina Raina"} p={"201801184"} marginRight={"3%"} marginLeft={"5%"}/>
+                    <Card cardwidth={"25%"} backcolor={"white"} fontcolor={"#ffffff"} cardheight={"120px"} borderradius={2} h3={"Maulina Raina"} p={"201801186"} marginRight={"3%"} marginLeft={"5%"}/>
                     <Card cardwidth={"25%"} cardheight={"120px"} borderradius={2} h3={"Shreya Joshi"} p={"201801174"} marginRight={"3%"} marginLeft={"5%"}/>
                     <Card cardwidth={"25%"} cardheight={"120px"} borderradius={2} h3={"Aaditi Roy"} p={"201801103"} marginRight={"3%"} marginLeft={"5%"}/>
                   </div>

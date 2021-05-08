@@ -2,15 +2,17 @@ import React, {Fragment, useState, useRef} from "react"
 import {BrowserRouter as Router, Route, Switch, Link, Redirect, useRouteMatch } from "react-router-dom"
 import './reshome.css'
 import img1 from '../../images/reshome4.jpg'
-import backimg from './reshome_img2.jpg'
-import menu from './resmenu.jpg'
-import revenue2 from './revenue2.jpeg'
-import rush from './rush.jpeg'
+import backimg from './backimg.jpg'
+
+import menu from './menu.jpg'
+import revenue2 from './revenue.jpg'
+import rush from './rush.jpg'
+import feedback from './feedback.jpg'
+import remove from './remove.jpg'
+//pic left
 import register1 from './register.jpg'
 import markatten from './markatten.jpg'
 import viewatten from './viewatten.jpg'
-import feedback from './feedback.jpg'
-import remove from './remove2.jpg'
 
 
 import Card from './Card'
@@ -21,6 +23,8 @@ import "@fontsource/open-sans-condensed"
 const ResHome = () => {
 
     const divRef = useRef();
+    
+  const user_image = localStorage.getItem("user_image");
 
     return (    
 
@@ -47,7 +51,7 @@ const ResHome = () => {
        
 
 
-    <Header logout={"log out"} avatar={""}  logoutpath={"/restaurantmanager/login"} height={"65px"} color={"white"} color2={"#0A0908"}/>
+    <Header logout={"log out"} avatar={user_image}  logoutpath={"/restaurantmanager/login"} height={"65px"} color={"white"} color2={"#0A0908"}/>
     <br />
     <br />   
 
