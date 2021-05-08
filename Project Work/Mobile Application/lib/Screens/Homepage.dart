@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,21 @@ class Homepage extends StatefulWidget {
   _HomepageState createState() => _HomepageState();
 }
 
+class Debouncer {
+  final int milliseconds;
+  VoidCallback action;
+  Timer _timer;
+
+  Debouncer({this.milliseconds});
+
+  run(VoidCallback action) {
+    if (null != _timer) {
+      _timer.cancel();
+    }
+    _timer = Timer(Duration(milliseconds: milliseconds), action);
+  }
+}
+
 class _HomepageState extends State<Homepage> {
 
   TextEditingController _filter = TextEditingController();
@@ -22,6 +38,8 @@ class _HomepageState extends State<Homepage> {
 
   List<Dish> _dishesList = List<Dish>();
   List<Dish> _filteredDishesList = List<Dish>();
+
+  final _debouncer = Debouncer(milliseconds: 500);
 
   @override
   void initState() {
@@ -47,9 +65,7 @@ class _HomepageState extends State<Homepage> {
       searchFocus = ValueNotifier<bool>(_searchFocusNode.hasFocus);
     });
 
-    _retrieveMenuFromServer();
-
-    _filter.addListener(_filterDishes);
+    // _retrieveMenuFromServer();
     _foodAmountController.text = '0';
 
     super.initState();
@@ -65,6 +81,7 @@ class _HomepageState extends State<Homepage> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Design.backgroundPrimary,
       bottomNavigationBar: _placeOrderButton(),
@@ -91,19 +108,16 @@ class _HomepageState extends State<Homepage> {
 
   void _filterDishes() async {
 
-    if (!(_filter.text.isEmpty)) {
+    String query = _filter.text.toLowerCase().trim();
+    if (query.isNotEmpty){
+
       List<Dish> tempList = new List<Dish>();
       for (int i = 0; i < _dishesList.length; i++) {
-        if (_dishesList[i].name.toLowerCase().trim().contains(_filter.text.toLowerCase().trim())) {
+        if (_dishesList[i].name.toLowerCase().trim().contains(query)) {
           tempList.add(_dishesList[i]);
         }
       }
       _filteredDishesList = tempList;
-
-      for(var dish in _filteredDishesList){
-        // print(dish.name + ' - ' + dish.isJainAvailable.toString());
-      }
-
     } else {
       _filteredDishesList = _dishesList;
     }
@@ -156,6 +170,11 @@ class _HomepageState extends State<Homepage> {
   Widget _searchBar(){
     return TextField(
       controller: _filter,
+      onChanged: (query){
+        _debouncer.run(() {
+          _filterDishes();
+        });
+      },
       focusNode: _searchFocusNode,
       style: const TextStyle(
         color: Design.textPrimary,
