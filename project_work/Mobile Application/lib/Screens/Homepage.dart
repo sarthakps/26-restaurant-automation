@@ -9,6 +9,11 @@ import 'package:restaurant_management/Services/FromServer.dart';
 import 'package:restaurant_management/Values/Design.dart';
 
 class Homepage extends StatefulWidget {
+
+  List<Dish> _retrievedDishes;
+
+  Homepage(this._retrievedDishes);
+
   @override
   _HomepageState createState() => _HomepageState();
 }
@@ -43,40 +48,32 @@ class _HomepageState extends State<Homepage> {
 
   @override
   void initState() {
-    // _dishesList.add(Dish('Paneer Tikka Masala', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', 145.0, true, false));
-    // _dishesList.add(Dish('Malai Kofta', 'abcdefghijk', 105.0, true, true));
-    // _dishesList.add(Dish('Paneer Bhurji', 'abcdefghijk', 160.0, true, false));
-    // _dishesList.add(Dish('Butter Naan', 'abcdefghijk', 90.0, true, true));
-    // _dishesList.add(Dish('Paneer Lababdar', 'abcdefghijk', 145.0, true, false));
-    // _dishesList.add(Dish('Masala Papad', 'abcdefghijk', 105.0, true, true));
-    // _dishesList.add(Dish('Butter Milk', 'abcdefghijk', 160.0, true, false));
-    // _dishesList.add(Dish('Fulka Roti', 'abcdefghijk', 90.0, true, true));
-    // _dishesList.add(Dish('Veg Jaipuri', 'abcdefghijk', 145.0, true, false));
-    // _dishesList.add(Dish('Lassi', 'abcdefghijk', 105.0, true, true));
-    // _dishesList.add(Dish('Manchurian', 'abcdefghijk', 160.0, true, false));
-    // _dishesList.add(Dish('Baked Macaroni', 'abcdefghijk', 90.0, true, true));
-    // _dishesList.add(Dish('Cheese Sandwich', 'abcdefghijk', 90.0, true, false));
-    // _dishesList.add(Dish('Cheese Sandwich', 'abcdefghijk', 90.0, true, false));
-    // _dishesList.add(Dish('Cheese Sandwich', 'abcdefghijk', 90.0, true, false));
-    // _dishesList.add(Dish('Baked Macaroni', 'abcdefghijk', 90.0, true, true));
-
     _searchFocusNode.addListener(() {
       print('has focus: ' + _searchFocusNode.hasFocus.toString());
       searchFocus = ValueNotifier<bool>(_searchFocusNode.hasFocus);
     });
 
-    // _retrieveMenuFromServer();
+    _retrieveMenuFromServer();
     _foodAmountController.text = '0';
 
     super.initState();
   }
 
   Future<void> _retrieveMenuFromServer() async {
-    _dishesList = await FromServer.getDishes();
-    setState(() {
-      _filteredDishesList = _dishesList;
-    });
-
+    if(widget._retrievedDishes.length == 0){
+      _dishesList = await FromServer.getDishes();
+      widget._retrievedDishes = _dishesList;
+      setState(() {
+        _filteredDishesList = _dishesList;
+      });
+      print('Dishes not fetched!');
+    } else {
+      _dishesList = widget._retrievedDishes;
+      setState(() {
+        _filteredDishesList = _dishesList;
+      });
+      print('Dishes already fetched!');
+    }
   }
 
   @override
@@ -241,7 +238,7 @@ class _HomepageState extends State<Homepage> {
 
             Navigator.push(context,
                 MaterialPageRoute(
-                    builder: (context) => ConfirmOrder(orderedDishes)));
+                    builder: (context) => ConfirmOrder(orderedDishes, widget._retrievedDishes)));
           },
         ),
       ),
