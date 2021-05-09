@@ -626,48 +626,71 @@ router.post('/avg_feedback', verifyToken, async (req,res)=>{
 });
 
 
-// delete stff member : requires restaurant_id and user_id
+// delete staff member : email_id of manager and restaurant_id, user_id of user
 router.post('/delete_staff', verifyToken, async(req, res) => {
-    try{
-        const data = req.body;
-        // Check for empty field
-        if(!data.user_id || !data.restaurant_id)
-        {
-            return res.status(400).json({
-                error: 1,
-                msg: "One or more required field is empty!"
-            });
-        }
-        else
-        {
-            //Get email_id from user_id
-            const EmailOfUser = await pool.query("SELECT email_id FROM users WHERE restaurant_id=$1 and user_id=$2", [data.restaurant_id,data.user_id]);
-            if(!EmailOfUser.rows[0] && !EmailOfUser.rows.length && !EmailOfUser.rows[0].email_id)
-            {
-                return res.status(400).json({
-                    error:1,
-                    msg: "A user with given user id does not exists for this restaurant"
-                });
-            }
-            else{
-                // console.log(EmailOfUser.rows[0].email_id);
-                // Remove entry from FCM_JWT
-                const isLoggedIn = await pool.query("DELETE FROM fcm_jwt WHERE email_id=$1", [EmailOfUser.rows[0].email_id]);
-                // Remove entry from Attendance table
-                const result1 = await pool.query("DELETE FROM attendance WHERE restaurant_id=$1 and user_id=$2", [data.restaurant_id,data.user_id]);
-                // Remove entry from Users table
-                const result2 = await pool.query("DELETE FROM users WHERE restaurant_id=$1 and user_id=$2", [data.restaurant_id,data.user_id]);
-                return res.status(200).json({
-                    msg: "Deleted successfully!"
-                });
-            }
-        }
+    //INITIALIZE JWT VERIFICATION
+    jwt.verify(req.token, 'secretkey',async (err2,authData)=>{
+        if(err2){
 
-    }catch(err)
-    {
-        console.log(err.message);
-    }
+            //INVALID TOKEN/TIMEOUT so delete the entry from databse 
+            // const deleted_info = await pool.query("DELETE FROM fcm_jwt WHERE EMAIL_ID=$1 ",[req.body.email_id])
+            res.status(400).json({msg: "Session expired. Login again"})
+            
+        }else{
+            try{
+                const data = req.body;
+                // Check for empty field
+                if(!data.user_id || !data.restaurant_id)
+                {
+                    return res.status(400).json({
+                        error: 1,
+                        msg: "One or more required field is empty!"
+                    });
+                }
+                else
+                {
+                    //Get email_id from user_id
+                    const validUserid = await pool.query("SELECT * FROM users WHERE user_id=$1", [data.user_id]);
+                    if(validUserid.rowCount!=0){
+                    
+                        const EmailOfUser = await pool.query("SELECT email_id FROM users WHERE restaurant_id=$1 and user_id=$2", [data.restaurant_id,data.user_id]);
+                        if(!EmailOfUser.rows[0] && !EmailOfUser.rows.length && !EmailOfUser.rows[0].email_id)
+                        {
+                            return res.status(400).json({
+                                error:1,
+                                msg: "A user with given user id does not exists for this restaurant"
+                            });
+                        }
+                        else{
+                            // Remove entry from FCM_JWT
+                            const isLoggedIn = await pool.query("DELETE FROM fcm_jwt WHERE email_id=$1", [EmailOfUser.rows[0].email_id]);
+                            // Remove entry from Attendance table
+                            const result1 = await pool.query("DELETE FROM attendance WHERE restaurant_id=$1 and user_id=$2", [data.restaurant_id,data.user_id]);
+                            // Remove entry from Users table
+                            const result2 = await pool.query("DELETE FROM users WHERE restaurant_id=$1 and user_id=$2", [data.restaurant_id,data.user_id]);
+                            return res.status(200).json({
+                                msg: "Deleted successfully!"
+                            });
+                        }
+                    }
+                    else{
+                        return res.status(400).json({
+                            msg: "A user with given user id does not exists for this restaurant"
+                        })
+                    }                
+                }
+
+            }catch(err)
+            {
+                console.log(err.message);
+                return res.status(400)
+            }
+
+        }
+    });
+    
 });
+
 
 const {PythonShell} =require('python-shell');
 // Required at least 30 entries in database for forecasting
