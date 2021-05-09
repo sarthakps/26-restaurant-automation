@@ -654,7 +654,7 @@ router.post('/delete_staff', verifyToken, async(req, res) => {
                     if(validUserid.rowCount!=0){
                     
                         const EmailOfUser = await pool.query("SELECT email_id FROM users WHERE restaurant_id=$1 and user_id=$2", [data.restaurant_id,data.user_id]);
-                        if(!EmailOfUser.rows[0] && !EmailOfUser.rows.length && !EmailOfUser.rows[0].email_id)
+                        if(!EmailOfUser.rows[0] || !EmailOfUser.rows.length || !EmailOfUser.rows[0].email_id)
                         {
                             return res.status(400).json({
                                 error:1,

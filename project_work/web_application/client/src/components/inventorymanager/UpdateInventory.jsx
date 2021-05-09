@@ -144,8 +144,8 @@ const UpdateInventory = () => {
     const deleteItem = async(e) => {
       try {
 
-          const res_id = localStorage.getItem("resID");
-          const email_id = localStorage.getItem("emailID");
+          const res_id = localStorage.getItem("resIDI");
+          const email_id = localStorage.getItem("emailIDI");
           var inventory_id = e.currentTarget.value;
           console.log("inventory_id : ", inventory_id);
           const body = {restaurant_id:res_id, email_id, inventory_id};  // send email_id by localStorage method
@@ -221,7 +221,7 @@ const UpdateInventory = () => {
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, resmenu.length - page * rowsPerPage);
 
-  const user_image = localStorage.getItem("user_image")
+  const user_image = localStorage.getItem("user_imageI")
 
   const defaultOptions = {
     loop: true,

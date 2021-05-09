@@ -219,9 +219,17 @@ router.put('/delivered', verifyToken, async(req, res) => {
             //WHEN USER HAS VALID JWT TOKEN
             try {
                 const data = req.body;
-                const final = await pool.query("UPDATE ordered_dishes SET delivered=true WHERE order_id=$1", [data.order_id]);
 
-                res.status(200).json({msg: "Updated status successfully!"});
+                if(!data.restaurant_id && !data.order_id){
+                    res.status(400).json({
+                        error:1,
+                        msg: "provide all attributes"
+                    });
+                } else{
+                    const final = await pool.query("UPDATE ordered_dishes SET delivered=true WHERE order_id=$1 and restaurant_id=$2", [data.order_id, data.restaurant_id]);
+
+                    res.status(200).json({msg: "Updated status successfully!"});
+                }
 
             } catch (err) {
                 console.error(err);

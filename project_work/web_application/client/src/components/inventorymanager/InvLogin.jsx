@@ -84,9 +84,9 @@ const ResLogin = (props) => {
             //console.log("body:", body)
 
             var emailid = email_id;
-            localStorage.setItem("emailID", emailid);
+            localStorage.setItem("emailIDI", emailid);
             var res_id = restaurant_id;
-            localStorage.setItem("resID", res_id);
+            localStorage.setItem("resIDI", res_id);
 
             // proxy
             const submitLogin = await fetch("/inventorymanager/login", {
@@ -104,7 +104,7 @@ const ResLogin = (props) => {
                 props.history.push("/inventorymanager/invhome")
 
                 console.log("IN InvLogin file: ", submitLogin);
-                localStorage.setItem("user_image", submitLogin.user_image);
+                localStorage.setItem("user_imageI", submitLogin.user_image);
 
             }
             else{

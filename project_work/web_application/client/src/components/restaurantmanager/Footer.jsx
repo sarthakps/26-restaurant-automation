@@ -1,5 +1,6 @@
 import React from 'react'
 import './footer.css'
+import sample from './chef_y.svg'
 
 function Footer() {
     return (
@@ -9,38 +10,21 @@ function Footer() {
             <div class="row" style={{marginTop: "80px"}}>
 
                 <div class="col-xs-12 col-sm-6 col-md-3">
-                <div class="widget subscribe no-box" >
-                <h5 class="widget-title">COMPANY NAME<span></span></h5>
-                <p>About the company, little description will goes here.. </p>
-                </div>
-                </div>
-
-            
-            <div class="col-xs-12 col-sm-6 col-md-3">
-                <div class="widget no-box">
-                <h5 class="widget-title">Quick Links<span></span></h5>
-                <ul class="thumbnail-widget">
-                <li>
-                <div class="thumb-content"><a href="#">&nbsp;Get Started</a></div>	
-                </li>
-                <li>
-                <div class="thumb-content"><a href="#">&nbsp;Top Leaders</a></div>	
-                </li>
-                </ul>
-                </div>
-            
-            </div>
-
-            
-
-                <div class="col-xs-12 col-sm-6 col-md-3">
-            <div class="widget no-box">
-            <h5 class="widget-title">Contact Us<span></span></h5>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit.</p>
-                        <a href="#"> <i class="fa fa-facebook"> </i> </a>
-                        <a href="#"> <i class="fa fa-twitter"> </i> </a>
-                        <a href="#"> <i class="fa fa-youtube"> </i> </a>
-            </div>
+                <img src={sample} style={{height: "50px", width: "180px", marginBottom:"20px"}}/>
+                    <div class="widget no-box">
+                    <h5 class="widget-title">Reach Us<span></span></h5>
+                            <div>
+                                <a href="#"> <i class="fas fa-map-marker-alt"></i> &nbsp; 15, Yemen road, Yemen </a>
+                            </div>
+                             <div style={{paddingTop: "10px"}}>
+                             <a href="#"> <i class="fas fa-phone-alt"></i> &nbsp;  Phone : &nbsp; (+91) 4625718</a> 
+                            </div> 
+                            
+                            <div style={{paddingTop: "10px"}}>
+                                <a href="#"> <i class="fas fa-envelope"></i> &nbsp; support@eataliano.com </a>
+                            </div>
+                             
+                    </div>
             </div>
             <br />
             <br />

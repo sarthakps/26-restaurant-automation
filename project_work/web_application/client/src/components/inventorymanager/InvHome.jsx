@@ -13,7 +13,7 @@ import "@fontsource/open-sans-condensed"
 const InvHome = () => {
 
     const divRef = useRef();
-    const user_image = localStorage.getItem("user_image");
+    const user_image = localStorage.getItem("user_imageI");
 
     return (    
 

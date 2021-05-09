@@ -126,8 +126,8 @@ const Menu = () => {
 
           console.log("in getmenu")
 
-            const res_id = localStorage.getItem("resID");
-            const email_id = localStorage.getItem("emailID");
+            const res_id = localStorage.getItem("resIDK");
+            const email_id = localStorage.getItem("emailIDK");
             //console.log("In Menu file : ", res_id);
             const body = {restaurant_id:res_id, email_id};  // send email_id by localStorage method
 
@@ -255,7 +255,7 @@ const Menu = () => {
 //   const isSelected = (feedback_id) => selected.indexOf(feedback_id) !== -1;
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, resmenu.length - page * rowsPerPage);
-  const user_image = localStorage.getItem("user_image")
+  const user_image = localStorage.getItem("user_imageK")
 
   const defaultOptions = {
     loop: true,

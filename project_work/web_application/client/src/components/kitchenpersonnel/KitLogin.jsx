@@ -90,9 +90,9 @@ const ResLogin = (props) => {
             const body = {restaurant_id, email_id, password};
 
             var emailid = email_id;
-            localStorage.setItem("emailID", emailid);
+            localStorage.setItem("emailIDK", emailid);
             var res_id = restaurant_id;
-            localStorage.setItem("resID", res_id);
+            localStorage.setItem("resIDK", res_id);
 
             // proxy
             const submitLogin = await fetch("/kitchenpersonnel/login", {
@@ -109,7 +109,7 @@ const ResLogin = (props) => {
                 Swal.fire("Congrats!", submitLogin.msg, "success")
                 props.history.push("/kitchenpersonnel/pending-orders")
                 //console.log("IN ResLogin file: ", res_id);
-                localStorage.setItem("user_image", submitLogin.user_image);
+                localStorage.setItem("user_imageK", submitLogin.user_image);
 
             }
             else{
