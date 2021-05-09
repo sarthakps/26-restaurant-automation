@@ -700,17 +700,17 @@ const {PythonShell} =require('python-shell');
 // end_date: date corresponding to last entry of response
 // response: no of visitors of a restaurant on each day from statr_date to end_date
 // Here, function outputs past 30 days' visitors and expected visitors in next "days_predict"
-router.post('/rush_hour', async (req, res) => {
+router.post('/rush_hour',verifyToken, async (req, res) => {
 
     //INITIALIZE JWT VERIFICATION
-    /*jwt.verify(req.token, 'secretkey',async (err,authData)=>{
-        if(err){
+    jwt.verify(req.token, 'secretkey',async (err2,authData)=>{
+        if(err2){
 
             //INVALID TOKEN/TIMEOUT so delete the entry from databse 
             // const deleted_info = await pool.query("DELETE FROM fcm_jwt WHERE EMAIL_ID=$1 ",[req.body.email_id])
             res.status(400).json({msg: "Session expired. Login again"})
             
-        }else{*/
+        }else{
             
                     try {
                         const data = req.body;
@@ -731,10 +731,11 @@ router.post('/rush_hour', async (req, res) => {
                             const resForlastDate = await pool.query('SELECT DATE(time_stamp) FROM revenue WHERE restaurant_id=$1 order by DATE(time_stamp) DESC  limit 1',[data.restaurant_id]);
                             const noOfEntries = await pool.query('select COUNT(DISTINCT time_stamp) FROM revenue WHERE restaurant_id=$1',[data.restaurant_id]);
                             const checkdate = resForlastDate.rows[0].date;
-                            const startDate = new Date();
-                            startDate.setDate(checkdate.getDate());
-                            const endDate = new Date();
-                            endDate.setDate(checkdate.getDate() + 7);
+                            
+                            // const startDate = new Date();
+                            // startDate.setDate(checkdate.getDate());
+                            // const endDate = new Date();
+                            // endDate.setDate(checkdate.getDate() + 7);
                             // console.log(checkdate);
                             // console.log(startDate);
                             // console.log(endDate);
@@ -742,8 +743,9 @@ router.post('/rush_hour', async (req, res) => {
                             let idx=0;
                             for(idx=0;idx<data.days_predict;idx++)
                             {
-                                const addDate = new Date();
-                                addDate.setDate(checkdate.getDate()+idx)
+                                // const addDate = new Date();
+                                // addDate.setDate(checkdate.getDate()+idx)
+                                const addDate = addDays(checkdate,idx+1);
                                 dates.push(addDate);
                             }console.log(dates);
                             const final_response=[];
@@ -817,8 +819,8 @@ router.post('/rush_hour', async (req, res) => {
                     } catch (err) {
                         console.log(err.message)
                     }
-            // }      
-    // });
+            }      
+    });
 });
 // Train model
 // To train model. It will just return success message generated from train.py
@@ -919,7 +921,11 @@ function matchDate(myArr){
     return response;
 }
 
-
+function addDays(date, days) {
+    const copy = new Date(Number(date))
+    copy.setDate(date.getDate() + days)
+    return copy
+}
 function ISODateString(d){
     function pad(n){return n<10 ? '0'+n : n}
     return d.getUTCFullYear()+'-'
