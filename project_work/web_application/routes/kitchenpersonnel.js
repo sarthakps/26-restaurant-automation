@@ -220,7 +220,7 @@ router.put('/delivered', verifyToken, async(req, res) => {
             try {
                 const data = req.body;
 
-                if(!data.restaurant_id && !data.order_id){
+                if(!data.restaurant_id || !data.order_id){
                     res.status(400).json({
                         error:1,
                         msg: "provide all attributes"
