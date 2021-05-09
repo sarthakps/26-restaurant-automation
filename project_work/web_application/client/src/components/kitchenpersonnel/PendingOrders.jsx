@@ -117,7 +117,7 @@ import EnhancedTableHead from '../restaurantmanager/EnhancedTableHead'
     },
   }));
 
-const Menu = () => {
+const PendingOrders = () => {
     const [resmenu, setResmenu] = useState([]);
      const divRef = useRef();
 
@@ -140,13 +140,13 @@ const Menu = () => {
             })
             //console.log(menuDishes.ans);
             if(!menuDishes.ans){
-                // Swal.fire({
-                //     position: 'top-end',
-                //     icon: 'error',
-                //     title: 'No pending orders as of now!',
-                //     showConfirmButton: false,
-                //     timer: 1500
-                // })
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'error',
+                    title: 'No pending orders as of now!',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
             }
             else{
                 // Swal.fire({
@@ -409,32 +409,14 @@ const Menu = () => {
         <br />
         </div>
 
-      {/* TOAST */}
-            {/* <div>
-              <button onClick={notify}>Notify!</button>
-              <ToastContainer />
-            </div> */}
 
         <div ref={divRef} >
                     <Footer />
           </div>
 
 
-            {/* <ToastContainer autoClose={2000} position="top-center" />
-              <Navbar bg="primary" variant="dark">
-                <Navbar.Brand href="#home">Firebase notifictations with React and Express</Navbar.Brand>
-              </Navbar>
-              <Container className="center-column">
-                <Row>
-                  <Col>
-                    <Messaging />
-                  </Col>
-                </Row>
-            </Container> */}
-
-
         </body>
     )
 }
 
-export default Menu
+export default PendingOrders
