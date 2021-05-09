@@ -15,7 +15,7 @@ const pool = require('../db')
 
 
 var admin = require('firebase-admin');
-var serviceAccount = require(".\\restaurant-automation-8ad32-firebase-adminsdk-tixax-5d244a4be7.json")
+var serviceAccount = require("./fireinit.json")
 var app_fcm = admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
   });
