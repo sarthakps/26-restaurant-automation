@@ -162,6 +162,16 @@ const Attendance = () => {
             });
             info.current.scrollIntoView({ behavior: "smooth" });
             }
+          
+            else{
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'error',
+                    title: 'No attendance record for this date range!',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }
 
         } catch (err) {
             console.error(err.message)
