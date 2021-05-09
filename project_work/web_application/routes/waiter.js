@@ -521,7 +521,10 @@ router.post('/on_bill_pay', verifyToken, async(req, res) => {
 
                 const order_delete = await pool.query("DELETE FROM ordered_dishes WHERE restaurant_id=$1 and table_no=$2", [data.restaurant_id, data.table_no])
 
-                res.status(200).json({msg: "Updated status successfully!"});
+                res.status(200).json({
+                    msg: "Updated status successfully!",
+                    bill_id: bill_id
+                });
 
             } catch (err) {
                 console.error(err);
