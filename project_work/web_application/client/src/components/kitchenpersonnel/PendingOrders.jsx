@@ -310,11 +310,7 @@ const PendingOrders = () => {
           onChangeRowsPerPage={handleChangeRowsPerPage}
           style={{color:"#5e503f" ,  fontSize:"22px"}}
         />
-        <EnhancedTableToolbar
-            filter={filter}
-            onFilterChange={handleFilterChange}
-            style={{fontSize:"22px"}}
-        />
+    
         <h4 style={{color: "white"}}>{filter}</h4>
         <TableContainer>
           <Table
